@@ -95,7 +95,12 @@ event_handler (VDI_Workstation * vwk) {
         } else if (y > 767) {
           y = 767;
         }
-        
+
+        /* Has a handler been installed? */
+        if (vwk->motv != NULL) {
+          vwk->motv (x, y);
+        }
+
         old = FBgetpixel (vwk->fb, x, y);
         FBputpixel (vwk->fb, x, y, 0xffff);
         

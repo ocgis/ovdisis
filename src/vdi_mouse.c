@@ -61,9 +61,27 @@ vdi_vex_butv (VDI_Workstation *vwk)
   vdipb->contrl[N_INTOUT] = 0;
 }
 
+/*
+** Description
+** Implementation of vex_motv. Just fill in the handler address in the vdi
+** workstation and let the handler thread do the calls.
+**
+** 1998-12-13 CG
+*/
 void vdi_vex_motv(VDI_Workstation *vwk)
 {
-  EDEBUG("vex_motv: Call not implemented!\n");
+  /* Return the old vector */
+  vdipb->contrl[9] = MSW(vwk->butv);
+  vdipb->contrl[10] = LSW(vwk->butv);
+  
+  /* Setup the new vector */
+  vwk->motv = (void *)
+    (((unsigned short)vdipb->contrl[7] << 16) +
+    (unsigned short)vdipb->contrl[8]);
+
+  /* Return number of returned values */
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vex_curv(VDI_Workstation *vwk)
