@@ -2,6 +2,7 @@
  * vdi_call.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,35 +65,40 @@ VDIPB *vdipb;
 extern VDIWK wk[MAX_HANDLES];    /* declared in vdi_control.c */
 extern int wk_open[MAX_HANDLES]; /* ----------- " ----------- */ 
 
+void (*vdi_handler)(VDIPB * vdipb) = NULL;
 
 void vdi_call(VDIPB *vdiparblk)
 {
-  int no_opcodes = sizeof(vdi_functions) / sizeof(VdiFunction *);
-
-  vdipb=vdiparblk;
-
-  if ((vdipb->contrl[ROUTINE] == 1) ||
-      (vdipb->contrl[ROUTINE] == 100)) { 
-    /* v_opn{v,}wk() is special */
-    vdi_functions[vdipb->contrl[ROUTINE]]((VDI_Workstation *)NULL);
-    IDEBUG("vdi_call: Call to v_opnwk finished.\n");
+  if (vdi_handler != NULL) {
+    vdi_handler (vdiparblk);
   } else {
-    if(vdipb->contrl[ROUTINE] >= 0 && vdipb->contrl[ROUTINE] <= no_opcodes) {
-      if(vdi_functions[vdipb->contrl[ROUTINE]]) {
-	if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
-	  /* Call our function */
-	  vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
-	  IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
-		 vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
-
-	} else {
-	  EDEBUG("vdi_call: Handle %d not open!\n",vdipb->contrl[VDI_HANDLE]);
-	}
-      } else {
-	EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
-      }
+    int no_opcodes = sizeof(vdi_functions) / sizeof(VdiFunction *);
+    
+    vdipb=vdiparblk;
+    
+    if ((vdipb->contrl[ROUTINE] == 1) ||
+        (vdipb->contrl[ROUTINE] == 100)) { 
+      /* v_opn{v,}wk() is special */
+      vdi_functions[vdipb->contrl[ROUTINE]]((VDI_Workstation *)NULL);
+      IDEBUG("vdi_call: Call to v_opnwk finished.\n");
     } else {
-      EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
+      if(vdipb->contrl[ROUTINE] >= 0 && vdipb->contrl[ROUTINE] <= no_opcodes) {
+        if(vdi_functions[vdipb->contrl[ROUTINE]]) {
+          if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
+            /* Call our function */
+            vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
+            IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
+                   vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
+            
+          } else {
+            EDEBUG("vdi_call: Handle %d not open!\n",vdipb->contrl[VDI_HANDLE]);
+          }
+        } else {
+          EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
+        }
+      } else {
+        EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
+      }
     }
   }
 }

@@ -208,6 +208,7 @@ restore_mouse_background (VDI_Workstation * vwk,
 ** 1998-12-21 CG
 ** 1998-12-26 CG
 ** 1999-01-02 CG
+** 1999-05-20 CG
 */
 static
 void
@@ -218,7 +219,6 @@ event_handler (VDI_Workstation * vwk) {
   struct itimerval old_timer_value;
 
   /* Install a timer handler */
-  global_vwk = vwk;
   signal (SIGALRM, &timer_handler);
   setitimer (ITIMER_REAL, &timer_value, &old_timer_value);
 
@@ -297,15 +297,19 @@ event_handler (VDI_Workstation * vwk) {
 ** 1998-10-13 CG
 ** 1998-10-14 CG
 ** 1998-12-07 CG
+** 1999-05-20 CG
 */
 void
 start_event_handler (VDI_Workstation * vwk)
 {
+  /* Initialize global vwk that is used by timer and mouse handlers */
+  global_vwk = vwk;
+
   /* Create a new thread */
   if (pthread_create (&event_handler_thread,
                       NULL,
                       (void *) &event_handler,
-                      (void *) vwk) < 0) {
+                      vwk) < 0) {
   }
 }
 
