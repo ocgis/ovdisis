@@ -56,7 +56,7 @@ tar:
 	cd ..; tar cvzf $(notdir $(shell pwd))-`date "+%Y%m%d"`.tar.gz \
 		`find $(notdir $(shell pwd)) -type f -a ! -name '*.[oa]' \
 		-a ! -name .depend -a ! -name '*~' -a ! -name '*.orig' \
-		-a ! -perm +a=x`
+		-a ! -perm +a=x | grep -v '/CVS/'`
 
 
 force:
