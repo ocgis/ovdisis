@@ -73,18 +73,30 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
     fbb->plane_ct = src->fd_nplanes; /* use source no of bitplanes! */
     fbb->s_form = src->fd_addr;
 
-    if(src->fd_stand) {
+    if (src->fd_stand)
+    {
       /* block is in VDI format */
 
       fbb->s_nxwd = 2;
       fbb->s_nxln = src->fd_wdwidth * 2;
       fbb->s_nxpl = src->fd_wdwidth * 2 * src->fd_h;
     } /* else block is in machine dependent format */
+    else 
+    {
+      /* block is in machine dependent format */
 
-    /* "machine dependent" could be discussed. 
-       On one hand, machine dependent _is_ machine dependent, but
-       on the other hand, machine dependent is most likely associated
-       with Atari interleaved format */
+      fbb->s_nxwd = 2;
+      fbb->s_nxln = src->fd_wdwidth * 2;
+      fbb->s_nxpl = src->fd_wdwidth * 2 * src->fd_h;
+    }      
+
+    /*
+    ** "machine dependent" could be discussed. 
+    ** On one hand, machine dependent _is_ machine dependent, but
+    ** on the other hand, machine dependent is most likely associated
+    ** with Atari interleaved format. For now we treat them exactly the
+    ** same
+    */
 
   } /* else source is the screen, i.e. already setup by FBgetbltpblk() */
 
@@ -93,13 +105,31 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
   if(dst->fd_addr) {
     fbb->d_form = dst->fd_addr;
 
-    if(dst->fd_stand) {
+    if(dst->fd_stand)
+    {
       /* destination should be in VDI format */
 
       fbb->d_nxwd = 2;
       fbb->d_nxln = dst->fd_wdwidth * 2;
       fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
     } /* else destination should be in machine dependent format */
+    else
+    {
+      /* destination should be in machine dependent format */
+
+      fbb->d_nxwd = 2;
+      fbb->d_nxln = dst->fd_wdwidth * 2;
+      fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
+    }
+
+    /*
+    ** "machine dependent" could be discussed. 
+    ** On one hand, machine dependent _is_ machine dependent, but
+    ** on the other hand, machine dependent is most likely associated
+    ** with Atari interleaved format. For now we treat them exactly the
+    ** same
+    */
+
 
     /* See discussion about machine dependent above */
 
