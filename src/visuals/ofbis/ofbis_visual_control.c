@@ -53,28 +53,38 @@ ofbis_visual_clear (VDI_Workstation * vwk)
 }
 
 
+/*
+** Set drawing write mode
+*/
 void
 ofbis_visual_set_write_mode (void * fb,
-			     int    write_mode) {
-  switch (write_mode) {
-  case MD_REPLACE:
-    FBsetwritemode (FB_T(fb), FB_REPLACE);
-    break;
+			     int    write_mode)
+{
+  static int last_write_mode = -1;
 
-  case MD_TRANS:
-    FBsetwritemode (FB_T(fb), FB_TRANS);
-    break;
-
-  case MD_XOR:
-    FBsetwritemode (FB_T(fb), FB_XOR);
-    break;
-
-  case MD_ERASE:
-    FBsetwritemode (FB_T(fb), FB_ERASE);
-    break;
-
-  default:
-    ;
+  if(write_mode != last_write_mode)
+  {
+    switch (write_mode)
+    {
+    case MD_REPLACE:
+      FBsetwritemode (FB_T(fb), FB_REPLACE);
+      break;
+      
+    case MD_TRANS:
+      FBsetwritemode (FB_T(fb), FB_TRANS);
+      break;
+      
+    case MD_XOR:
+      FBsetwritemode (FB_T(fb), FB_XOR);
+      break;
+      
+    case MD_ERASE:
+      FBsetwritemode (FB_T(fb), FB_ERASE);
+      break;
+      
+    default:
+      ;
+    }
   }
 }
 
