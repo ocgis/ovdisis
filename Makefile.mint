@@ -1,3 +1,4 @@
+INCLUDES = -Isrc
 SUBDIRS = src
 
 all: subdirs otestis
