@@ -23,6 +23,9 @@
 
 static pthread_t event_handler_thread;
 
+/* This is needed for the timer handler */
+static VDI_Workstation * global_vwk;
+
 /*
 ** Description
 ** Map buttons in vdi format
@@ -34,11 +37,27 @@ unsigned int
 map_buttons (unsigned int ofbis_buttons) {
   /*
   ** FIXME: I'm not sure if the mapping is correct for the middle and the right
-  ** button.
+  ** buttons.
   */
   return (((ofbis_buttons & 0x4) ? 0 : 1) |
           ((ofbis_buttons & 0x2) ? 0 : 2) |
           ((ofbis_buttons & 0x1) ? 0 : 4));
+}
+
+
+/*
+** Description
+** For each timer tick (20 ms) this routine is called and will call a
+** callback routine that the user has setup.
+**
+** 1998-12-26 CG
+*/
+static
+void
+timer_handler (int signal_number) {
+  if (global_vwk->timv != NULL) {
+    global_vwk->timv ();
+  }
 }
 
 
@@ -51,17 +70,25 @@ map_buttons (unsigned int ofbis_buttons) {
 ** 1998-12-06 CG
 ** 1998-12-13 CG
 ** 1998-12-21 CG
+** 1998-12-26 CG
 */
 static
 void
 event_handler (VDI_Workstation * vwk) {
-  FBEVENT fe;
-  int          x = 0;
-  int          y = 0;
-  unsigned int buttons = 0;
-  int          old = 0;
+  FBEVENT          fe;
+  int              x = 0;
+  int              y = 0;
+  unsigned int     buttons = 0;
+  int              old = 0;
+  struct itimerval timer_value = {{0, 50000}, {0, 50000}};
+  struct itimerval old_timer_value;
 
-  while (1) {
+  /* Install a timer handler */
+  global_vwk = vwk;
+  signal (SIGALRM, &timer_handler);
+  setitimer (ITIMER_REAL, &timer_value, &old_timer_value);
+
+  while (TRUE) {
     FBgetevent (vwk->fb, &fe);
 
     if (fe.type == FBKeyEvent) {

@@ -120,10 +120,33 @@ void vdi_v_get_pixel(VDI_Workstation *vwk)
   vdipb->contrl[N_INTOUT] = 2;
 }
 
-void vdi_vex_timv(VDI_Workstation *vwk)
-{
-  EDEBUG("vex_timv: Call not implemented!\n");
+
+/*
+** Description
+** Implementation of vex_timv. Just fill in the handler address in the vdi
+** workstation and let the handler do the calls.
+**
+** 1998-12-26 CG
+*/
+void
+vdi_vex_timv (VDI_Workstation *vwk) {
+  /* Return the old vector */
+  vdipb->contrl[9] = MSW(vwk->timv);
+  vdipb->contrl[10] = LSW(vwk->timv);
+  
+  /* Setup the new vector */
+  vwk->timv = (void *)
+    (((unsigned short)vdipb->contrl[7] << 16) +
+     (unsigned short)vdipb->contrl[8]);
+
+  /* Milliseconds per timer tick are hardcoded to 50 */
+  vdipb->intout[0] = 50;
+
+  /* Return number of returned values */
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 1;
 }
+
 
 void vdi_vq_key_s(VDI_Workstation *vwk)
 {
