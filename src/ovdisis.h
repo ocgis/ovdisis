@@ -198,24 +198,24 @@ typedef void VdiFunction(VDI_Workstation *);
 #define UNUSED (VdiFunction *)NULL
 
 /* debug info defines */
-#if DEBUGLEVEL>=1
+#if DEBUGLEVEL>=0
 # define EDEBUG(fmt,args...) fprintf(stderr,fmt,##args)
-# if DEBUGLEVEL>=2
+# if DEBUGLEVEL>=1
 #  define ADEBUG(fmt,args...) fprintf(stdout,fmt,##args)
-#  if DEBUGLEVEL>=3
+#  if DEBUGLEVEL>=2
 #   define IDEBUG(fmt,args...) fprintf(stdout,fmt,##args)
-#  else  /* 3 */
+#  else  /* 2 */
 #   define IDEBUG(fmt,args...) 
-#  endif /* 3 */
-# else  /* 2 */
+#  endif /* 2 */
+# else  /* 1 */
 #  define ADEBUG(fmt,args...) 
 #  define IDEBUG(fmt,args...) 
-# endif /* 2 */
-#else  /* 1 */
+# endif /* 1 */
+#else  /* 0 */
 # define EDEBUG(fmt,args...) 
 # define ADEBUG(fmt,args...) 
 # define IDEBUG(fmt,args...) 
-#endif /* 1 */
+#endif /* 0 */
 
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
