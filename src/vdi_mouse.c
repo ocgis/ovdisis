@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 
+#include "event.h"
 #include "ovdisis.h"
 
 /*
@@ -42,14 +43,28 @@ vdi_vsc_form (VDI_Workstation * vwk) {
            new_mouse->mf_bg);
 }
 
-void vdi_v_show_c(VDI_Workstation *vwk)
-{
-  EDEBUG("v_show_c: Call not implemented!\n");
+
+/*
+** Description
+** Implementetation of v_show_c()
+**
+** 1999-01-03 CG
+*/
+void
+vdi_v_show_c (VDI_Workstation *vwk) {
+  increase_mouse_visibility ();
 }
 
+
+/*
+** Description
+** Implementetation of v_hide_c()
+**
+** 1999-01-03 CG
+*/
 void vdi_v_hide_c(VDI_Workstation *vwk)
 {
-  EDEBUG("v_hide_c: Call not implemented!\n");
+  decrease_mouse_visibility ();
 }
 
 void vdi_vq_mouse(VDI_Workstation *vwk)

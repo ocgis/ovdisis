@@ -38,15 +38,22 @@ start_event_handler (VDI_Workstation * vwk);
 void
 stop_event_handler (void);
 
-#endif /* _EVENT_H_ */
+/*
+** Description
+** Decrease mouse cursor visibility one level
+**
+** 1999-01-03 CG
+*/
+void
+decrease_mouse_visibility (void);
 
 /*
-** Revision history
+** Description
+** Increase mouse cursor visibility one level
 **
-** 1998-10-13 CG
-**            Created original
-**
-** 1998-10-14 CG
-**            Added prototype for exit_event_handler
+** 1999-01-03 CG
 */
+void
+increase_mouse_visibility (void);
 
+#endif /* _EVENT_H_ */

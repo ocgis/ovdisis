@@ -27,8 +27,16 @@ static pthread_t event_handler_thread;
 static VDI_Workstation * global_vwk;
 
 /* Used when saving / restoring mouse background */
-static FBBLTPBLK * mouse_background;
 static unsigned short mouse_background_buffer[16*16*2];
+
+/* If this is positive the mouse cursor is visible */
+static int mouse_visibility = 0;
+
+static pthread_mutex_t mouse_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+/* Mouse cursor coordinates */
+static int mouse_x = 0;
+static int mouse_y = 0;
 
 /*
 ** Description
@@ -146,6 +154,8 @@ void
 save_mouse_background (VDI_Workstation * vwk,
                        int               x,
                        int               y) {
+  FBBLTPBLK * mouse_background;
+  
   /* Setup mouse background blit */
   mouse_background = FBgetbltpblk (vwk->fb);
 
@@ -171,6 +181,8 @@ void
 restore_mouse_background (VDI_Workstation * vwk,
                           int               x,
                           int               y) {
+  FBBLTPBLK * mouse_background;
+  
   /* Setup mouse background blit */
   mouse_background = FBgetbltpblk (vwk->fb);
   
@@ -201,8 +213,6 @@ static
 void
 event_handler (VDI_Workstation * vwk) {
   FBEVENT          fe;
-  int              x = 0;
-  int              y = 0;
   unsigned int     buttons = 0;
   struct itimerval timer_value = {{0, 50000}, {0, 50000}};
   struct itimerval old_timer_value;
@@ -213,8 +223,10 @@ event_handler (VDI_Workstation * vwk) {
   setitimer (ITIMER_REAL, &timer_value, &old_timer_value);
 
   /* Save mouse background and draw mouse */
-  save_mouse_background (vwk, x, y);
-  draw_mouse_cursor (vwk, x, y);
+  if (mouse_visibility > 0) {
+    save_mouse_background (vwk, mouse_x, mouse_y);
+    draw_mouse_cursor (vwk, mouse_x, mouse_y);
+  }
 
   while (TRUE) {
     FBgetevent (vwk->fb, &fe);
@@ -235,36 +247,39 @@ event_handler (VDI_Workstation * vwk) {
 
       /* Has the mouse been moved? */
       if ((fe.mouse.x != 0) || (fe.mouse.y != 0)) {
-        restore_mouse_background (vwk, x, y);
-        
-        x += fe.mouse.x;
-        y += fe.mouse.y;
-        
-        if (x < 0) {
-          x = 0;
-        } else if (x > vwk->dev.attr.xres) {
-          x = vwk->dev.attr.xres;
+        /* Make sure the visibility isn't being updated */
+        pthread_mutex_lock (&mouse_mutex);
+
+        if (mouse_visibility > 0) {
+          restore_mouse_background (vwk, mouse_x, mouse_y);
         }
         
-        if (y < 0) {
-          y = 0;
-        } else if (y > vwk->dev.attr.yres) {
-          y = vwk->dev.attr.yres;
+        mouse_x += fe.mouse.x;
+        mouse_y += fe.mouse.y;
+        
+        if (mouse_x < 0) {
+          mouse_x = 0;
+        } else if (mouse_x > vwk->dev.attr.xres) {
+          mouse_x = vwk->dev.attr.xres;
+        }
+        
+        if (mouse_y < 0) {
+          mouse_y = 0;
+        } else if (mouse_y > vwk->dev.attr.yres) {
+          mouse_y = vwk->dev.attr.yres;
         }
 
         /* Has a handler been installed? */
         if (vwk->motv != NULL) {
-          vwk->motv (x, y);
+          vwk->motv (mouse_x, mouse_y);
         }
 
-        save_mouse_background (vwk, x, y);
-        draw_mouse_cursor (vwk, x, y);
-#if 0
-        fprintf (stderr,
-                 "ovdisis: event.c: FBMouseEvent: x = %d y = %d\n",
-                 x,
-                 y);
-#endif
+        if (mouse_visibility > 0) {
+          save_mouse_background (vwk, mouse_x, mouse_y);
+          draw_mouse_cursor (vwk, mouse_x, mouse_y);
+        }
+
+        pthread_mutex_unlock (&mouse_mutex);
       }
     } else {
       fprintf (stderr, "ovdisis: event.c: Unknown event\n");
@@ -285,15 +300,12 @@ event_handler (VDI_Workstation * vwk) {
 void
 start_event_handler (VDI_Workstation * vwk)
 {
-  fprintf (stderr, "ovdisis: event.c: start_event_handler: Trying to create thread\n");
   /* Create a new thread */
   if (pthread_create (&event_handler_thread,
                       NULL,
                       (void *) &event_handler,
                       (void *) vwk) < 0) {
-    fprintf (stderr, "ovdisis: event.c: start_event_handler: Couldn't create event handler thread\n");
   }
-  fprintf (stderr, "ovdisis: event.c: start_event_handler: Created thread\n");
 }
 
 
@@ -311,4 +323,43 @@ stop_event_handler (void) {
   pthread_kill (event_handler_thread, SIGKILL);
   fprintf (stderr, "ovdisis: event.c: killed handler thread\n");
 #endif
+}
+
+
+/*
+** Exported
+**
+** 1999-01-03 CG
+*/
+void
+increase_mouse_visibility (void) {
+  pthread_mutex_lock (&mouse_mutex);
+
+  if (mouse_visibility == 0) {
+    save_mouse_background (global_vwk, mouse_x, mouse_y);
+    draw_mouse_cursor (global_vwk, mouse_x, mouse_y);
+  }
+
+  mouse_visibility++;
+
+  pthread_mutex_unlock (&mouse_mutex);
+}
+
+
+/*
+** Exported
+**
+** 1999-01-03 CG
+*/
+void
+decrease_mouse_visibility (void) {
+  pthread_mutex_lock (&mouse_mutex);
+
+  mouse_visibility--;
+
+  if (mouse_visibility == 0) {
+    restore_mouse_background (global_vwk, mouse_x, mouse_y);
+  }
+
+  pthread_mutex_unlock (&mouse_mutex);
 }
