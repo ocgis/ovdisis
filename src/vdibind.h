@@ -88,13 +88,15 @@ typedef struct {
 #define ALL_BLACK  15
 
 
-/* linetypes */
-
+/* vsl_type linetypes */
 #define SOLID       1
+#define LDASHED     2
 #define LONGDASH    2
+#define DOTTED      3
 #define DOT         3
 #define DASHDOT     4
 #define DASH        5
+#define DASHDOTDOT  6
 #define DASH2DOT    6
 #define USERLINE    7
 
