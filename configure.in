@@ -34,11 +34,6 @@ dnl AC_C_INLINE
 dnl AC_TYPE_OFF_T
 dnl AC_HEADER_TIME
 
-dnl Checks for library functions.
-dnl AC_PROG_GCC_TRADITIONAL
-dnl AC_FUNC_MMAP
-dnl AC_TYPE_SIGNAL
-dnl AC_FUNC_VPRINTF
-dnl AC_CHECK_FUNCS(select strerror)
+AC_SUBST(VERSION)
 
-AC_OUTPUT(fntread/Makefile src/Makefile vdibind/Makefile vdi_dump/Makefile Makefile)
+AC_OUTPUT(fntread/Makefile src/Makefile vdibind/Makefile vdi_dump/Makefile Makefile ovdisis-config)

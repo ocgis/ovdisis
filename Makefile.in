@@ -79,11 +79,13 @@ noinst_PROGRAMS = otestis
 otestis_SOURCES = otestis.c
 otestis_LDADD = src/.libs/libovdisis.a vdibind/libvdibind.a
 
+bin_SCRIPTS = ovdisis-config
+
 EXTRA_DIST = FUNCS
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = 
+CONFIG_CLEAN_FILES =  ovdisis-config
 PROGRAMS =  $(noinst_PROGRAMS)
 
 
@@ -94,6 +96,8 @@ LIBS = @LIBS@
 otestis_OBJECTS =  otestis.o
 otestis_DEPENDENCIES =  src/.libs/libovdisis.a vdibind/libvdibind.a
 otestis_LDFLAGS = 
+SCRIPTS =  $(bin_SCRIPTS)
+
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@
@@ -102,7 +106,7 @@ HEADERS =  $(noinst_HEADERS)
 DIST_COMMON =  README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
 Makefile.in NEWS TODO aclocal.m4 config.guess config.h.in config.sub \
 configure configure.in install-sh ltconfig ltmain.sh missing \
-mkinstalldirs stamp-h.in
+mkinstalldirs ovdisis-config.in stamp-h.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -152,6 +156,8 @@ distclean-hdr:
 	-rm -f config.h
 
 maintainer-clean-hdr:
+ovdisis-config: $(top_builddir)/config.status ovdisis-config.in
+	cd $(top_builddir) && CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
 
 mostlyclean-noinstPROGRAMS:
 
@@ -197,6 +203,25 @@ maintainer-clean-libtool:
 otestis: $(otestis_OBJECTS) $(otestis_DEPENDENCIES)
 	@rm -f otestis
 	$(LINK) $(otestis_LDFLAGS) $(otestis_OBJECTS) $(otestis_LDADD) $(LIBS)
+
+install-binSCRIPTS: $(bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo " $(INSTALL_SCRIPT) $$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`"; \
+	    $(INSTALL_SCRIPT) $$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
+	  else if test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_SCRIPT) $(srcdir)/$$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`"; \
+	    $(INSTALL_SCRIPT) $(srcdir)/$$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
+	  else :; fi; fi; \
+	done
+
+uninstall-binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	list='$(bin_SCRIPTS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
+	done
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -350,22 +375,27 @@ installcheck: installcheck-recursive
 all-recursive-am: config.h
 	$(MAKE) all-recursive
 
-all-am: Makefile $(PROGRAMS) $(HEADERS) config.h
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(HEADERS) config.h
 
-install-exec: install-exec-recursive
+install-exec-am: install-binSCRIPTS
+
+uninstall-am: uninstall-binSCRIPTS
+
+install-exec: install-exec-recursive install-exec-am
 	@$(NORMAL_INSTALL)
 
 install-data: install-data-recursive
 	@$(NORMAL_INSTALL)
 
-install: install-recursive
+install: install-recursive install-exec-am
 	@:
 
-uninstall: uninstall-recursive
+uninstall: uninstall-recursive uninstall-am
 
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
 installdirs: installdirs-recursive
+	$(mkinstalldirs)  $(DATADIR)$(bindir)
 
 
 mostlyclean-generic:
@@ -417,18 +447,20 @@ mostlyclean-noinstPROGRAMS distclean-noinstPROGRAMS \
 clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
-clean-libtool maintainer-clean-libtool install-data-recursive \
-uninstall-data-recursive install-exec-recursive \
-uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
-all-recursive check-recursive installcheck-recursive info-recursive \
-dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
+clean-libtool maintainer-clean-libtool uninstall-binSCRIPTS \
+install-binSCRIPTS install-data-recursive uninstall-data-recursive \
+install-exec-recursive uninstall-exec-recursive installdirs-recursive \
+uninstalldirs-recursive all-recursive check-recursive \
+installcheck-recursive info-recursive dvi-recursive \
+mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir \
 mostlyclean-depend distclean-depend clean-depend \
 maintainer-clean-depend info dvi installcheck all-recursive-am all-am \
-install-exec install-data install uninstall all installdirs \
-mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+install-exec-am uninstall-am install-exec install-data install \
+uninstall all installdirs mostlyclean-generic distclean-generic \
+clean-generic maintainer-clean-generic clean mostlyclean distclean \
+maintainer-clean
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
