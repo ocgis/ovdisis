@@ -12,22 +12,24 @@
 **
 */
 
+#include "ovdisis.h"
+
 void
-ggi_visual_set_cmap (void * fb,
+ggi_visual_set_cmap (VWKREF wk,
 		     int    index,
 		     int    red,
 		     int    green,
 		     int    blue);
 
 void
-ggi_visual_get_cmap (void * fb,
+ggi_visual_get_cmap (void * vis,
 		     int    index,
 		     int *  red,
 		     int *  green,
 		     int *  blue);
 
 void
-ggi_visual_put_cmap (VDI_Workstation * wk);
+ggi_visual_put_cmap (VWKREF wk);
 
 void
-ggi_visual_free_cmap (VDI_Workstation * wk);
+ggi_visual_free_cmap (VWKREF wk);

@@ -16,11 +16,12 @@
 #include <stdio.h>
 
 #include "ggi_visual.h"
+#include "ggi_visual_cmap.h"
 #include "ovdisis.h"
 #include "various.h"
 
 void
-ggi_visual_set_cmap (void * fb,
+ggi_visual_set_cmap (VWKREF vwk,
 		     int    index,
 		     int    red,
 		     int    green,
@@ -30,17 +31,18 @@ ggi_visual_set_cmap (void * fb,
 
 
 void
-ggi_visual_get_cmap (void * fb,
-		       int    index,
-		       int *  red,
-		       int *  green,
-		       int *  blue) {
+ggi_visual_get_cmap (void * vis,
+                     int    index,
+                     int *  red,
+                     int *  green,
+                     int *  blue) {
   fprintf(stderr, "Implement ggi_visual_get_cmap\n");
 }
 
 
 void
-ggi_visual_put_cmap (VDI_Workstation * wk) {
+ggi_visual_put_cmap (VWKREF wk)
+{
   int       i;
   ggi_color cmap[256];
   int       number_of_pens;
@@ -79,6 +81,7 @@ ggi_visual_put_cmap (VDI_Workstation * wk) {
 }
 
 void
-ggi_visual_free_cmap (VDI_Workstation * wk) {
+ggi_visual_free_cmap (VWKREF wk)
+{
   fprintf(stderr, "Implement ggi_visual_free_cmap\n");
 }

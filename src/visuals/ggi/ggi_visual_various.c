@@ -16,10 +16,11 @@
 #include <stdio.h>
 
 #include "ggi_visual.h"
+#include "ggi_visual_various.h"
 #include "ovdisis.h"
 
 int
-ggi_visual_get_pixel (void * fb,
+ggi_visual_get_pixel (VWKREF vwk,
 		      int    x,
 		      int    y) {
   fprintf(stderr, "Implement ggi_visual_get_pixel\n");
@@ -28,34 +29,39 @@ ggi_visual_get_pixel (void * fb,
 
 
 void
-ggi_visual_put_pixel (void * private,
+ggi_visual_put_pixel (VWKREF vwk,
 		      int    x,
 		      int    y,
 		      int    c) {
-  ggiPutPixel(VISUAL_T(private), x, y, COLOURS(private)[c]);
+  ggiPutPixel(VISUAL_T(vwk->visual->private),
+              x,
+              y,
+              COLOURS(vwk->visual->private)[c]);
 }
 
 
 void
-ggi_visual_hline (void * private,
+ggi_visual_hline (VWKREF vwk,
 		  int    x1,
 		  int    x2,
 		  int    y,
 		  int    c) {
-  ggiSetGCForeground(VISUAL_T(private), COLOURS(private)[c]);
-  ggiDrawHLine(VISUAL_T(private), x1, y, x2 - x1 + 1);
+  ggiSetGCForeground(VISUAL_T(vwk->visual->private),
+                     COLOURS(vwk->visual->private)[c]);
+  ggiDrawHLine(VISUAL_T(vwk->visual->private), x1, y, x2 - x1 + 1);
 }
 
 
 void
-ggi_visual_line (void * private,
+ggi_visual_line (VWKREF vwk,
 		 int    x1,
 		 int    y1,
 		 int    x2,
 		 int    y2,
 		 int    c) {
-  ggiSetGCForeground(VISUAL_T(private), COLOURS(private)[c]);
-  ggiDrawLine(VISUAL_T(private), x1, y1, x2, y2);
+  ggiSetGCForeground(VISUAL_T(vwk->visual->private),
+                     COLOURS(vwk->visual->private)[c]);
+  ggiDrawLine(VISUAL_T(vwk->visual->private), x1, y1, x2, y2);
 }
 
 
@@ -65,8 +71,25 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
 		   RECT *            srccor,
 		   RECT *            dstcor,
 		   MFDB *            src,
-		   MFDB *            dst) {
-  fprintf(stderr, "Implement ggi_visual_bitblt\n");
+		   MFDB *            dst)
+{
+  if((src->fd_addr == NULL) && (dst->fd_addr == NULL))
+  {
+    fix_rect(srccor);
+    fix_rect(dstcor);
+
+    ggiCopyBox(VISUAL_T(vwk->visual->private),
+               srccor->x1,
+               srccor->y1,
+               srccor->x2 - srccor->x1 + 1,
+               srccor->y2 - srccor->y1 + 1,
+               dstcor->x1,
+               dstcor->y1);
+  }
+  else
+  {
+    fprintf(stderr, "Implement ggi_visual_bitblt\n");
+  }
 }
 
 
@@ -78,7 +101,8 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 		    RECT *            srccor,
 		    RECT *            dstcor,
 		    MFDB *            src,
-		    MFDB *            dst) {
+		    MFDB *            dst)
+{
   fprintf(stderr, "Implement ggi_visual_bitbltt\n");
 }
 
@@ -96,7 +120,7 @@ ggi_visual_put_char (VWKREF vwk,
 
 
 void
-ggi_visual_set_font (void * fb,
+ggi_visual_set_font (void * vis,
 		     void * data,
 		     int    width,
 		     int    height) {

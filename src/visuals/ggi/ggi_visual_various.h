@@ -12,26 +12,28 @@
 **
 */
 
+#include "ovdisis.h"
+
 int
-ggi_visual_get_pixel (void * fb,
+ggi_visual_get_pixel (VWKREF vwk,
 		      int    x,
 		      int    y);
 
 void
-ggi_visual_put_pixel (void * fb,
+ggi_visual_put_pixel (VWKREF vwk,
 		      int    x,
 		      int    y,
 		      int    c);
 
 void
-ggi_visual_hline (void * fb,
+ggi_visual_hline (VWKREF vwk,
 		  int    x1,
 		  int    x2,
 		  int    y,
 		  int    c);
 
 void
-ggi_visual_line (void * fb,
+ggi_visual_line (VWKREF vwk,
 		 int    x1,
 		 int    y1,
 		 int    x2,
@@ -39,15 +41,15 @@ ggi_visual_line (void * fb,
 		 int    c);
 
 void
-ggi_visual_bitblt (VDI_Workstation * vwk,
-		   int               mode,
+ggi_visual_bitblt (VWKREF vwk,
+		   int    mode,
 		   RECT *            srccor,
 		   RECT *            dstcor,
 		   MFDB *            src,
 		   MFDB *            dst);
 
 void
-ggi_visual_bitbltt (VDI_Workstation * vwk,
+ggi_visual_bitbltt (VWKREF vwk,
 		    int               mode,
 		    int               fgcol,
 		    int               bgcol,
@@ -57,7 +59,7 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 		    MFDB *            dst);
 
 void
-ggi_visual_put_char (void * fb,
+ggi_visual_put_char (VWKREF vwk,
 		     int    x,
 		     int    y,
 		     int    col,

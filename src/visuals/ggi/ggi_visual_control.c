@@ -70,7 +70,7 @@ ggi_visual_clear (VDI_Workstation * vwk)
 
 
 void
-ggi_visual_set_write_mode (void * fb,
+ggi_visual_set_write_mode (void * vis,
 			   int    write_mode) {
   fprintf(stderr, "Implement ggi_visual_set_write_mode\n");
 }
