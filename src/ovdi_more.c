@@ -23,8 +23,9 @@ extern int wk_open[MAX_HANDLES]; /* ----------- " ----------- */
 
 int ovdi_getchar(int handle)
 {
-  if(wk_open[handle-1])
+  if(wk_open[handle-1]) {
     return FBgetchar(wk[handle-1].physical->fb);
-
-  return 0;
+  } else {
+    return 0;
+  }
 }

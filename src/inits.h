@@ -15,6 +15,8 @@
 #ifndef _INITS_H_
 #define _INITS_H_
 
+#include "ovdisis.h"
+
 void init_workstation(VDI_Workstation *);
 void init_cmap(VDI_Workstation *);
 void init_marker(VDI_Workstation *);

@@ -16,9 +16,10 @@
 #include <stdlib.h>
 #include <sys/shm.h>
 
+#include "event.h"
+#include "inits.h"
 #include "ovdisis.h"
 #include "various.h"
-#include "inits.h"
 
 void vdi_v_clrwk(VDI_Workstation *);	/* Used by v_opnwk */
 
@@ -139,8 +140,14 @@ wsdetach (VDI_Workstation * ws)
 }
 
 
-/* vwk not used by this function */
-void vdi_v_opnwk(VDI_Workstation *vwk)
+/*
+** Description
+** Implementation of the vdi function v_opnwk
+**
+** 1998-10-13 CG
+*/
+void
+vdi_v_opnwk(VDI_Workstation *vwk)
 {
   int               w;
   VDI_Workstation * new_ws;
@@ -203,14 +210,24 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
   init_fill(wk[w].physical);
   init_text(wk[w].physical);
 
+  /* Start event handler */
+  init_event_handler (wk[w].physical);
+
   ADEBUG("v_opnwk: Default palette set\n");
 
   vdipb->contrl[N_PTSOUT] = 6;
   vdipb->contrl[N_INTOUT] = 45;
 }
 
-/* vwk not used */
-void vdi_v_clswk(VDI_Workstation *vwk)
+
+/*
+** Description
+** Implementation of v_clswk
+**
+** 1998-10-14 CG
+*/
+void
+vdi_v_clswk (VDI_Workstation *vwk)
 {
   int i, w;
 
@@ -223,6 +240,10 @@ void vdi_v_clswk(VDI_Workstation *vwk)
       EDEBUG("v_clswk: Handle %d is not a physical workstation!", w + 1);
     return;
   }
+
+  /* Destroy event handler */
+  exit_event_handler ();
+
   /* cmap not used in TrueColor mode */
   if (wk[w].physical->inq.attr.planes < 16) {
     FBfreecmap(wk[w].physical->fb->cmap);
@@ -432,3 +453,13 @@ void vdi_vq_extnd(VDI_Workstation *vwk)
   vdipb->contrl[N_INTOUT] = 45;
 }
 
+
+/*
+** Revision history
+**
+** 1998-10-13 CG
+**            Added call to event handling initialization in vdi_v_opnwk
+**
+** 1998-10-14 CG
+**            Added call to event handling destroy in vdi_v_clswk
+*/

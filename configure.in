@@ -34,6 +34,7 @@ dnl AC_TYPE_OFF_T
 dnl AC_HEADER_TIME
 
 AC_CHECK_LIB(m,main)
+AC_CHECK_LIB(pthread,pthread_create)
 
 if test x$with_ofbis = xyes ; then
   AC_MSG_ERROR([
@@ -88,4 +89,4 @@ OSISINCLUDE=${includedir}/osis
 AC_SUBST(VERSION)
 AC_SUBST(OSISINCLUDE)
 
-AC_OUTPUT(fntread/Makefile src/Makefile vdi_dump/Makefile Makefile ovdisis-config)
+AC_OUTPUT(fntread/Makefile src/Makefile vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
