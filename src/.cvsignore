@@ -8,3 +8,4 @@ Makefile.in
 vdibind.h
 *.lib
 Linker.Out
+*.P

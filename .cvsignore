@@ -17,3 +17,6 @@ Makefile.in
 configure
 aclocal.m4
 acinclude.m4
+COPYING
+INSTALL
+*.P
