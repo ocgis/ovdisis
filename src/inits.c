@@ -321,9 +321,14 @@ void copy_cmap(VDI_Workstation *wk1, VDI_Workstation *wk2)
     wk2->fb->cmap->len = (1 << wk2->inq.attr.planes);
     wk2->fb->cmap->end = (1 << wk2->inq.attr.planes) - 1;
 
+    /* Actually, we don't need to set the palette since we're
+     * using the same Virtual Console for the framebuffer
+     */
+#if 0
     sleep(1);			/* This is apparently needed in 8 bit mode (oFBis bug?) */
 
     FBputcmap(wk2->fb, wk2->fb->cmap);
+#endif
     break;
 
   case 16: /* TrueColor mode, nothing to be done */
