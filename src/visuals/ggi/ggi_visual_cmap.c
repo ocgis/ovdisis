@@ -12,9 +12,12 @@
 **
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 
+#include "ggi_visual.h"
 #include "ovdisis.h"
+#include "various.h"
 
 void
 ggi_visual_set_cmap (void * fb,
@@ -38,7 +41,38 @@ ggi_visual_get_cmap (void * fb,
 
 void
 ggi_visual_put_cmap (VDI_Workstation * wk) {
-  fprintf(stderr, "Implement ggi_visual_put_cmap\n");
+  int i;
+  ggi_color cmap[1 << wk->inq.attr.planes];
+
+  switch (wk->inq.attr.planes) {
+  case 1:
+  case 2:
+  case 4:
+  case 8:
+    for (i = 0; i < (1 << wk->inq.attr.planes); i++) {
+      int ti = gem2tos_color(wk->inq.attr.planes, i);
+
+      cmap[ti].r = (wk->vdi_cmap.red[i] * 65535) / 1000;
+      cmap[ti].g = (wk->vdi_cmap.green[i] * 65535) / 1000;
+      cmap[ti].b = (wk->vdi_cmap.blue[i] * 65535) / 1000;
+      cmap[ti].a = 0xffff;
+    }
+
+    ggiSetPalette(VISUAL_T(wk->visual->private),
+                  0,
+                  1 << wk->inq.attr.planes,
+                  cmap);
+
+    for (i = 0; i < (1 << wk->inq.attr.planes); i++) {
+      COLOURS(wk->visual->private)[i] =
+        ggiMapColor(VISUAL_T(wk->visual->private), &cmap[i]);
+    }
+
+    break;
+
+  default:
+    ;
+  }
 }
 
 void

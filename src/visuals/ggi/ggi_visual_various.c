@@ -28,40 +28,34 @@ ggi_visual_get_pixel (void * fb,
 
 
 void
-ggi_visual_put_pixel (void * vis,
+ggi_visual_put_pixel (void * private,
 		      int    x,
 		      int    y,
 		      int    c) {
-  ggi_color col1 = { 0, 0, 0xffff, 0xffff };
-
-  ggiPutPixel(VISUAL_T(vis), x, y, ggiMapColor(VISUAL_T(vis), &col1));
+  ggiPutPixel(VISUAL_T(private), x, y, COLOURS(private)[c]);
 }
 
 
 void
-ggi_visual_hline (void * vis,
+ggi_visual_hline (void * private,
 		  int    x1,
 		  int    x2,
 		  int    y,
 		  int    c) {
-  ggi_color col1 = { 0xffff, 0, 0, 0xffff };
-
-  ggiSetGCForeground(VISUAL_T(vis), ggiMapColor(VISUAL_T(vis), &col1));
-  ggiDrawHLine(VISUAL_T(vis), x1, y, x2 - x1 + 1);
+  ggiSetGCForeground(VISUAL_T(private), COLOURS(private)[c]);
+  ggiDrawHLine(VISUAL_T(private), x1, y, x2 - x1 + 1);
 }
 
 
 void
-ggi_visual_line (void * vis,
+ggi_visual_line (void * private,
 		 int    x1,
 		 int    y1,
 		 int    x2,
 		 int    y2,
 		 int    c) {
-  ggi_color col1 = { 0, 0xffff, 0, 0xffff };
-
-  ggiSetGCForeground(VISUAL_T(vis), ggiMapColor(VISUAL_T(vis), &col1));
-  ggiDrawLine(VISUAL_T(vis), x1, y1, x2, y2);
+  ggiSetGCForeground(VISUAL_T(private), COLOURS(private)[c]);
+  ggiDrawLine(VISUAL_T(private), x1, y1, x2, y2);
 }
 
 
@@ -90,15 +84,13 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 
 
 void
-ggi_visual_put_char (void * vis,
+ggi_visual_put_char (void * private,
 		     int    x,
 		     int    y,
 		     int    col,
 		     int    ch) {
-  ggi_color col1 = { 0xffff, 0xffff, 0xffff, 0xffff };
-
-  ggiSetGCForeground(VISUAL_T(vis), ggiMapColor(VISUAL_T(vis), &col1));
-  ggiPutc(VISUAL_T(vis), x, y, ch);
+  ggiSetGCForeground(VISUAL_T(private), COLOURS(private)[col]);
+  ggiPutc(VISUAL_T(private), x, y, ch);
 }
 
 

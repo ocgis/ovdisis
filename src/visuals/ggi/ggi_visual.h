@@ -12,4 +12,10 @@
 **
 */
 
-#define VISUAL_T(vis) ((ggi_visual_t)vis)
+typedef struct {
+  ggi_visual_t vis;
+  ggi_pixel    colours[256];
+} private_t;
+
+#define VISUAL_T(private) (((private_t *)private)->vis)
+#define COLOURS(private) (((private_t *)private)->colours)

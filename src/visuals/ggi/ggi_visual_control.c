@@ -14,6 +14,7 @@
 
 #include <ggi/ggi.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ggi_visual.h"
 #include "ovdisis.h"
@@ -31,7 +32,12 @@ ggi_visual_open (void) {
 
   if(err == 0)
   {
-    return (void *)vis;
+    private_t * private;
+
+    private = malloc(sizeof(private_t));
+    private->vis = vis;
+
+    return (void *)private;
   }
   else
   {
@@ -43,15 +49,23 @@ ggi_visual_open (void) {
 }
 
 void
-ggi_visual_close (void * vis) {
-  ggiClose(VISUAL_T(vis));
+ggi_visual_close (void * private) {
+  ggiClose(VISUAL_T(private));
   ggiExit();
+  free(private);
 }
+
 
 void
 ggi_visual_clear (VDI_Workstation * vwk)
 {
-  fprintf(stderr, "Implement ggi_visual_clear\n");
+  ggiSetGCForeground(VISUAL_T(vwk->visual->private),
+                     COLOURS(vwk->visual->private)[0]);
+  ggiDrawBox(VISUAL_T(vwk->visual->private),
+             0,
+             0,
+             vwk->dev.attr.xres - 1,
+             vwk->dev.attr.yres - 1);
 }
 
 
