@@ -17,10 +17,6 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
 
 AM_CONFIG_HEADER(config.h)
 
-dnl Set CFLAGS
-dnl CFLAGS="$CFLAGS -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce"
-CFLAGS="$CFLAGS -Wall"
-
 dnl Enable extra arguments
 AC_ARG_WITH(ofbis, [  --with-ofbis=DIR        Use uninstalled copy of ofbis])
 
@@ -118,6 +114,10 @@ else
     build_ofbis_visual=true
   fi
 fi
+
+dnl Set CFLAGS
+dnl CFLAGS="$CFLAGS -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce"
+CFLAGS="$CFLAGS -Wall"
 
 dnl Decide how to build the sources
 AM_CONDITIONAL(BUILD_BINDINGS_ONLY, test x$build_bindings_only = xtrue)

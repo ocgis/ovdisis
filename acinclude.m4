@@ -8,7 +8,7 @@ AC_DEFUN(OSIS_CHECK_TYPES,
   else
     AC_MSG_WARN("No 16 bit type used. Using int instead. This might break the package.")
     S_INT16_T="signed int"
-    U_INT16_T="unsigned short"
+    U_INT16_T="unsigned int"
   fi
 
   AC_SUBST(S_INT16_T)
