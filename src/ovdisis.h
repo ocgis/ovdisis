@@ -136,19 +136,19 @@ typedef struct
 #define VISUAL_GET_CMAP(vwk, index, red, green, blue) \
         vwk->visual->get_cmap(vwk->visual->private, index, red, green, blue)
 #define VISUAL_GET_PIXEL(vwk, x, y) \
-        vwk->visual->get_pixel(vwk->visual->private, x, y)
+        vwk->visual->get_pixel(vwk, x, y)
 #define VISUAL_PUT_PIXEL(vwk, x, y, c) \
-        vwk->visual->put_pixel(vwk->visual->private, x, y, c)
+        vwk->visual->put_pixel(vwk, x, y, c)
 #define VISUAL_HLINE(vwk, x1, x2, y, c) \
-        vwk->visual->hline(vwk->visual->private, x1, x2, y, c)
+        vwk->visual->hline(vwk, x1, x2, y, c)
 #define VISUAL_LINE(vwk, x1, y1, x2, y2, c) \
-        vwk->visual->line(vwk->visual->private, x1, y1, x2, y2, c)
+        vwk->visual->line(vwk, x1, y1, x2, y2, c)
 #define VISUAL_BITBLT(vwk, mode, src_c, dst_c, src_m, dst_m) \
         vwk->visual->bitblt(vwk, mode, src_c, dst_c, src_m, dst_m)
 #define VISUAL_BITBLTT(vwk, mode, fgcol, bgcol, src_c, dst_c, src_m, dst_m) \
         vwk->visual->bitbltt(vwk, mode, fgcol, bgcol, src_c, dst_c, src_m, dst_m)
 #define VISUAL_PUT_CHAR(vwk, x, y, col, ch) \
-        vwk->visual->put_char(vwk->visual->private, x, y, col, ch)
+        vwk->visual->put_char(vwk, x, y, col, ch)
 #define VISUAL_SET_FONT(vwk, data, width, height) \
         vwk->visual->set_font(vwk->visual->private, data, width, height)
 #define VISUAL_PUT_CMAP(vwk) vwk->visual->put_cmap(vwk)
@@ -220,10 +220,10 @@ typedef struct
   void   (*set_cmap)(void *, int, int, int, int); /* Set colour map entry */
   void   (*get_cmap)(void *, int, int *, int *, int *); /* Set colour map entry */
   void   (*put_cmap)(VWKREF vwk);         /* Put colourmap from workstation */
-  int    (*get_pixel)(void *, int, int);  /* Get pixel */
-  void   (*put_pixel)(void *, int, int, int);  /* Put pixel */
-  void   (*hline)(void *, int, int, int, int); /* Draw a horizontal line */
-  void   (*line)(void *, int, int, int, int, int); /* Draw a line */
+  int    (*get_pixel)(VWKREF, int, int);  /* Get pixel */
+  void   (*put_pixel)(VWKREF, int, int, int);  /* Put pixel */
+  void   (*hline)(VWKREF, int, int, int, int); /* Draw a horizontal line */
+  void   (*line)(VWKREF, int, int, int, int, int); /* Draw a line */
   void   (*bitblt)(VWKREF vwk,
 		   int    mode,
 		   RECT * src_c,
@@ -238,7 +238,7 @@ typedef struct
 		    RECT * dest_c,
 		    MFDB * src_m,
 		    MFDB * dst_m);
-  void   (*put_char)(void * private,
+  void   (*put_char)(VWKREF vwk,
 		     int    x,
 		     int    y,
 		     int    col,
@@ -318,9 +318,9 @@ typedef void VdiFunction(VDI_Workstation *);
 #if DEBUGLEVEL>=1
 # define EDEBUG(fmt,args...) fprintf(stderr,fmt,##args)
 # if DEBUGLEVEL>=2
-#  define ADEBUG(fmt,args...) fprintf(stdout,fmt,##args)
+#  define ADEBUG(fmt,args...) fprintf(stderr,fmt,##args)
 #  if DEBUGLEVEL>=3
-#   define IDEBUG(fmt,args...) fprintf(stdout,fmt,##args)
+#   define IDEBUG(fmt,args...) fprintf(stderr,fmt,##args)
 #  else  /* 3 */
 #   define IDEBUG(fmt,args...) 
 #  endif /* 3 */
