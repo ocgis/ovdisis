@@ -84,13 +84,14 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 
 
 void
-ggi_visual_put_char (void * private,
+ggi_visual_put_char (VWKREF vwk,
 		     int    x,
 		     int    y,
 		     int    col,
 		     int    ch) {
-  ggiSetGCForeground(VISUAL_T(private), COLOURS(private)[col]);
-  ggiPutc(VISUAL_T(private), x, y, ch);
+  ggiSetGCForeground(VISUAL_T(vwk->visual->private), 
+		     COLOURS(vwk->visual->private)[col]);
+  ggiPutc(VISUAL_T(vwk->visual->private), x, y, ch);
 }
 
 
