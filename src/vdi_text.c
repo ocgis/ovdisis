@@ -24,7 +24,7 @@
 
 void vdi_v_gtext(VDI_Workstation *vwk)
 {
-  int ch, i, ni, x,y,ly, w;
+  int ch, i,endchar, ni, x,y,ly, w;
   unsigned long col;
 
   ni = gem2tos_color(vwk->inq.attr.planes, vwk->text_a.color);
@@ -75,9 +75,31 @@ void vdi_v_gtext(VDI_Workstation *vwk)
   /* y position for underline */
   ly = y + vwk->text_a.font->top + vwk->text_a.font->descent;
 
-  for(i = 0 ; i < vdipb->contrl[N_INTIN] ; i++) {
-    ch = vdipb->intin[i];
-    FBputchar(vwk->fb, x, y, col, 0, ch&0xff);
+
+  i = 0;
+  endchar = vdipb->contrl[N_INTIN];
+
+  /* Poor mans clipping */
+  /* Skips whole characters if they are outside the framebuffer */
+  if((y < 0) || (y + vwk->text_a.cellheight > vwk->dev.attr.yres))
+    return;
+  while(x < 0) {
+    i++;
+    x += vwk->text_a.cellwidth;
+    w--;
+  }
+  while(x+w > vwk->dev.attr.xres) {
+    endchar--;
+    w -= vwk->text_a.cellwidth;
+  }
+
+  /* Draw the text, one character at a time */
+  for( ; i < endchar ; i++) {
+    ch = vdipb->intin[i] & 0xff;
+    FBputchar(vwk->fb, x, y, col, 0, ch);
+
+    if(vwk->text_a.effects & THICKENED)
+      FBputchar(vwk->fb, x+1, y, col, 0, ch);
 
     if(vwk->text_a.effects & UNDERLINED)
       FBhline(vwk->fb, x, x+vwk->text_a.cellwidth, ly, col);
