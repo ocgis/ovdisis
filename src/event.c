@@ -50,13 +50,14 @@ map_buttons (unsigned int ofbis_buttons) {
 ** 1998-10-14 CG
 ** 1998-12-06 CG
 ** 1998-12-13 CG
+** 1998-12-21 CG
 */
 static
 void
 event_handler (VDI_Workstation * vwk) {
   FBEVENT fe;
-  unsigned int x = 0;
-  unsigned int y = 0;
+  int          x = 0;
+  int          y = 0;
   unsigned int buttons = 0;
   int          old = 0;
 
@@ -86,14 +87,14 @@ event_handler (VDI_Workstation * vwk) {
         
         if (x < 0) {
           x = 0;
-        } else if (x > 1023) {
-          x = 1023;
+        } else if (x > vwk->dev.attr.xres) {
+          x = vwk->dev.attr.xres;
         }
         
         if (y < 0) {
           y = 0;
-        } else if (y > 767) {
-          y = 767;
+        } else if (y > vwk->dev.attr.yres) {
+          y = vwk->dev.attr.yres;
         }
 
         /* Has a handler been installed? */
