@@ -17,6 +17,7 @@
 
 #include "ggi_visual.h"
 #include "ovdisis.h"
+#include "ovdisis_keyboard.h"
 
 static int old_buttons = 0; /* FIXME */
 
@@ -43,7 +44,8 @@ map_key(gii_key_event *         ge,
     case GIIK_F8  :
     case GIIK_F9  :
     case GIIK_F10 :
-      ve->keycode = GII_KVAL(ge->sym) - GII_KVAL(GIIK_F1) + 0x3b;
+      ve->keycode =
+        GII_KVAL(ge->sym) - GII_KVAL(GIIK_F1) + VDI_KSCAN(VDI_K_F1);
       break;
 
     case GIIK_F11 :
@@ -56,7 +58,8 @@ map_key(gii_key_event *         ge,
     case GIIK_F18 :
     case GIIK_F19 :
     case GIIK_F20 :
-      ve->keycode = GII_KVAL(ge->sym) - GII_KVAL(GIIK_F11) + 0x54;
+      ve->keycode =
+        GII_KVAL(ge->sym) - GII_KVAL(GIIK_F11) + VDI_KSCAN(VDI_K_F11);
       break;
 
     default :
