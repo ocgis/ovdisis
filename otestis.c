@@ -236,10 +236,11 @@ int do_stuff()
   for(i=0 ; i<8 ; i++)
     {
       vst_color(vh2, i);
-      v_gtext(vh2, 70, i*8, "NoCrew");
+      v_gtext(vh2, 70, i*8+20, "NoCrew");
     }
   vst_effects(vh2, UNDERLINED);
-  v_gtext(vh2, 70, i*8, "NoCrew");
+  vst_alignment(vh2, 2, 0, &i, &i);
+  v_gtext(vh2, 70, 8*8+20, "NoCrew");
   vqt_name(vh2, 1, fontname);
   fontname[32] = '\0';
   printf("otestis: Fontname='%s'\n",fontname);
@@ -250,10 +251,11 @@ int do_stuff()
   for(i=0 ; i<8 ; i++)
     {
       vst_color(vh2, i);
-      v_gtext(vh2, 130, i*6, "NoCrew");
+      v_gtext(vh2, 130, i*6+20, "NoCrew");
     }
   vst_effects(vh2, UNDERLINED);
-  v_gtext(vh2, 130, i*6, "NoCrew");
+  vst_alignment(vh2, 0, 5, &i, &i);
+  v_gtext(vh2, 130, 8*6+20, "NoCrew");
   vqt_name(vh2, 1, fontname);
   fontname[32] = '\0';
   printf("otestis: Fontname='%s'\n",fontname);
@@ -264,10 +266,11 @@ int do_stuff()
   for(i=0 ; i<8 ; i++)
     {
       vst_color(vh2, i);
-      v_gtext(vh2, 180, i*16, "NoCrew");
+      v_gtext(vh2, 180, i*16+20, "NoCrew");
     }
   vst_effects(vh2, UNDERLINED);
-  v_gtext(vh2, 180, i*16, "NoCrew");
+  vst_alignment(vh2, 1, 0, &i, &i);
+  v_gtext(vh2, 180, 8*16+20, "NoCrew");
   vqt_name(vh2, 1, fontname);
   fontname[32] = '\0';
   printf("otestis: Fontname='%s'\n",fontname);

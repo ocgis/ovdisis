@@ -24,25 +24,63 @@
 
 void vdi_v_gtext(VDI_Workstation *vwk)
 {
-  int ch, i, ni, x,y;
+  int ch, i, ni, x,y,ly, w;
   unsigned long col;
 
   ni = gem2tos_color(vwk->inq.attr.planes, vwk->text_a.color);
   col = get_color(vwk, ni);
  
   x = vdipb->ptsin[0];
-  y = vdipb->ptsin[1];
+  y = vdipb->ptsin[1] - vwk->text_a.font->top;
 
-  /* Do alignment stuff here */
+  w = vdipb->contrl[N_INTIN] * vwk->text_a.cellwidth;
+
+  /* Do horizontal alignment */
+  switch(vwk->text_a.h_alignment) {
+  case 0: /* Left */
+    break;
+  case 1: /* Center */
+    x -= w/2;
+    break;
+  case 2: /* Right */
+    x -= w;
+    break;
+  default: /* Illegal horizontal alignment, shouldn't occur here! */
+    break;
+  }
+
+  /* Do vertical alignment */
+  switch(vwk->text_a.v_alignment) {
+  case 0: /* Base line */
+    break;
+  case 1: /* Half line */
+    y += vwk->text_a.font->half;
+    break;
+  case 2: /* Ascent line */
+    y += vwk->text_a.font->ascent;
+    break;
+  case 3: /* Bottom line */
+    y -= vwk->text_a.font->bottom;
+    break;
+  case 4: /* Descent line */
+    y -= vwk->text_a.font->descent;
+    break;
+  case 5: /* Top line */
+    y += vwk->text_a.font->top;
+    break;
+  default: /* Illegal vertical alignment, shouldn't occur here! */
+    break;
+  }
+
+  /* y position for underline */
+  ly = y + vwk->text_a.font->top + vwk->text_a.font->descent;
 
   for(i = 0 ; i < vdipb->contrl[N_INTIN] ; i++) {
     ch = vdipb->intin[i];
     FBputchar(vwk->fb, x, y, col, 0, ch&0xff);
 
-    if(vwk->text_a.effects & UNDERLINED) {
-      FBhline(vwk->fb, x, x+vwk->text_a.cellwidth, 
-	      y+vwk->text_a.cellheight - vwk->text_a.font->descent, col);
-    }
+    if(vwk->text_a.effects & UNDERLINED)
+      FBhline(vwk->fb, x, x+vwk->text_a.cellwidth, ly, col);
 
     x += vwk->text_a.cellwidth;
   }
