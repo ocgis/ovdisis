@@ -186,6 +186,8 @@ event_handler (VDI_Workstation * vwk) {
   int              key_next_index;
   static int       key_index_looped = 0;
 
+  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
   /* Save mouse background and draw mouse */
   if (mouse_visibility > 0)
   {
@@ -330,7 +332,8 @@ start_event_handler (VDI_Workstation * vwk)
   /* Install a timer handler */
   sa.sa_handler = &timer_handler;
   sigemptyset(&sa.sa_mask);
-  sa.sa_flags = 0;
+  sa.sa_flags = SA_NOMASK | SA_INTERRUPT;
+  sa.sa_flags &= ~SA_RESTART;
   sigaction(SIGALRM, &sa, &old_sa);
 
   setitimer(ITIMER_REAL, &timer_value, &old_timer_value);
