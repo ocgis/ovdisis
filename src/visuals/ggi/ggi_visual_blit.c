@@ -224,12 +224,12 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
     }
     else {
       /* Blit from screen to memory */
-      int x,y;
+      int y;
       int w,h;
       /*ggi_visual_t *vis = &VISUAL_T(vwk->visual->private);
       ggi_pixel pixel_src;
       ggi_color color_src;*/
-      u_int8_t *src_ptr, *dst_ptr;
+      u_int8_t *dst_ptr;
 
       w = min( srccor->x2 - srccor->x1 + 1 ,  dstcor->x2 - dstcor->x1 + 1);
       h = min( srccor->y2 - srccor->y1 + 1 ,  dstcor->y2 - dstcor->y1 + 1);
@@ -243,26 +243,13 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
          return;
         }
 
-      /* Get a temporary buffer: */
-      src_ptr = malloc( w * h * vwk->inq.attr.planes/8 );
-      if( src_ptr==NULL )
-        {
-         fprintf(stderr,
-	    "ggi_visual_blit: Not enough temporary memory (display to memory)\n");
-         return;
-
-        }
-
-      /* Read the graphics data in the temporary buffer: */
-      ggiGetBox(VISUAL_T(vwk->visual->private), srccor->x1, srccor->y1, w, h, src_ptr);
-
       switch( mode ) {
        case S_ONLY:
         for( y = 0 ; y < h ; y++ ) {
          dst_ptr = ((u_int8_t *)dst->fd_addr)
-                 + (y + dstcor->y1) * ((dst->fd_w+7)/8 * dst->fd_nplanes)
+                 + (dst->fd_w * dst->fd_nplanes + 7)/8 * (y + dstcor->y1)
                  + dstcor->x1 * dst->fd_nplanes/8;
-         memcpy(dst_ptr, src_ptr+(y * w * vwk->inq.attr.planes/8), w*dst->fd_nplanes/8);
+         ggiGetBox(VISUAL_T(vwk->visual->private), srccor->x1, srccor->y1 + y, w, 1, dst_ptr);
         }
 	break;
 	
@@ -274,19 +261,17 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
 	    "ggi_visual_blit: Unsupported blit mode (display to memory)\n");
         break;
        }
-      
-      free(src_ptr);
     }
   }
   else {
     if( dst->fd_addr == NULL ) {
       /* Blit memory to screen */
-      int x,y;
+      int y;
       int w,h;
       /*ggi_visual_t *vis = &VISUAL_T(vwk->visual->private);
       ggi_pixel pixel_src;
       ggi_color color_src;*/
-      u_int8_t *src_ptr, *dst_ptr;
+      u_int8_t *src_ptr;
 
       w = min( srccor->x2 - srccor->x1 + 1 ,  dstcor->x2 - dstcor->x1 + 1);
       h = min( srccor->y2 - srccor->y1 + 1 ,  dstcor->y2 - dstcor->y1 + 1);
@@ -300,22 +285,13 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
          return;
         }
 
-      /* Get a temporary buffer: */
-      dst_ptr = malloc( w * h * vwk->inq.attr.planes/8 );
-      if( dst_ptr==NULL )
-        {
-         fprintf(stderr,
-	    "ggi_visual_blit: Not enough temporary memory (memory to display)\n");
-         return;
-        }
-
       switch( mode ) {
        case S_ONLY:
         for( y = 0 ; y < h ; y++ ) {
          src_ptr = ((u_int8_t *)src->fd_addr)
-                 + (y + srccor->y1) * ((src->fd_w+7)/8 * src->fd_nplanes)
+                 + (src->fd_w * src->fd_nplanes + 7)/8 * (y + srccor->y1)
                  + srccor->x1 * src->fd_nplanes/8;
-         memcpy(dst_ptr+(y * w * vwk->inq.attr.planes/8), src_ptr, w*src->fd_nplanes/8);
+         ggiPutBox(VISUAL_T(vwk->visual->private), dstcor->x1, dstcor->y1 + y, w, 1, src_ptr);
         }
 	break;
 	
@@ -328,15 +304,43 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
         break;
        }
 
-      /* Now put it on the screen: */
-      ggiPutBox(VISUAL_T(vwk->visual->private), dstcor->x1, dstcor->y1, w, h, dst_ptr);
-      
-      free(dst_ptr);
     }
     else {
     /* Blit memory to memory */
-    fprintf(stderr,
-	    "Implement ggi_visual_bitblt (memory to memory)\n");
+     int y;
+     int w,h;
+     u_int8_t *src_ptr, *dst_ptr;
+
+     w = min( srccor->x2 - srccor->x1 + 1 ,  dstcor->x2 - dstcor->x1 + 1);
+     h = min( srccor->y2 - srccor->y1 + 1 ,  dstcor->y2 - dstcor->y1 + 1);
+
+     if( dst->fd_nplanes!=8 && dst->fd_nplanes!=16 && dst->fd_nplanes!=24 && dst->fd_nplanes!=32 )
+       {
+        fprintf(stderr, "ggi_visual_blit: Unsupported bit depth (memory to memory)\n");
+        return;
+       }
+
+      switch( mode ) {
+       case S_ONLY:
+        for( y = 0 ; y < h ; y++ ) {
+         src_ptr = ((u_int8_t *)src->fd_addr)
+                 + (src->fd_w * src->fd_nplanes + 7)/8 * (y + srccor->y1)
+                 + srccor->x1 * src->fd_nplanes/8;
+         dst_ptr = ((u_int8_t *)dst->fd_addr)
+                 + (dst->fd_w * dst->fd_nplanes + 7)/8 * (y + dstcor->y1)
+                 + dstcor->x1 * dst->fd_nplanes/8;
+         memcpy(dst_ptr, src_ptr, w*dst->fd_nplanes/8);  /* Copy it */
+        }
+	break;
+	
+       case D_ONLY:
+	break;
+
+       default:
+        fprintf(stderr, "ggi_visual_blit: Unsupported blit mode (memory to memory)\n");
+        break;
+       }
+
     }
   }
 }
