@@ -211,7 +211,9 @@ extern void vex_timv(int, void *, void *, int *);
 extern void v_show_c(int, int);
 extern void v_hide_c(int);
 extern void vq_mouse(int, int *, int *, int *);
-extern void vex_butv(int, void *, void *);
+extern void vex_butv(int  handle,
+                     void (*butv)(int bstate),
+                     void *(*old_butv) (int bstate));
 extern void vex_motv(int, void *, void *);
 extern void vex_curv(int, void *, void *);
 extern void vq_extnd(int, int, int *);

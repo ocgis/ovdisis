@@ -28,14 +28,16 @@ static pthread_t event_handler_thread;
 **
 ** 1998-10-13 CG
 ** 1998-10-14 CG
+** 1998-12-06 CG
 */
 static
 void
 event_handler (VDI_Workstation * vwk) {
   FBEVENT fe;
-  int     x = 0;
-  int     y = 0;
-  int     old = 0;
+  unsigned int x = 0;
+  unsigned int y = 0;
+  unsigned int buttons = 0;
+  int          old = 0;
 
   while (1) {
     FBgetevent (vwk->fb, &fe);
@@ -46,33 +48,43 @@ event_handler (VDI_Workstation * vwk) {
                fe.key.state,
                fe.key.ascii);
     } else if (fe.type == FBMouseEvent) {
-
-      FBputpixel (vwk->fb, x, y, old);
-
-      x += fe.mouse.x;
-      y += fe.mouse.y;
-
-      if (x < 0) {
-        x = 0;
-      } else if (x > 1023) {
-        x = 1023;
+      /* Has one or more of the buttons changed? */
+      if (fe.mouse.buttons != buttons) {
+        if (vwk->butv != NULL) {
+          vwk->butv(fe.mouse.buttons);
+        }
+        buttons = fe.mouse.buttons;
       }
 
-      if (y < 0) {
-        y = 0;
-      } else if (y > 767) {
-        y = 767;
-      }
-
-      old = FBgetpixel (vwk->fb, x, y);
-      FBputpixel (vwk->fb, x, y, 0xffff);
-
+      /* Has the mouse been moved? */
+      if ((fe.mouse.x != 0) || (fe.mouse.y != 0)) {
+        FBputpixel (vwk->fb, x, y, old);
+        
+        x += fe.mouse.x;
+        y += fe.mouse.y;
+        
+        if (x < 0) {
+          x = 0;
+        } else if (x > 1023) {
+          x = 1023;
+        }
+        
+        if (y < 0) {
+          y = 0;
+        } else if (y > 767) {
+          y = 767;
+        }
+        
+        old = FBgetpixel (vwk->fb, x, y);
+        FBputpixel (vwk->fb, x, y, 0xffff);
+        
 #if 0
-      fprintf (stderr,
-               "ovdisis: event.c: FBMouseEvent: x = %d y = %d\n",
-               x,
-               y);
+        fprintf (stderr,
+                 "ovdisis: event.c: FBMouseEvent: x = %d y = %d\n",
+                 x,
+                 y);
 #endif
+      }
     } else {
       fprintf (stderr, "ovdisis: event.c: Unknown event\n");
     }
@@ -91,7 +103,6 @@ event_handler (VDI_Workstation * vwk) {
 void
 init_event_handler (VDI_Workstation * vwk)
 {
-#if 0
   fprintf (stderr, "ovdisis: event.c: init_event_handler: Trying to create thread\n");
   /* Create a new thread */
   if (pthread_create (&event_handler_thread,
@@ -101,7 +112,6 @@ init_event_handler (VDI_Workstation * vwk)
     fprintf (stderr, "ovdisis: init_event_handler: Couldn't create event handler thread\n");
   }
   fprintf (stderr, "ovdisis: event.c: init_event_handler: Created thread\n");
-#endif
 }
 
 

@@ -4,11 +4,11 @@
 #
 # Generated automatically by ltconfig - GNU libtool 1.0h
 # This program was configured as follows,
-# on host lasagna:
+# on host christer.nocrew.org:
 #
 # CC="gcc" CFLAGS=" -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce" CPPFLAGS="" \
-# LD="/usr/bin/ld" NM="/usr/bin/nm -B" RANLIB="ranlib" LN_S="ln -s" \
-#   ./ltconfig --with-gcc --with-gnu-ld --no-verify ./ltmain.sh m68k-unknown-linux-gnu
+# LD="/usr/bin/ld" NM="/usr/local/bin/nm -B" RANLIB="ranlib" LN_S="ln -s" \
+#   ./ltconfig --with-gcc --with-gnu-ld --no-verify ./ltmain.sh powerpc-unknown-linux-gnu
 #
 # Compiler and other test output produced by ltconfig, useful for
 # debugging ltconfig, is in ./config.log if it exists.
@@ -29,8 +29,8 @@ build_libtool_libs=yes
 build_old_libs=yes
 
 # The host system.
-host_alias="m68k-unknown-linux-gnu"
-host="m68k-unknown-linux-gnu"
+host_alias="powerpc-unknown-linux-gnu"
+host="powerpc-unknown-linux-gnu"
 
 # The archiver.
 AR="ar"
@@ -45,7 +45,7 @@ LD="/usr/bin/ld"
 LN_S="ln -s"
 
 # A BSD-compatible nm program.
-NM="/usr/bin/nm -B"
+NM="/usr/local/bin/nm -B"
 
 # The name of the directory that contains temporary libtool files.
 objdir=".libs"
@@ -109,7 +109,7 @@ finish_cmds="PATH=\\\"\\\\\$PATH:/sbin\\\" ldconfig -n \$libdir"
 finish_eval=""
 
 # Take the output of nm and produce a listing of raw symbols and C names.
-global_symbol_pipe="sed -n -e 's/^.* [ABCDGISTUW] \\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\1/p'"
+global_symbol_pipe=""
 
 # How to strip a library file.
 striplib=""

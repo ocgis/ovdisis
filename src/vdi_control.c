@@ -152,7 +152,7 @@ void
 vdi_v_opnwk(VDI_Workstation *vwk)
 {
   int               w;
-  VDI_Workstation * new_ws;
+  VDI_Workstation * new_ws = NULL;
 
   if(first) {
     for(w=0 ; w<MAX_HANDLES ; w++)
@@ -211,6 +211,13 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   init_line(wk[w].physical);
   init_fill(wk[w].physical);
   init_text(wk[w].physical);
+
+  /* Reset event vectors */
+  wk[w].physical->butv = NULL;
+  wk[w].physical->curv = NULL;
+  wk[w].physical->motv = NULL;
+  wk[w].physical->timv = NULL;
+  wk[w].physical->keyv = NULL;
 
   /* Start event handler */
   init_event_handler (wk[w].physical);

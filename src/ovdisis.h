@@ -18,6 +18,9 @@
 #include <ofbis.h>
 #include "vdibind.h" /* for VDI definitions */
 
+#define MSW(a) ((unsigned short)((unsigned long)(a) >> 16))
+#define LSW(a) ((unsigned short)((unsigned long)(a) & 0xffffUL))
+
 /* Defines for vdipb->contrl[] */
 #define ROUTINE 0
 #define N_PTSIN 1
@@ -167,6 +170,12 @@ typedef	struct
   int write_mode;
   RECT clip;
 
+  /* Event vectors */
+  void (*butv) (int bstate);
+  void (*curv) (int mx, int my);
+  void (*motv) (int mx, int my);
+  void (*timv) (void);
+  void (*keyv) (void);
 } VDI_Workstation;
 
 typedef struct
