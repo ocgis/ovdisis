@@ -17,6 +17,7 @@
 
 extern void vdi_v_gtext(VDI_Workstation *);
 
+extern void vdi_vst_font(VDI_Workstation *);
 extern void vdi_vst_color(VDI_Workstation *);
 extern void vdi_vst_height(VDI_Workstation *);
 extern void vdi_vst_point(VDI_Workstation *);

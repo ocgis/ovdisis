@@ -475,8 +475,35 @@ void vdi_vs_clip(VDI_Workstation *vwk)
     vwk->handle, vwk->clip.x1, vwk->clip.y1, vwk->clip.x2, vwk->clip.y2);
 }
 
-void vdi_vswr_mode(VDI_Workstation *vwk)
-{
+
+/*
+** Exported
+**
+** 1998-12-26 CG
+*/
+void
+vdi_vswr_mode (VDI_Workstation * vwk) {
+  switch (vdipb->intin[0]) {
+  case MD_REPLACE:
+    FBsetwritemode (vwk->fb, FB_REPLACE);
+    break;
+
+  case MD_TRANS:
+    FBsetwritemode (vwk->fb, FB_TRANS);
+    break;
+
+  case MD_XOR:
+    FBsetwritemode (vwk->fb, FB_XOR);
+    break;
+
+  case MD_ERASE:
+    FBsetwritemode (vwk->fb, FB_ERASE);
+    break;
+
+  default:
+    ;
+  }
+
   vwk->write_mode = vdipb->intin[0];
   vdipb->intout[0] = vwk->write_mode;
 
@@ -502,14 +529,3 @@ void vdi_vq_extnd(VDI_Workstation *vwk)
   vdipb->contrl[N_PTSOUT] = 6;
   vdipb->contrl[N_INTOUT] = 45;
 }
-
-
-/*
-** Revision history
-**
-** 1998-10-13 CG
-**            Added call to event handling initialization in vdi_v_opnwk
-**
-** 1998-10-14 CG
-**            Added call to event handling destroy in vdi_v_clswk
-*/

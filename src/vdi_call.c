@@ -34,7 +34,7 @@ VdiFunction *vdi_functions[] = {
   /*   5 */ vdi_characters, vdi_v_pline, vdi_v_pmarker, vdi_v_gtext, vdi_v_fillarea,
   /*  10 */ UNUSED, vdi_gdps, vdi_vst_height, vdi_vst_rotation, vdi_vs_color,
   /*  15 */ vdi_vsl_type, vdi_vsl_width, vdi_vsl_color, vdi_vsm_type, vdi_vsm_height,
-  /*  20 */ vdi_vsm_color, UNUSED, vdi_vst_color, vdi_vsf_interior, vdi_vsf_style,
+  /*  20 */ vdi_vsm_color, vdi_vst_font, vdi_vst_color, vdi_vsf_interior, vdi_vsf_style,
   /*  25 */ vdi_vsf_color, vdi_vq_color, UNUSED, UNUSED, UNUSED,
   /*  30 */ UNUSED, UNUSED, vdi_vswr_mode, UNUSED, UNUSED,
   /*  35 */ vdi_vql_attributes, vdi_vqm_attributes, vdi_vqf_attributes, vdi_vqt_attributes, vdi_vst_alignment,

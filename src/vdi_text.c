@@ -61,6 +61,18 @@ void vdi_vst_height(VDI_Workstation *vwk)
   EDEBUG("vst_height: Call not implemented!\n");
 }
 
+
+/*
+** Exported
+**
+** 1998-12-26 CG
+*/
+void
+vdi_vst_font (VDI_Workstation * vwk) {
+  EDEBUG("vst_font: Call not implemented!\n");
+}
+
+
 /* This should really only check within the same font ID. */
 void vdi_vst_point(VDI_Workstation *vwk)
 {

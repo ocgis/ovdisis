@@ -44,7 +44,7 @@ fi
 if test x$with_ofbis = x ; then 
   # Look for separately installed ofbis
 
-  AM_PATH_OFBIS(0.0.7,,
+  AM_PATH_OFBIS(0.0.8,,
     AC_MSG_ERROR([
 *** oFBis 0.0.7 or better is required. The latest version of oFBis
 *** is always available from ftp://ftp.nocrew.org.]),
