@@ -111,15 +111,17 @@ int key_first_index, key_amount, key_buffer_length;
 ** Description
 ** For each timer tick (20 ms) this routine is called and will call a
 ** callback routine that the user has setup.
-**
-** 1998-12-26 CG
 */
 static
 void
-timer_handler (int signal_number) {
-  if (global_vwk->timv != NULL) {
+timer_handler (int signal_number)
+{
+  if (global_vwk->timv != NULL)
+  {
     global_vwk->timv ();
   }
+
+  signal(SIGALRM, &timer_handler);
 }
 
 
