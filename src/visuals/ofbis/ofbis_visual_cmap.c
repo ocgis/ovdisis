@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "ofbis_visual.h"
+#include "ofbis_visual_cmap.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -64,8 +65,6 @@ ofbis_visual_get_cmap (void * fb,
   *blue = (short)((FB_T(fb)->cmap->blue[index]  * 1000) / 65535);
 }
 
-
-/*  #define fb FB_T(wk->visual->private) */
 
 void
 ofbis_visual_put_cmap (VDI_Workstation * wk) {
@@ -123,26 +122,38 @@ ofbis_visual_free_cmap (VDI_Workstation * wk) {
   }
 }
 
-/* #undef fb */
 
 int 
-ofbis_native_colour(VWKREF wk, int c) {
-  switch(wk->inq.attr.planes) {
+ofbis_native_colour(VWKREF wk,
+                    int    c)
+{
+  switch(wk->inq.attr.planes)
+  {
   case 1:
   case 2:
   case 4:
   case 8:
     return c;
+
   case 15:
   case 16:
   case 24:
   case 32:
-    if(c>255) {
+    if(c > 255)
+    {
       fprintf(stderr, "Illegal colour value %d\n", c);
       return FBc24_to_cnative(FB_T(wk->visual->private), 
 			      COLOURS(wk->visual->private)[255]);
     }
-    return FBc24_to_cnative(FB_T(wk->visual->private), 
-			    COLOURS(wk->visual->private)[c]);
+    else
+    {
+      return FBc24_to_cnative(FB_T(wk->visual->private), 
+                              COLOURS(wk->visual->private)[c]);
+    }
+
+  default:
+    fprintf(stderr, "ofbis: Unknown colour depth: %d\n", wk->inq.attr.planes);
+
+    return c;
   }
 }

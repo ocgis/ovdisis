@@ -12,8 +12,10 @@
 **
 */
 
+#include "ovdisis.h"
+
 void
-ofbis_visual_set_cmap (void * fb,
+ofbis_visual_set_cmap (VWKREF wk,
 		       int    index,
 		       int    red,
 		       int    green,
@@ -27,7 +29,11 @@ ofbis_visual_get_cmap (void * fb,
 		       int *  blue);
 
 void
-ofbis_visual_put_cmap (VDI_Workstation * wk);
+ofbis_visual_put_cmap (VWKREF wk);
 
 void
-ofbis_visual_free_cmap (VDI_Workstation * wk);
+ofbis_visual_free_cmap (VWKREF wk);
+
+int 
+ofbis_native_colour(VWKREF wk,
+                    int    c);
