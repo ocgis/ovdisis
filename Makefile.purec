@@ -1,0 +1,22 @@
+PCLIBDIR = /usr/lib/purec
+PCINCDIR = /usr/include
+
+CC = pcc
+AS = pasm
+LD = plink
+CFLAGS = -I$(PCINCDIR) -Isrc
+
+otestis_OBJECTS = \
+	otestis.o
+
+all: subdirs otestis
+
+subdirs:
+	$(MAKE) -f Makefile.purec -C src
+
+otestis: $(otestis_OBJECTS) src/ovdisis.lib
+	$(LD) -O=$@ $(PCLIBDIR)/crt0.o $(otestis_OBJECTS) src/ovdisis.lib \
+	  $(PCLIBDIR)/mintlib.lib
+
+.c.o:
+	$(CC) $(CFLAGS) -O$@ $<

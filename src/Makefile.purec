@@ -1,0 +1,32 @@
+CC = pcc
+AS = pasm
+LD = plink
+CFLAGS = -I/usr/include
+
+HEADERS = vdibind.h
+
+BINDINGS_SRC = vdibind.c
+TRAP_SRC = vdi_call_purec.s
+
+SOURCES = \
+	$(BINDINGS_SRC) $(TRAP_SRC)
+
+OBJECTS = \
+	vdibind.o vdi_call_purec.o
+
+all: ovdisis.lib
+
+ovdisis.lib: $(OBJECTS)
+	$(LD) -J -O=$@ $(OBJECTS)
+
+vdibind.h: vdibind.h.in
+	cat $< | sed s/@S_INT16_T@/signed\ short/g | \
+                 sed s/@U_INT16_T@/unsigned\ short/g | \
+                 sed s:__attribute__\ \(\(packed\)\):/**/:g> vdibind.h
+
+.c.o:
+	$(CC) $(CFLAGS) -O$@ $<
+
+.s.o:
+	$(AS) -ODUM.O $<
+	mv DUM.O $@

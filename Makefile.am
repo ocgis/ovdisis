@@ -16,4 +16,4 @@ bin_SCRIPTS = ovdisis-config
 m4datadir = $(datadir)/aclocal
 m4data_DATA = ovdisis.m4
 
-EXTRA_DIST = FUNCS
+EXTRA_DIST = FUNCS Makefile.purec

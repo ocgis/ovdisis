@@ -12,10 +12,12 @@
  *
  */
 
+#undef GEM_OLD
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __TOS__
+#ifdef GEM_OLD
 #include <aes.h>
 #include <vdi.h>
 #define M_DOT 1
@@ -29,7 +31,7 @@
 #define CLIP_ON 1
 #else
 #include "vdibind.h"
-#endif /* __TOS__ */
+#endif
 
 char
 my_getchar (int vid) {
@@ -58,14 +60,14 @@ int do_stuff()
   int work_out[57];
   char fontname[33];
 
-#ifdef __TOS__
+#ifdef GEM_OLD
   vp1 = graf_handle(&i,&i,&i,&i);
 #else
   /* Open physical workstation */
   v_opnwk(work_in, &vp1, work_out);
   if(!vp1)
     return 0;
-#endif /* __TOS__ */
+#endif
 
 
   vh1 = vp1;
@@ -386,9 +388,9 @@ int do_stuff()
   v_clsvwk(vh2);
 
 
-#ifndef __TOS__
+#ifndef GEM_OLD
   v_clswk(vp1);
-#endif /* __TOS__ */
+#endif
 
 
   return 0;

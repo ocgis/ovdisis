@@ -2,6 +2,7 @@
  * vdibind.h
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 #define WORD  @S_INT16_T@
 #define UWORD @U_INT16_T@
 #endif /* WORD */
+
+#define PACKED __attribute__ ((packed))
 
 #define NR_CONTRL 15
 #define NR_INTIN 132
@@ -163,7 +166,7 @@ typedef struct {
   WORD fd_r2;
 
   WORD fd_r3;
-} __attribute__ ((packed)) MFDB;
+} PACKED MFDB;
 
 /***********************************************************/
 
@@ -172,7 +175,7 @@ typedef struct vdi_rectangle {
   int v_y1;
   int v_x2;
   int v_y2;
-} __attribute__ ((packed)) VRECT;
+} PACKED VRECT;
 
 /***********************************************************/
 
@@ -184,7 +187,7 @@ typedef struct {
   WORD mf_bg;
   WORD mf_mask[16];
   WORD mf_data[16];
-} __attribute__ ((packed)) MFORM;
+} PACKED MFORM;
 
 /***********************************************************/
 
