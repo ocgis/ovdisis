@@ -66,9 +66,14 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 NM = @NM@
+OFBIS_CFLAGS = @OFBIS_CFLAGS@
+OFBIS_CONFIG = @OFBIS_CONFIG@
+OFBIS_LIBS = @OFBIS_LIBS@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
+ofbis_cflags = @ofbis_cflags@
+ofbis_libs = @ofbis_libs@
 
 SUBDIRS = src vdibind vdi_dump fntread
 
@@ -77,9 +82,12 @@ CFLAGS = -Ivdibind -Isrc
 noinst_HEADERS = extern_ovdisis.h vdidefs.h
 noinst_PROGRAMS = otestis
 otestis_SOURCES = otestis.c
-otestis_LDADD = src/.libs/libovdisis.a vdibind/libvdibind.a
+otestis_LDADD = vdibind/libvdibind.a src/.libs/libovdisis.a
 
 bin_SCRIPTS = ovdisis-config
+
+m4datadir = $(datadir)/aclocal
+m4data_DATA = ovdisis.m4
 
 EXTRA_DIST = FUNCS
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -94,13 +102,15 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 otestis_OBJECTS =  otestis.o
-otestis_DEPENDENCIES =  src/.libs/libovdisis.a vdibind/libvdibind.a
+otestis_DEPENDENCIES =  vdibind/libvdibind.a src/.libs/libovdisis.a
 otestis_LDFLAGS = 
 SCRIPTS =  $(bin_SCRIPTS)
 
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+DATA =  $(m4data_DATA)
+
 HEADERS =  $(noinst_HEADERS)
 
 DIST_COMMON =  README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
@@ -221,6 +231,25 @@ uninstall-binSCRIPTS:
 	@$(NORMAL_UNINSTALL)
 	list='$(bin_SCRIPTS)'; for p in $$list; do \
 	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
+	done
+
+install-m4dataDATA: $(m4data_DATA)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(m4datadir)
+	@list='$(m4data_DATA)'; for p in $$list; do \
+	  if test -f $(srcdir)/$$p; then \
+	    echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(m4datadir)/$$p"; \
+	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(m4datadir)/$$p; \
+	  else if test -f $$p; then \
+	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(m4datadir)/$$p"; \
+	    $(INSTALL_DATA) $$p $(DESTDIR)$(m4datadir)/$$p; \
+	  fi; fi; \
+	done
+
+uninstall-m4dataDATA:
+	@$(NORMAL_UNINSTALL)
+	list='$(m4data_DATA)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(m4datadir)/$$p; \
 	done
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -375,19 +404,21 @@ installcheck: installcheck-recursive
 all-recursive-am: config.h
 	$(MAKE) all-recursive
 
-all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(HEADERS) config.h
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA) $(HEADERS) config.h
 
 install-exec-am: install-binSCRIPTS
 
-uninstall-am: uninstall-binSCRIPTS
+install-data-am: install-m4dataDATA
+
+uninstall-am: uninstall-binSCRIPTS uninstall-m4dataDATA
 
 install-exec: install-exec-recursive install-exec-am
 	@$(NORMAL_INSTALL)
 
-install-data: install-data-recursive
+install-data: install-data-recursive install-data-am
 	@$(NORMAL_INSTALL)
 
-install: install-recursive install-exec-am
+install: install-recursive install-exec-am install-data-am
 	@:
 
 uninstall: uninstall-recursive uninstall-am
@@ -395,7 +426,7 @@ uninstall: uninstall-recursive uninstall-am
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
 installdirs: installdirs-recursive
-	$(mkinstalldirs)  $(DATADIR)$(bindir)
+	$(mkinstalldirs)  $(DATADIR)$(bindir) $(DATADIR)$(m4datadir)
 
 
 mostlyclean-generic:
@@ -448,17 +479,17 @@ clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
 mostlyclean-compile distclean-compile clean-compile \
 maintainer-clean-compile mostlyclean-libtool distclean-libtool \
 clean-libtool maintainer-clean-libtool uninstall-binSCRIPTS \
-install-binSCRIPTS install-data-recursive uninstall-data-recursive \
-install-exec-recursive uninstall-exec-recursive installdirs-recursive \
-uninstalldirs-recursive all-recursive check-recursive \
-installcheck-recursive info-recursive dvi-recursive \
-mostlyclean-recursive distclean-recursive clean-recursive \
+install-binSCRIPTS uninstall-m4dataDATA install-m4dataDATA \
+install-data-recursive uninstall-data-recursive install-exec-recursive \
+uninstall-exec-recursive installdirs-recursive uninstalldirs-recursive \
+all-recursive check-recursive installcheck-recursive info-recursive \
+dvi-recursive mostlyclean-recursive distclean-recursive clean-recursive \
 maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
 distclean-tags clean-tags maintainer-clean-tags distdir \
 mostlyclean-depend distclean-depend clean-depend \
 maintainer-clean-depend info dvi installcheck all-recursive-am all-am \
-install-exec-am uninstall-am install-exec install-data install \
-uninstall all installdirs mostlyclean-generic distclean-generic \
+install-exec-am install-data-am uninstall-am install-exec install-data \
+install uninstall all installdirs mostlyclean-generic distclean-generic \
 clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 

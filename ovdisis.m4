@@ -1,0 +1,72 @@
+# Configure paths for oVDIsis
+# Christer Gustavsson 98-09-20
+
+dnl AM_PATH_OVDISIS([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
+dnl Test for oVDIsis, and define OVDISIS_CFLAGS and OVDISIS_LIBS
+
+AC_DEFUN(AM_PATH_OVDISIS,
+[dnl 
+dnl Get the cflags and libraries from the ovdisis-config script
+dnl
+AC_ARG_WITH(ovdisis-prefix,[  --with-ovdisis-prefix=PFX   Prefix where oVDIsis is installed (optional)],
+            ovdisis_config_prefix="$withval", ovdisis_config_prefix="")
+AC_ARG_WITH(ovdisis-exec-prefix,[  --with-ovdisis-exec-prefix=PFX Exec prefix where oVDIsis is installed (optional)],
+            ovdisis_config_exec_prefix="$withval", ovdisis_config_exec_prefix="")
+AC_ARG_ENABLE(ovdisistest, [  --disable-ovdisistest       Do not try to compile and run a test oVDIsis program],
+		    , enable_ovdisistest=yes)
+
+  if test x$ovdisis_config_exec_prefix != x ; then
+     ovdisis_config_args="$ovdisis_config_args --exec-prefix=$ovdisis_config_exec_prefix"
+     if test x${OVDISIS_CONFIG+set} != xset ; then
+        OVDISIS_CONFIG=$ovdisis_config_exec_prefix/bin/ovdisis-config
+     fi
+  fi
+  if test x$ovdisis_config_prefix != x ; then
+     ovdisis_config_args="$ovdisis_config_args --prefix=$ovdisis_config_prefix"
+     if test x${OVDISIS_CONFIG+set} != xset ; then
+        OVDISIS_CONFIG=$ovdisis_config_prefix/bin/ovdisis-config
+     fi
+  fi
+
+  AC_PATH_PROG(OVDISIS_CONFIG, ovdisis-config, no)
+  min_ovdisis_version=ifelse([$1], ,0.0.6,$1)
+  AC_MSG_CHECKING(for oVDIsis - version >= $min_ovdisis_version)
+  no_ovdisis=""
+  if test "$OVDISIS_CONFIG" = "no" ; then
+    no_ovdisis=yes
+  else
+    OVDISIS_CFLAGS=`$OVDISIS_CONFIG $ovdisis_config_args --cflags`
+    OVDISIS_LIBS=`$OVDISIS_CONFIG $ovdisis_config_args --libs`
+    ovdisis_config_major_version=`$OVDISIS_CONFIG $ovdisis_config_args --version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+    ovdisis_config_minor_version=`$OVDISIS_CONFIG $ovdisis_config_args --version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+    ovdisis_config_micro_version=`$OVDISIS_CONFIG $ovdisis_config_args --version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+    if test "x$enable_ovdisistest" = "xyes" ; then
+      ac_save_CFLAGS="$CFLAGS"
+      ac_save_LIBS="$LIBS"
+      CFLAGS="$CFLAGS $OVDISIS_CFLAGS"
+      LIBS="$LIBS $OVDISIS_LIBS"
+     fi
+  fi
+  if test "x$no_ovdisis" = x ; then
+     AC_MSG_RESULT(yes)
+     ifelse([$2], , :, [$2])     
+  else
+     AC_MSG_RESULT(no)
+     if test "$OVDISIS_CONFIG" = "no" ; then
+       echo "*** The ovdisis-config script installed by oVDIsis could not be found"
+       echo "*** If oVDIsis was installed in PREFIX, make sure PREFIX/bin is in"
+       echo "*** your path, or set the OVDISIS_CONFIG environment variable to the"
+       echo "*** full path to ovdisis-config."
+     else
+        :
+     fi
+     OVDISIS_CFLAGS=""
+     OVDISIS_LIBS=""
+     ifelse([$3], , :, [$3])
+  fi
+  AC_SUBST(OVDISIS_CFLAGS)
+  AC_SUBST(OVDISIS_LIBS)
+])

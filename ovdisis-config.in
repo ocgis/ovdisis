@@ -1,5 +1,8 @@
 #!/bin/sh
 
+ofbis_libs="@ofbis_libs@"
+ofbis_cflags="@ofbis_cflags@"
+
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 exec_prefix_set=no
@@ -39,11 +42,21 @@ while test $# -gt 0; do
       echo @VERSION@
       ;;
     --cflags)
-      echo
+      echo $ofbis_cflags
       ;;
     --libs)
+      my_ofbis_libs=
       libdirs=-L@libdir@
-      echo $libdirs -lovdisis
+      for i in $ofbis_libs ; do
+        if test $i != -L@libdir@ ; then
+          if test -z "$my_ofbis_libs" ; then
+            my_ofbis_libs="$i"
+          else
+            my_ofbis_libs="$my_ofbis_libs $i"
+          fi
+        fi
+      done
+      echo $libdirs -lovdisis $my_ofbis_libs
       ;;
     *)
       echo "${usage}" 1>&2

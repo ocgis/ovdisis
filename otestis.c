@@ -297,7 +297,7 @@ int do_stuff()
 #ifdef __TOS__
   getchar();
 #else
-  while(ovdi_getchar(vp1) != 'd')
+  while(ovdi_getchar(vp1) != 'a')
     ;
 #endif /* __TOS__ */
 
@@ -321,7 +321,7 @@ int do_stuff()
 #ifdef __TOS__
       getchar();
 #else
-      while(ovdi_getchar(vp1) != 's')
+      while(ovdi_getchar(vp1) != 'a')
 	;
 #endif /* __TOS__ */
 
@@ -352,7 +352,7 @@ int do_stuff()
 #ifdef __TOS__
   getchar();
 #else
-  while(ovdi_getchar(vp1) != 's')
+  while(ovdi_getchar(vp1) != 'a')
     ;
 #endif /* __TOS__ */
 

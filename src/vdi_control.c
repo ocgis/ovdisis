@@ -52,7 +52,7 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
     EDEBUG("v_opnwk: Not enough memory for physical workstation!\n");
     return;
   }
-  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC)) == NULL) {
+  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC | FB_NO_KBD)) == NULL) {
     free(wk[w].physical);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: Error opening FrameBuffer!\n");

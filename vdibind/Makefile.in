@@ -66,9 +66,14 @@ LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 NM = @NM@
+OFBIS_CFLAGS = @OFBIS_CFLAGS@
+OFBIS_CONFIG = @OFBIS_CONFIG@
+OFBIS_LIBS = @OFBIS_LIBS@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
+ofbis_cflags = @ofbis_cflags@
+ofbis_libs = @ofbis_libs@
 
 CFLAGS = -I../src
 
