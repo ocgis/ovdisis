@@ -19,6 +19,7 @@
 #include "ggi_visual_control.h"
 #include "ggi_visual_event.h"
 #include "ggi_visual_mouse.h"
+#include "ggi_visual_mutex.h"
 #include "ggi_visual_various.h"
 
 VDI_Visual *
@@ -44,7 +45,8 @@ init (void)
     ggi_visual_set_font,
     ggi_visual_save_mouse_bg,
     ggi_visual_restore_mouse_bg,
-    ggi_visual_get_event
+    ggi_visual_get_event,
+    ggi_visual_mutex
   };
 
   return &visual;
