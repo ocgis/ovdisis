@@ -33,8 +33,8 @@ void init_workstation(VDI_Workstation *wk)
 
   /* Setup data for v_opnwk */
 
-  wk->dev.attr.xres = wk->fb->vinf.xres_virtual - 1;	/* Max addressable width */
-  wk->dev.attr.yres = wk->fb->vinf.yres_virtual - 1;	/* Max addressable height */
+  wk->dev.attr.xres = wk->fb->vinf.xres - 1;		/* Max visible width */
+  wk->dev.attr.yres = wk->fb->vinf.yres - 1;		/* Max visible height */
   wk->dev.attr.noscale = 0;				/* Device Coord Units flag */
   wk->dev.attr.wpixel = 372;				/* Width of pixel in microns */
   wk->dev.attr.hpixel = 372;				/* Height of pixel in microns */
