@@ -129,6 +129,16 @@ typedef struct {
 #define COLOR_REQUESTED 0
 #define COLOR_ACTUAL    1
 
+/* vsin_mode values */
+#define REQUEST_MODE 1
+#define SAMPLE_MODE  2
+
+#define LOCATOR  1
+#define VALUATOR 2
+#define CHOICE   3
+#define STRING   4
+
+
 /* return values for vq_vgdos() inquiry */
 #define GDOS_NONE (-2L)        /* no GDOS installed */
 #define GDOS_FSM  0x5F46534DL /* '_FSM' */
@@ -288,5 +298,14 @@ extern void vrq_string (int    handle,
 			int    echo,
 			int *  outxy,
 			char * str);
+extern int vsm_string_raw (int   handle,
+			   int   maxlen,
+			   int   echo,
+			   int * outxy,
+			   int * str);
+
+extern void vsin_mode (int handle,
+		       int device,
+		       int mode);
 
 #endif /* _VDIBIND_H_ */

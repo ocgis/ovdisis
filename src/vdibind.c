@@ -1368,3 +1368,48 @@ vrq_string (int    handle,
     str[i] = (char)o_vdipb.intout[i];
   }
 }
+
+
+int
+vsm_string_raw (int   handle,
+		int   maxlen,
+		int   echo,
+		int * outxy,
+		int * str) {
+  int i;
+
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 31;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 2;
+
+  o_vdipb.intin[0] = 1 - maxlen;
+  o_vdipb.intin[1] = echo;
+  
+  o_vdipb.ptsin[0] = outxy[0];
+  o_vdipb.ptsin[0] = outxy[1];
+
+  vdi_call(&o_vdipb);
+
+  for (i = 0; i < o_vdipb.contrl[N_INTOUT]; i++) {
+    str[i] = o_vdipb.intout[i];
+  }
+
+  return o_vdipb.contrl[N_INTOUT];
+}
+
+
+void
+vsin_mode (int handle,
+	   int device,
+	   int mode) {
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 33;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 2;
+
+  o_vdipb.intin[0] = device;
+  o_vdipb.intin[1] = mode;
+  
+  vdi_call(&o_vdipb);
+}
