@@ -4,6 +4,9 @@
 ** Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
 **           2000     Vincent Barrilliot <vincent_barrilliot@yahoo.com>
 **
+** Change marks:
+**  MK: Markus Kohm <markus.kohm@gmx.de>
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -47,13 +50,14 @@ ggi_visual_set_cmap (VWKREF vwk,
 		     int    red,
 		     int    green,
 		     int    blue) {
-
+#if DEBUGLEVEL>=1
+  int i;
+#endif
   do_set_unmapped( vwk, index, red, green, blue );
-  
+
 #if DEBUGLEVEL>=1
   for(i=0; i<16 ; i++) {
     ggi_color *color_unmapped = COLOR_UNMAPPED(vwk->visual->private);
-    int i;
 
     EDEBUG("Color %d: R:%d  G:%d  B:%d\n",i,color_unmapped[i].r, color_unmapped[i].g, color_unmapped[i].b);
   }
@@ -112,5 +116,11 @@ ggi_visual_put_cmap(VWKREF vwk)
 void
 ggi_visual_free_cmap (VWKREF wk)
 {
+#if 0 /* 2000-12-07 MK */
   fprintf(stderr, "Implement ggi_visual_free_cmap\n");
+#else
+  EDEBUG("ggi cmap doesn't really need to be freed\n");
+#endif
 }
+
+

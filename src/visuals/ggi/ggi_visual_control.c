@@ -62,13 +62,19 @@ ggi_visual_close (void * private) {
 void
 ggi_visual_clear (VWKREF vwk)
 {
+  /* At the first ggi_visual_clear the colors are not mapped at all,
+   * so we can't use COLOR_MAPPED(vwk->visual->private[1]) to draw
+   * a white box.
+   */
+  ggi_color color;
+  color.r = color.g = color.b = color.a = ~0; /* white */
   ggiSetGCForeground(VISUAL_T(vwk->visual->private),
-                     COLOR_MAPPED(vwk->visual->private)[0]);
+		     ggiMapColor(VISUAL_T(vwk->visual->private),&color));
   ggiDrawBox(VISUAL_T(vwk->visual->private),
              0,
              0,
-             vwk->dev.attr.xres - 1,
-             vwk->dev.attr.yres - 1);
+             vwk->dev.attr.xres,
+             vwk->dev.attr.yres);
 }
 
 
@@ -77,3 +83,4 @@ ggi_visual_set_write_mode (void * vis,
 			   int    write_mode) {
   WRITE_MODE(vis) = write_mode;
 }
+
