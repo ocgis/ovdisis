@@ -3,6 +3,9 @@
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
 
+/* The number of bytes in a short.  */
+#undef SIZEOF_SHORT
+
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
 

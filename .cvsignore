@@ -9,3 +9,10 @@ config.status
 stamp-h
 ovdisis.m4
 ovdisis-config
+libtool
+.libs
+stamp-h.in
+Makefile.in
+configure
+aclocal.m4
+acinclude.m4

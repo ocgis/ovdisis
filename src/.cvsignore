@@ -4,3 +4,4 @@
 Makefile
 .deps
 .libs
+Makefile.in

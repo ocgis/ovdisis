@@ -17,13 +17,9 @@
 
 #include <sys/types.h>
 
-/* FIXME */
-typedef signed short   int16_t;
-typedef unsigned short u_int16_t;
-
 #ifndef WORD
-#define WORD int16_t
-#define UWORD u_int16_t
+#define WORD  @S_INT16_T@
+#define UWORD @U_INT16_T@
 #endif /* WORD */
 
 typedef struct {

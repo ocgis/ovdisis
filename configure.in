@@ -22,6 +22,7 @@ AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AM_PROG_LIBTOOL
 
 dnl Use this instead of AC_PROG_RANLIB because
 dnl this works with cross-compiling.
@@ -101,14 +102,12 @@ fi
 AM_CONDITIONAL(BUILD_BINDINGS_ONLY, test x$build_bindings_only = xtrue)
 AM_CONDITIONAL(USE_LIBTOOL, test x$use_libtool = xtrue)
 
-if test x$use_libtool = xtrue; then
-  dnl Create libtool
-  AM_PROG_LIBTOOL
-fi
+dnl Check for standard types
+OSIS_CHECK_TYPES
 
 OSISINCLUDE=${includedir}/osis
 
 AC_SUBST(VERSION)
 AC_SUBST(OSISINCLUDE)
 
-AC_OUTPUT(fntread/Makefile src/Makefile vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
+AC_OUTPUT(fntread/Makefile src/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
