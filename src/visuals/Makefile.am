@@ -1,1 +1,1 @@
-SUBDIRS = ofbis
+SUBDIRS = ggi ofbis
