@@ -26,7 +26,7 @@
 ** 1998-12-07 CG
 */
 void
-vdi_init_event_handler (VDI_Workstation * vwk);
+init_event_handler (VDI_Workstation * vwk);
 
 /*
 ** Description
@@ -36,7 +36,7 @@ vdi_init_event_handler (VDI_Workstation * vwk);
 ** 1998-12-07 CG
 */
 void
-vdi_exit_event_handler (void);
+exit_event_handler (void);
 
 #endif /* _EVENT_H_ */
 
