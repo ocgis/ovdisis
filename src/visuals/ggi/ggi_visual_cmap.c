@@ -1,7 +1,7 @@
 /*
 ** ggi_visual_cmap.c
 **
-** Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+** Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ ggi_visual_get_cmap (void * vis,
 
 
 void
-ggi_visual_put_cmap (VWKREF wk)
+ggi_visual_put_cmap(VWKREF wk)
 {
   int       i;
   ggi_color cmap[256];
@@ -60,12 +60,10 @@ ggi_visual_put_cmap (VWKREF wk)
   }
 
   for (i = 0; i < number_of_pens; i++) {
-    int ti = gem2tos_color(number_of_planes, i);
-    
-    cmap[ti].r = (wk->vdi_cmap.red[i] * 65535) / 1000;
-    cmap[ti].g = (wk->vdi_cmap.green[i] * 65535) / 1000;
-    cmap[ti].b = (wk->vdi_cmap.blue[i] * 65535) / 1000;
-    cmap[ti].a = 0xffff;
+    cmap[i].r = (wk->vdi_cmap.red[i] * 65535) / 1000;
+    cmap[i].g = (wk->vdi_cmap.green[i] * 65535) / 1000;
+    cmap[i].b = (wk->vdi_cmap.blue[i] * 65535) / 1000;
+    cmap[i].a = 0xffff;
   }
   
   ggiSetPalette(VISUAL_T(wk->visual->private),
