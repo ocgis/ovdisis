@@ -34,12 +34,12 @@ Xsed="sed -e s/^X//"
 if test "${CDPATH+set}" = set; then CDPATH=; export CDPATH; fi
 
 ### BEGIN LIBTOOL CONFIG
-# Libtool was configured as follows, on host christer:
+# Libtool was configured as follows, on host gnocchi:
 #
 # CC="gcc" CFLAGS=" -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce" CPPFLAGS="" \
 # LD="/usr/bin/ld" NM="/usr/bin/nm -B" RANLIB="ranlib" LN_S="ln -s" \
 # DLLTOOL="""" AS="""" \
-#   ./ltconfig --cache-file=./config.cache --with-gcc --with-gnu-ld --no-verify ./ltmain.sh powerpc-unknown-linux-gnu
+#   ./ltconfig --cache-file=./config.cache --with-gcc --with-gnu-ld --no-verify ./ltmain.sh sparc-unknown-linux-gnu
 #
 # Compiler and other test output produced by ltconfig, useful for
 # debugging ltconfig, is in ./config.log if it exists.
@@ -60,8 +60,8 @@ build_old_libs=yes
 fast_install=yes
 
 # The host system.
-host_alias=powerpc-unknown-linux-gnu
-host=powerpc-unknown-linux-gnu
+host_alias=sparc-unknown-linux-gnu
+host=sparc-unknown-linux-gnu
 
 # An echo program that does not interpret backslashes.
 echo="echo"
