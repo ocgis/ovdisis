@@ -16,12 +16,6 @@ ifneq (.depend,$(wildcard .depend))
 PREREQ += dep
 endif
 
-# I've had some problems with FBgetchar() together with
-# vs_color. It seems to work with linux 2.0.25, but not
-# with 2.0.21. If you have 2.0.21, uncomment the next
-# line, or the program might hang.
-#COPTIONS += -DNOKEYCHECK
-
 CFLAGS = $(COPTIONS) -I. -Isrc -Ivdibind
 
 

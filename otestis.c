@@ -284,14 +284,12 @@ int do_stuff()
   pxy[0]=400; pxy[1]=380; pxy[2]=580; pxy[3]=480;
   v_bar(vh2, pxy);
 
-#ifndef NOKEYCHECK
 #ifdef __TOS__
   getchar();
 #else
   while(ovdi_getchar(vp1) != 'd')
     ;
 #endif /* __TOS__ */
-#endif /* NOKEYCHECK */
 
   {
     MFDB src,dst;
@@ -310,14 +308,12 @@ int do_stuff()
     vro_cpyfm(vh2, S_XOR_D, rc, &src, &dst);
 
     for(i=0 ; i<16 ; i++) {
-#ifndef NOKEYCHECK
 #ifdef __TOS__
       getchar();
 #else
       while(ovdi_getchar(vp1) != 's')
 	;
 #endif /* __TOS__ */
-#endif /* NOKEYCHECK */
 
       rc[4]-=3; rc[5]-=2;
       vro_cpyfm(vh2, NOT_S, rc, &src, &dst);
@@ -343,15 +339,12 @@ int do_stuff()
     vs_clip(vh2, CLIP_OFF, pxy);
   }
 
-#ifndef NOKEYCHECK
 #ifdef __TOS__
   getchar();
 #else
   while(ovdi_getchar(vp1) != 's')
     ;
 #endif /* __TOS__ */
-#endif /* NOKEYCHECK */
-
 
   pxy[0] = 1000;
   pxy[1] = 0;
@@ -372,15 +365,12 @@ int do_stuff()
   pxy[3] = 350;
   v_pline(vh2, 2, pxy);
 
-#ifndef NOKEYCHECK
 #ifdef __TOS__
   getchar();
 #else
   while(ovdi_getchar(vp1) != 'a')
     ;
 #endif /* __TOS__ */
-#endif /* NOKEYCHECK */
-
   
   v_clsvwk(vh1);
   v_clsvwk(vh2);
