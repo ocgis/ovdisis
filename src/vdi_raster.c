@@ -38,7 +38,7 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
   fix_rect(&srccor);
   fix_rect(&dstcor);
 
-  /* Completely ignore what the user says that the destination 
+  /* Completely ignore what the user says what the destination 
      width and height should be and recalculate them here.
      They must be recalculated after the fix. */
 
@@ -136,7 +136,7 @@ void vdi_vrt_cpyfm(VDI_Workstation *vwk)
   fix_rect(&srccor);
   fix_rect(&dstcor);
 
-  /* Completely ignore what the user says that the destination 
+  /* Completely ignore what the user says what the destination 
      width and height should be and recalculate them here.
      They must be recalculated after the fix. */
 
