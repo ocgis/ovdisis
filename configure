@@ -1910,7 +1910,7 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-  min_ofbis_version=0.0.6
+  min_ofbis_version=0.0.7
   echo $ac_n "checking for oFBis - version >= $min_ofbis_version""... $ac_c" 1>&6
 echo "configure:1916: checking for oFBis - version >= $min_ofbis_version" >&5
   no_ofbis=""
@@ -1948,7 +1948,7 @@ echo "configure:1916: checking for oFBis - version >= $min_ofbis_version" >&5
      OFBIS_CFLAGS=""
      OFBIS_LIBS=""
      { echo "configure: error: 
-*** oFBis 0.0.6 or better is required. The latest version of oFBis
+*** oFBis 0.0.7 or better is required. The latest version of oFBis
 *** is always available from ftp://ftp.nocrew.org." 1>&2; exit 1; }
   fi
   
