@@ -150,7 +150,9 @@ typedef	struct
   void (*curv) (int mx, int my);
   void (*motv) (int mx, int my);
   void (*timv) (void);
-  void (*keyv) (int state, int ascii, int scan);
+
+  /* Device modes */
+  int device_mode[5];
 
   /* Process ID for owner of this workstation */
   int pid;
