@@ -14,6 +14,7 @@
 
 #include <ofbis.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "ofbis_visual.h"
 #include "ovdisis.h"
@@ -49,7 +50,7 @@ ofbis_visual_get_cmap (void * fb,
 }
 
 
-#define fb FB_T(wk->visual->private)
+/*  #define fb FB_T(wk->visual->private) */
 
 void
 ofbis_visual_put_cmap (VDI_Workstation * wk) {
@@ -61,30 +62,38 @@ ofbis_visual_put_cmap (VDI_Workstation * wk) {
   case 4:
   case 8:
     /* fb->cmap is set by FBgetcmap */
-    FBgetcmap(fb);
+    FBgetcmap(FB_T(wk->visual->private));
     ADEBUG("v_opnwk: FB cmap length %d allocated: %p\n",
-	   fb->cmap->len, fb->cmap);
+	   FB_T(wk->visual->private)->cmap->len, FB_T(wk->visual->private)->cmap);
 
-    for (i = 0; i < fb->cmap->len; i++) {
+    for (i = 0; i < FB_T(wk->visual->private)->cmap->len; i++) {
       int ti = gem2tos_color(wk->inq.attr.planes, i);
 
-      fb->cmap->red[ti]   =
+      FB_T(wk->visual->private)->cmap->red[ti]   =
         (wk->vdi_cmap.red[i] * 65535) / 1000;
-      fb->cmap->green[ti]   =
+      FB_T(wk->visual->private)->cmap->green[ti]   =
         (wk->vdi_cmap.green[i] * 65535) / 1000;
-      fb->cmap->blue[ti]   =
+      FB_T(wk->visual->private)->cmap->blue[ti]   =
         (wk->vdi_cmap.blue[i] * 65535) / 1000;
     }
     /* Put the changed cmap on to the FrameBuffer */
-    fb->cmap->start = 0;
-    fb->cmap->len = (1 << wk->inq.attr.planes);
-    fb->cmap->end = (1 << wk->inq.attr.planes) - 1;
+    FB_T(wk->visual->private)->cmap->start = 0;
+    FB_T(wk->visual->private)->cmap->len = (1 << wk->inq.attr.planes);
+    FB_T(wk->visual->private)->cmap->end = (1 << wk->inq.attr.planes) - 1;
 
     sleep(1);			/* This is apparently needed in 8 bit mode (oFBis bug?) */
 
-    FBputcmap(fb, fb->cmap);
+    FBputcmap(FB_T(wk->visual->private), FB_T(wk->visual->private)->cmap);
     break;
-
+  case 15:
+  case 16:
+  case 24:
+  case 32:
+    for(i = 0; i < 256; i++) {
+      COLOURS(wk->visual->private)[i] = (( ( (wk->vdi_cmap.red[i] * 65535/1000) >> 8) << 16) |
+					  ( ( (wk->vdi_cmap.green[i] * 65535/1000) >> 8) << 8) |
+					  ( ( (wk->vdi_cmap.blue[i] * 65535/1000) >> 8)));
+    }
   default:
     ;
   }
@@ -100,3 +109,24 @@ ofbis_visual_free_cmap (VDI_Workstation * wk) {
 }
 
 #undef fb
+
+int 
+ofbis_native_colour(VWKREF wk, int c) {
+  switch(wk->inq.attr.planes) {
+  case 1:
+  case 2:
+  case 4:
+  case 8:
+    return c;
+  case 15:
+  case 16:
+  case 24:
+  case 32:
+    return FBc24_to_cnative(FB_T(wk->visual->private), 
+			    COLOURS(wk->visual->private)[c]);
+  }
+}
+
+
+
+
