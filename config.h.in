@@ -2,9 +2,3 @@
 
 /* Define if you have the ANSI C header files.  */
 #undef STDC_HEADERS
-
-/* Define if you have the fb library (-lfb).  */
-#undef HAVE_LIBFB
-
-/* Define if you have the m library (-lm).  */
-#undef HAVE_LIBM
