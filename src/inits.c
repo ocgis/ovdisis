@@ -127,49 +127,25 @@ void init_workstation(VDI_Workstation *wk)
 void init_cmap(VDI_Workstation *wk)
 {
   int i, ti;
+  int planes = (wk->inq.attr.planes < 8) ? wk->inq.attr.planes : 8;
 
   /* I'm using the allocated cmap from FBgetcmap()
      from within the FB struct. Maybe I should
      have a separate pointer outside it. It doesn't
      matter now though, since they both would point
      at the same cmap. */
-  switch (wk->inq.attr.planes) {
-  case 1:
-  case 2:
-  case 4:
-  case 8:
-    for (i = 0; i < (1 << wk->inq.attr.planes); i++) {
-      ti = gem2tos_color(wk->inq.attr.planes, i);
-
-      wk->vdi_cmap.red[i]   =
-	((int)default_cmap[wk->inq.attr.planes]->red[ti]   * 1000) / 65535;
-      wk->vdi_cmap.green[i] =
-	((int)default_cmap[wk->inq.attr.planes]->green[ti] * 1000) / 65535;
-      wk->vdi_cmap.blue[i]  =
-	((int)default_cmap[wk->inq.attr.planes]->blue[ti]  * 1000) / 65535;
-    }
-
-    VISUAL_PUT_CMAP(wk);
-    break;
-
-  case 16:			/* TrueColor mode, use 256 virtual pens */
-    for (i = 0; i < default_cmap[8]->len; i++) {
-      /* Convert colour index as in 8 bpl mode */
-      ti = gem2tos_color(8, i);
-
-      wk->vdi_cmap.red[i]   = ((int)default_cmap[8]->red[ti]   * 1000) / 65535;
-      wk->vdi_cmap.green[i] = ((int)default_cmap[8]->green[ti] * 1000) / 65535;
-      wk->vdi_cmap.blue[i]  = ((int)default_cmap[8]->blue[ti]  * 1000) / 65535;
-    }
-
-    VISUAL_PUT_CMAP(wk);
-    break;
-
-  default:
-    /* Unknown mode, do nothing */
-    /* Perhaps it would be better to exit here? */
-    break;
+  for (i = 0; i < (1 << planes); i++) {
+    ti = gem2tos_color(planes, i);
+    
+    wk->vdi_cmap.red[i]   =
+      ((int)default_cmap[planes]->red[ti]   * 1000) / 65535;
+    wk->vdi_cmap.green[i] =
+      ((int)default_cmap[planes]->green[ti] * 1000) / 65535;
+    wk->vdi_cmap.blue[i]  =
+      ((int)default_cmap[planes]->blue[ti]  * 1000) / 65535;
   }
+  
+  VISUAL_PUT_CMAP(wk);
 }
 
 
