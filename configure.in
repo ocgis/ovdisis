@@ -4,14 +4,15 @@ AC_INIT(otestis.c)
 PACKAGE=ovdisis
 VERSION=0.0.1
 
+dnl Check system type
+AC_CANONICAL_SYSTEM
+
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
 
 AM_CONFIG_HEADER(config.h)
 
 dnl Set CFLAGS
 CFLAGS="$CFLAGS -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce"
-
-AM_PROG_LIBTOOL
 
 dnl Enable extra arguments
 AC_ARG_WITH(ofbis, [  --with-ofbis=DIR        Use uninstalled copy of ofbis])
@@ -21,7 +22,13 @@ AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
-AC_PROG_RANLIB
+
+dnl Use this instead of AC_PROG_RANLIB because
+dnl this works with cross-compiling.
+AC_CHECK_TOOL(RANLIB, ranlib, :)
+
+dnl Create libtool
+AM_PROG_LIBTOOL
 
 dnl Checks for header files.
 AC_HEADER_STDC
