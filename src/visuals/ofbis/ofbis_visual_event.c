@@ -35,6 +35,18 @@ map_buttons (unsigned int ofbis_buttons) {
 }
 
 
+static
+inline
+void
+map_key (FBKEYEVENT *            fe,
+         Visual_Key_Event_Type * ve)
+{
+  ve->state = fe->state;
+  ve->keycode = fe->keycode & 0x7f;
+  ve->ascii = fe->ascii;
+}
+
+
 void
 ofbis_visual_get_event (void *         fb,
                         Visual_Event * visual_event) {
@@ -48,10 +60,9 @@ ofbis_visual_get_event (void *         fb,
     break;
 
   case FBKeyEvent :
-    visual_event->type = Visual_Key_Event;
-    visual_event->key.state = fe.key.state;
-    visual_event->key.keycode = fe.key.keycode;
-    visual_event->key.ascii = fe.key.ascii;
+    visual_event->type = (fe.key.keycode & 0x80) ?
+      Visual_Key_Press_Event : Visual_Key_Release_Event;
+    map_key(&fe.key, &visual_event->key);
     break;
 
   case FBMouseEvent :

@@ -169,7 +169,9 @@ typedef struct {
 
 typedef enum {
   Visual_No_Event,
-  Visual_Key_Event,
+  Visual_Key_Press_Event,
+  Visual_Key_Release_Event,
+  Visual_Key_Repeat_Event,
   Visual_Mouse_Move_Event,
   Visual_Mouse_Button_Event
 } Visual_Event_Type;

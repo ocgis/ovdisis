@@ -53,7 +53,7 @@ void vdi_vsm_string(VDI_Workstation *vwk)
 
       value = (WORD)key_ascii_buffer[key_first_index] & 0xff;
       if(getboth)
-	value |= (WORD)(key_ascii_buffer[key_first_index] << 8);
+	value |= (WORD)(key_scancode_buffer[key_first_index] << 8);
       
       vdipb->intout[i] = value;
       key_first_index = (key_first_index+1) % key_buffer_length;

@@ -20,6 +20,60 @@
 
 static int old_buttons = 0; /* FIXME */
 
+static
+inline
+void
+map_key(gii_key_event *         ge,
+        Visual_Key_Event_Type * ve)
+{
+  switch(GII_KTYP(ge->sym))
+  {
+  case GII_KT_FN :
+    ve->state = 0;
+    /* FIXME: CTRL and ALT */
+    switch(ge->sym)
+    {
+    case GIIK_F1  :
+    case GIIK_F2  :
+    case GIIK_F3  :
+    case GIIK_F4  :
+    case GIIK_F5  :
+    case GIIK_F6  :
+    case GIIK_F7  :
+    case GIIK_F8  :
+    case GIIK_F9  :
+    case GIIK_F10 :
+      ve->keycode = GII_KVAL(ge->sym) - GII_KVAL(GIIK_F1) + 0x3b;
+      break;
+
+    case GIIK_F11 :
+    case GIIK_F12 :
+    case GIIK_F13 :
+    case GIIK_F14 :
+    case GIIK_F15 :
+    case GIIK_F16 :
+    case GIIK_F17 :
+    case GIIK_F18 :
+    case GIIK_F19 :
+    case GIIK_F20 :
+      ve->keycode = GII_KVAL(ge->sym) - GII_KVAL(GIIK_F11) + 0x54;
+      break;
+
+    default :
+      /* FIXME */
+    }
+
+    ve->ascii = 0;
+    break;
+
+  default :
+    ve->state = 0;
+    ve->keycode = ge->label;
+    ve->ascii = GII_KVAL(ge->sym);
+  }
+}
+
+
 void
 ggi_visual_get_event (void *         vis,
 		      Visual_Event * visual_event) {
@@ -57,15 +111,21 @@ ggi_visual_get_event (void *         vis,
     break;
 
   case evKeyPress:
-    fprintf(stderr, "evKeyPress\n");
+    visual_event->type = Visual_Key_Press_Event;
+    map_key(&event_buffer.key,
+            &visual_event->key);
     break;
 
   case evKeyRelease:
-    fprintf(stderr, "evKeyRelease\n");
+    visual_event->type = Visual_Key_Release_Event;
+    map_key(&event_buffer.key,
+            &visual_event->key);
     break;
 
   case evKeyRepeat:
-    fprintf(stderr, "evKeyRepeat\n");
+    visual_event->type = Visual_Key_Repeat_Event;
+    map_key(&event_buffer.key,
+            &visual_event->key);
     break;
 
   default:

@@ -184,45 +184,61 @@ event_handler (VDI_Workstation * vwk) {
   while (TRUE) {
     VISUAL_GET_EVENT(vwk, &visual_event);
 
-    if (visual_event.type == Visual_Key_Event && enable_keyboard) {
-      /* We only care if the key is pressed down, not released
-       * Figure out how to make repeat if a key is held down.
-       */
-      if(visual_event.key.keycode & 0x80) {
-	pthread_mutex_lock(&key_mutex);
-	
-	key_scancode_buffer[key_next_index] = visual_event.key.keycode;
-	key_ascii_buffer[key_next_index] = visual_event.key.ascii;
-	key_amount++;
-	if(key_first_index == -1)
-	  key_first_index = 0;
-	else if(key_index_looped && key_amount == KEY_BUFFER_LENGTH)
-	  key_first_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
-	if(key_amount >= KEY_BUFFER_LENGTH) {
-	  key_index_looped = 1;
-	  key_amount = KEY_BUFFER_LENGTH;
-	}
-	key_next_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
-	
-	pthread_mutex_unlock(&key_mutex);
-	pthread_cond_broadcast(&key_cond);
-      } 
-    } else if (visual_event.type == Visual_Mouse_Button_Event) {
+    switch(visual_event.type)
+    {
+    case Visual_Key_Press_Event  :
+    case Visual_Key_Repeat_Event :
+      if(enable_keyboard)
+      {
+        /* We only care if the key is pressed down, not released */
+        pthread_mutex_lock(&key_mutex);
+        
+        key_scancode_buffer[key_next_index] = visual_event.key.keycode;
+        key_ascii_buffer[key_next_index] = visual_event.key.ascii;
+        key_amount++;
+        
+        if(key_first_index == -1)
+        {
+          key_first_index = 0;
+        }
+        else if(key_index_looped && key_amount == KEY_BUFFER_LENGTH)
+        {
+          key_first_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
+        }
+        
+        if(key_amount >= KEY_BUFFER_LENGTH) {
+          key_index_looped = 1;
+          key_amount = KEY_BUFFER_LENGTH;
+        }
+        key_next_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
+        
+        pthread_mutex_unlock(&key_mutex);
+        pthread_cond_broadcast(&key_cond);
+      }
+      break;
+
+    case Visual_Key_Release_Event :
+      /* Do nothing */
+      break;
+
+    case Visual_Mouse_Button_Event :
       if (vwk->butv != NULL) {
         vwk->butv (visual_event.mouse_button.buttons);
       }
       buttons = visual_event.mouse_button.buttons;
-    } else if(visual_event.type == Visual_Mouse_Move_Event) {
+      break;
+
+    case Visual_Mouse_Move_Event :
       /* Make sure the visibility isn't being updated */
       pthread_mutex_lock (&mouse_mutex);
       
       if (mouse_visibility > 0) {
         VISUAL_RESTORE_MOUSE_BG (vwk);
       }
-        
+      
       mouse_x = visual_event.mouse_move.x;
       mouse_y = visual_event.mouse_move.y;
-
+      
       /* Has a handler been installed? */
       if (vwk->motv != NULL) {
         vwk->motv (mouse_x, mouse_y);
@@ -234,7 +250,9 @@ event_handler (VDI_Workstation * vwk) {
       }
       
       pthread_mutex_unlock (&mouse_mutex);
-    } else {
+      break;
+
+    default:
       fprintf (stderr, "ovdisis: event.c: Unknown event\n");
     }
   }
