@@ -106,6 +106,9 @@ void vdi_v_gtext(VDI_Workstation *vwk)
 
     x += vwk->text_a.cellwidth;
   }
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vst_color(VDI_Workstation *vwk)
@@ -113,12 +116,15 @@ void vdi_vst_color(VDI_Workstation *vwk)
   vwk->text_a.color=(int)vdipb->intin[0];
   vdipb->intout[0]=(short)vwk->text_a.color;
 
+  vdipb->contrl[N_PTSOUT]=0;
   vdipb->contrl[N_INTOUT]=1;
 }
 
 void vdi_vst_height(VDI_Workstation *vwk)
 {
   EDEBUG("vst_height: Call not implemented!\n");
+  vdipb->contrl[N_PTSOUT]=2;
+  vdipb->contrl[N_INTOUT]=0;
 }
 
 
@@ -126,10 +132,13 @@ void vdi_vst_height(VDI_Workstation *vwk)
 ** Exported
 **
 ** 1998-12-26 CG
+** 1999-05-22 CG
 */
 void
 vdi_vst_font (VDI_Workstation * vwk) {
   EDEBUG("vst_font: Call not implemented!\n");
+  vdipb->contrl[N_PTSOUT]=0;
+  vdipb->contrl[N_INTOUT]=1;
 }
 
 
@@ -166,8 +175,8 @@ void vdi_vst_point(VDI_Workstation *vwk)
 
   IDEBUG("vst_point: Changed point size to %d\n",fp->size);
 
+  vdipb->contrl[N_PTSOUT]=2;
   vdipb->contrl[N_INTOUT]=1;
-  vdipb->contrl[N_PTSOUT]=4;
 }
 
 void vdi_vst_effects(VDI_Workstation *vwk)
@@ -175,6 +184,7 @@ void vdi_vst_effects(VDI_Workstation *vwk)
   vwk->text_a.effects=(int)vdipb->intin[0];
   vdipb->intout[0]=(short)vwk->text_a.effects;
 
+  vdipb->contrl[N_PTSOUT]=0;
   vdipb->contrl[N_INTOUT]=1;
 }
 
@@ -193,6 +203,7 @@ void vdi_vst_alignment(VDI_Workstation *vwk)
   vdipb->intout[0]=(short)vwk->text_a.h_alignment;
   vdipb->intout[1]=(short)vwk->text_a.v_alignment;
 
+  vdipb->contrl[N_PTSOUT]=0;
   vdipb->contrl[N_INTOUT]=2;
 }
 
@@ -201,6 +212,7 @@ void vdi_vst_rotation(VDI_Workstation *vwk)
   vwk->text_a.rotation=(int)vdipb->intin[0];
   vdipb->intout[0]=(short)vwk->text_a.rotation;
 
+  vdipb->contrl[N_PTSOUT]=0;
   vdipb->contrl[N_INTOUT]=1;
 }
 
@@ -218,8 +230,8 @@ void vdi_vqt_attributes(VDI_Workstation *vwk)
   vdipb->intout[4]=(short)vwk->text_a.v_alignment;
   vdipb->intout[5]=(short)vwk->write_mode;
 
-  vdipb->contrl[N_PTSOUT]=2;
-  vdipb->contrl[N_INTOUT]=6;
+  vdipb->contrl[N_PTSOUT] = 2;
+  vdipb->contrl[N_INTOUT] = 6;
 }
 
 /* This is made really simple now, since we only use monospaced fonts */
@@ -240,6 +252,9 @@ void vdi_vqt_extent(VDI_Workstation *vwk)
   vdipb->ptsout[5] = height;
   vdipb->ptsout[6] = 0;
   vdipb->ptsout[7] = height;
+
+  vdipb->contrl[N_PTSOUT] = 4;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 /* Simple for monospaced fonts */
@@ -248,6 +263,10 @@ void vdi_vqt_width(VDI_Workstation *vwk)
   vdipb->ptsout[0] = vwk->text_a.font->wcell;
   vdipb->ptsout[2] = 0;
   vdipb->ptsout[4] = 0;
+
+  vdipb->contrl[N_PTSOUT] = 3;
+  vdipb->contrl[N_INTOUT] = 1;
+  /* FIXME: Something should be written in intout[0] */
 }
 
 /* I'm not sure I'm doing this the correct way. 
@@ -270,6 +289,9 @@ void vdi_vqt_name(VDI_Workstation *vwk)
   vdipb->intout[32 + 1] = 0;
 
   vdipb->intout[0] = fp->id;
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 34;
 }
 
 void vdi_vqt_fontinfo(VDI_Workstation *vwk)
@@ -284,6 +306,9 @@ void vdi_vqt_fontinfo(VDI_Workstation *vwk)
   vdipb->ptsout[2] = vwk->text_a.font->left;
   vdipb->ptsout[4] = vwk->text_a.font->right;
   vdipb->ptsout[6] = vdipb->ptsout[2] + vdipb->ptsout[4];
+
+  vdipb->contrl[N_PTSOUT] = 4;
+  vdipb->contrl[N_INTOUT] = 2;
 }
 
 

@@ -66,56 +66,59 @@ void vdi_v_bar(VDI_Workstation *vwk)
   cor.y2 = vdipb->ptsin[3];
 
   if(do_rectclip(&cor, &vwk->clip))
+  {
+    ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
+    col = get_color(vwk, ni);
+    
+    switch(vwk->fill_a.interior)
     {
-      ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
-      col = get_color(vwk, ni);
-
-      switch(vwk->fill_a.interior)
-	{
-	case FIS_HOLLOW:
-	  /* Just draw the frame. Maybe. */
-	  break;
-	case FIS_SOLID:
-	  for(y=cor.y1 ; y<=cor.y2 ; y++)
-	    FBhline(vwk->fb, cor.x1, cor.x2, y, col);
-	  break;
-	case FIS_PATTERN:
-	case FIS_HATCH:
-	case FIS_USER:
-	  EDEBUG("v_bar: Unimplemented filling style, %d!\n", vwk->fill_a.interior);
-	  break;
-	default:
-	  EDEBUG("v_bar: Unknown filling style, %d!\n", vwk->fill_a.interior);
-	  break;
-	}
-
-      /* Don't draw frame if FIS_SOLID */
-      if(vwk->fill_a.perimeter && (vwk->fill_a.interior!=FIS_SOLID))
-	{
-	  RECT lin;
-
-	  lin.x1 = vdipb->ptsin[0];
-	  lin.x2 = vdipb->ptsin[2];
-	  lin.y1 = lin.y2 = vdipb->ptsin[1];
-	  if(do_lineclip(&lin, &vwk->clip))
-	    FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
-	  lin.x1 = vdipb->ptsin[0];
-	  lin.x2 = vdipb->ptsin[2];
-	  lin.y1 = lin.y2 = vdipb->ptsin[3];
-	  if(do_lineclip(&lin, &vwk->clip))
-	    FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
-	  lin.x1 = lin.x2 = vdipb->ptsin[0];
-	  lin.y1 = vdipb->ptsin[1];
-	  lin.y2 = vdipb->ptsin[3];
-	  if(do_lineclip(&lin, &vwk->clip))
-	    FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
-	  lin.x1 = lin.x2 = vdipb->ptsin[2];
-	  lin.y1 = vdipb->ptsin[1];
-	  lin.y2 = vdipb->ptsin[3];
-	  if(do_lineclip(&lin, &vwk->clip))
-	    FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
-	}
+    case FIS_HOLLOW:
+      /* Just draw the frame. Maybe. */
+      break;
+    case FIS_SOLID:
+      for(y=cor.y1 ; y<=cor.y2 ; y++)
+        FBhline(vwk->fb, cor.x1, cor.x2, y, col);
+      break;
+    case FIS_PATTERN:
+    case FIS_HATCH:
+    case FIS_USER:
+      EDEBUG("v_bar: Unimplemented filling style, %d!\n", vwk->fill_a.interior);
+      break;
+    default:
+      EDEBUG("v_bar: Unknown filling style, %d!\n", vwk->fill_a.interior);
+      break;
     }
+    
+    /* Don't draw frame if FIS_SOLID */
+    if(vwk->fill_a.perimeter && (vwk->fill_a.interior!=FIS_SOLID))
+    {
+      RECT lin;
+      
+      lin.x1 = vdipb->ptsin[0];
+      lin.x2 = vdipb->ptsin[2];
+      lin.y1 = lin.y2 = vdipb->ptsin[1];
+      if(do_lineclip(&lin, &vwk->clip))
+        FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
+      lin.x1 = vdipb->ptsin[0];
+      lin.x2 = vdipb->ptsin[2];
+      lin.y1 = lin.y2 = vdipb->ptsin[3];
+      if(do_lineclip(&lin, &vwk->clip))
+        FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
+      lin.x1 = lin.x2 = vdipb->ptsin[0];
+      lin.y1 = vdipb->ptsin[1];
+      lin.y2 = vdipb->ptsin[3];
+      if(do_lineclip(&lin, &vwk->clip))
+        FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
+      lin.x1 = lin.x2 = vdipb->ptsin[2];
+      lin.y1 = vdipb->ptsin[1];
+      lin.y2 = vdipb->ptsin[3];
+      if(do_lineclip(&lin, &vwk->clip))
+        FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
+    }
+  }
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 /* an idea I had to use bresenham's circle algorithm for arcs
@@ -207,6 +210,8 @@ void vdi_v_arc(VDI_Workstation *vwk)
     list_circle_points(x, y, radius, x_values);
 
 /*   EDEBUG("v_arc: Call not implemented!\n"); */
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 #endif /* idea of bresenham */
 
@@ -246,11 +251,17 @@ void vdi_v_arc(VDI_Workstation *vwk)
     linp.x1 = linp.x2;
     linp.y1 = linp.y2;
   }
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_pieslice(VDI_Workstation *vwk)
 {
   EDEBUG("v_pieslice: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 
@@ -276,96 +287,99 @@ void vdi_v_circle(VDI_Workstation *vwk)
   col = get_color(vwk, ni);
 
   switch(vwk->fill_a.interior)
+  {
+  case FIS_HOLLOW:
+    /* Just draw the frame. Maybe. */
+    break;
+  case FIS_SOLID:
+    x_values = calloc(radius+1, sizeof(int));
+    if(!x_values)
     {
-    case FIS_HOLLOW:
-      /* Just draw the frame. Maybe. */
-      break;
-    case FIS_SOLID:
-      x_values = calloc(radius+1, sizeof(int));
-      if(!x_values)
-	{
-	  EDEBUG("v_circle: Not enough memory to allocate circle buffers!\n");
-	  return;
-	}
-
-      x = 0;
-      y = radius;
-      p = 3-2*radius;
-      while(x < y)
-	{
-	  /* add the points to a buffer
-	     which is used for filling */
-	  list_circle_points(x, y, radius, x_values);
-	  if(p < 0)
-	    p += 4*x+6;
-	  else
-	    {
-	      p += 4*(x-y)+10;
-	      y--;
-	    }
-	  x++;
-	}
-      if(x == y)
-	list_circle_points(x, y, radius, x_values);
-
-      /* Draw horizontal lines for each line 
-	 calculated previously using the
-	 x_values list */
-      /* Lines are mirrored around the x-axis
-         and then mirrored around the y-axis */
-      for(y=-radius ; y<0 ; y++)
-	{
-	  lin_l.x1 = lin_u.x1 = -x_values[y+radius] + x_center;
-	  lin_l.x2 = lin_u.x2 =  x_values[y+radius] + x_center;
-	  lin_u.y1 = lin_u.y2 =  y + y_center;
-	  lin_l.y1 = lin_l.y2 = -y + y_center;
-	  if(do_lineclip(&lin_u, &vwk->clip))
-	    FBhline(vwk->fb, lin_u.x1, lin_u.x2, lin_u.y1, col);
-	  if(do_lineclip(&lin_l, &vwk->clip))
-	    FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
-	}
-      /* Finally the middle line which hasn't been drawn */
-      lin_l.x1 = -x_values[radius] + x_center;
-      lin_l.x2 =  x_values[radius] + x_center;
-      lin_l.y1 = lin_l.y2 = y_center;
-      if(do_lineclip(&lin_l, &vwk->clip))
-	FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
- 
-      free(x_values);
-
-      break;
-    case FIS_PATTERN:
-    case FIS_HATCH:
-    case FIS_USER:
-      EDEBUG("v_circle: Unimplemented filling style, %d!\n", vwk->fill_a.interior);
-      break;
-    default:
-      EDEBUG("v_circle: Unknown filling style, %d!\n", vwk->fill_a.interior);
-      break;
+      EDEBUG("v_circle: Not enough memory to allocate circle buffers!\n");
+      return;
     }
-
+    
+    x = 0;
+    y = radius;
+    p = 3-2*radius;
+    while(x < y)
+    {
+      /* add the points to a buffer
+         which is used for filling */
+      list_circle_points(x, y, radius, x_values);
+      if(p < 0)
+        p += 4*x+6;
+      else
+      {
+        p += 4*(x-y)+10;
+        y--;
+      }
+      x++;
+    }
+    if(x == y)
+      list_circle_points(x, y, radius, x_values);
+    
+    /* Draw horizontal lines for each line 
+       calculated previously using the
+       x_values list */
+    /* Lines are mirrored around the x-axis
+       and then mirrored around the y-axis */
+    for(y=-radius ; y<0 ; y++)
+    {
+      lin_l.x1 = lin_u.x1 = -x_values[y+radius] + x_center;
+      lin_l.x2 = lin_u.x2 =  x_values[y+radius] + x_center;
+      lin_u.y1 = lin_u.y2 =  y + y_center;
+      lin_l.y1 = lin_l.y2 = -y + y_center;
+      if(do_lineclip(&lin_u, &vwk->clip))
+        FBhline(vwk->fb, lin_u.x1, lin_u.x2, lin_u.y1, col);
+      if(do_lineclip(&lin_l, &vwk->clip))
+        FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+    }
+    /* Finally the middle line which hasn't been drawn */
+    lin_l.x1 = -x_values[radius] + x_center;
+    lin_l.x2 =  x_values[radius] + x_center;
+    lin_l.y1 = lin_l.y2 = y_center;
+    if(do_lineclip(&lin_l, &vwk->clip))
+      FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+    
+    free(x_values);
+    
+    break;
+  case FIS_PATTERN:
+  case FIS_HATCH:
+  case FIS_USER:
+    EDEBUG("v_circle: Unimplemented filling style, %d!\n", vwk->fill_a.interior);
+    break;
+  default:
+    EDEBUG("v_circle: Unknown filling style, %d!\n", vwk->fill_a.interior);
+    break;
+  }
+  
   /* Don't draw frame if FIS_SOLID */
   if(vwk->fill_a.perimeter && (vwk->fill_a.interior!=FIS_SOLID))
+  {
+    x = 0;
+    y = radius;
+    p = 3-2*radius;
+    
+    while(x < y)
     {
-      x = 0;
-      y = radius;
-      p = 3-2*radius;
-
-      while(x < y)
-	{
-	  set_circle_pixels(vwk->fb, x, y, x_center, y_center, &vwk->clip, col);
-	  if(p < 0)
-	    p += 4*x + 6;
-	  else
-	    {
-	      p += 4*(x-y) + 10;
-	      y--;
-	    }
-	  x++;
-	}
-      if(x == y)
-	set_circle_pixels(vwk->fb, x, y, x_center, y_center, &vwk->clip, col);
+      set_circle_pixels(vwk->fb, x, y, x_center, y_center, &vwk->clip, col);
+      if(p < 0)
+        p += 4*x + 6;
+      else
+      {
+        p += 4*(x-y) + 10;
+        y--;
+      }
+      x++;
     }
+    if(x == y)
+      set_circle_pixels(vwk->fb, x, y, x_center, y_center, &vwk->clip, col);
+  }
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 /* Could probably be imlemented with some kind of Bresenham */
@@ -401,6 +415,9 @@ void vdi_v_ellipse(VDI_Workstation *vwk)
     linp.x1 = linp.x2;
     linp.y1 = linp.y2;
   }
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_ellarc(VDI_Workstation *vwk)
@@ -439,11 +456,17 @@ void vdi_v_ellarc(VDI_Workstation *vwk)
     linp.x1 = linp.x2;
     linp.y1 = linp.y2;
   }
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_ellpie(VDI_Workstation *vwk)
 {
   EDEBUG("v_ellpie: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 
@@ -466,109 +489,112 @@ void vdi_v_rbox(VDI_Workstation *vwk)
 
   /* check if draw at all */
   if(do_rectclip(&cor, &vwk->clip))
-    {
-      ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
-      col = get_color(vwk, ni);
-
-      radius = RBOX_RADIUS(org);
-
-      lin.x1 = org.x1 + radius;
-      lin.x2 = org.x2 - radius;
-      lin.y1 = lin.y2 = org.y1;
-      if(do_lineclip(&lin, &vwk->clip))
-	FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
-      lin.x1 = org.x1 + radius;
-      lin.x2 = org.x2 - radius;
-      lin.y1 = lin.y2 = org.y2;
-      if(do_lineclip(&lin, &vwk->clip))
-	FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
-      lin.x1 = lin.x2 = org.x1;
-      lin.y1 = org.y1 + radius;
-      lin.y2 = org.y2 - radius;
-      if(do_lineclip(&lin, &vwk->clip))
-	FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
-      lin.x1 = lin.x2 = org.x2;
-      lin.y1 = org.y1+ radius;
-      lin.y2 = org.y2 - radius;
-      if(do_lineclip(&lin, &vwk->clip))
-	FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
-
-
-      if(radius > 0) {
-	/* do the rounded corners */
-	ul_xc = org.x1 + radius;
-	ul_yc = org.y1 + radius;
-	ur_xc = org.x2 - radius;
-	ur_yc = org.y1 + radius;
-	ll_xc = org.x1 + radius;
-	ll_yc = org.y2 - radius;
-	lr_xc = org.x2 - radius;
-	lr_yc = org.y2 - radius;
-
-	x = 0;
-	y = radius;
-	p = 3-2*radius;
-
-	while(x < y) {
-	  /* upper left corner */
-	  if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-	    FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
-	  if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-	    FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
-
-	  /* upper right corner */
-	  if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-	    FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
-	  if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-	    FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
-
-	  /* lower left corner */
-	  if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-	    FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
-	  if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
+  {
+    ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
+    col = get_color(vwk, ni);
+    
+    radius = RBOX_RADIUS(org);
+    
+    lin.x1 = org.x1 + radius;
+    lin.x2 = org.x2 - radius;
+    lin.y1 = lin.y2 = org.y1;
+    if(do_lineclip(&lin, &vwk->clip))
+      FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
+    lin.x1 = org.x1 + radius;
+    lin.x2 = org.x2 - radius;
+    lin.y1 = lin.y2 = org.y2;
+    if(do_lineclip(&lin, &vwk->clip))
+      FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
+    lin.x1 = lin.x2 = org.x1;
+    lin.y1 = org.y1 + radius;
+    lin.y2 = org.y2 - radius;
+    if(do_lineclip(&lin, &vwk->clip))
+      FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
+    lin.x1 = lin.x2 = org.x2;
+    lin.y1 = org.y1+ radius;
+    lin.y2 = org.y2 - radius;
+    if(do_lineclip(&lin, &vwk->clip))
+      FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
+    
+    
+    if(radius > 0) {
+      /* do the rounded corners */
+      ul_xc = org.x1 + radius;
+      ul_yc = org.y1 + radius;
+      ur_xc = org.x2 - radius;
+      ur_yc = org.y1 + radius;
+      ll_xc = org.x1 + radius;
+      ll_yc = org.y2 - radius;
+      lr_xc = org.x2 - radius;
+      lr_yc = org.y2 - radius;
+      
+      x = 0;
+      y = radius;
+      p = 3-2*radius;
+      
+      while(x < y) {
+        /* upper left corner */
+        if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
+          FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+        if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
+          FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+        
+        /* upper right corner */
+        if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
+          FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+        if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
+          FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+        
+        /* lower left corner */
+        if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
+          FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+        if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
 	    FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
-
-	  /* lower right corner */
-	  if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-	    FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
-	  if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
+        
+        /* lower right corner */
+        if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
+          FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+        if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
 	    FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
-
-	  if(p < 0)
-	    p += 4*x + 6;
-	  else {
-	    p += 4*(x-y) + 10;
-	    y--;
-	  }
-	  x++;
-	}
-	if(x == y) {
-	  /* upper left corner */
-	  if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-	    FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
-	  if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-	    FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
-
-	  /* upper right corner */
-	  if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-	    FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
-	  if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-	    FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
-
-	  /* lower left corner */
-	  if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-	    FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
-	  if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-	    FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
-
-	  /* lower right corner */
-	  if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-	    FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
-	  if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-	    FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
-	}
+        
+        if(p < 0)
+          p += 4*x + 6;
+        else {
+          p += 4*(x-y) + 10;
+          y--;
+        }
+        x++;
+      }
+      if(x == y) {
+        /* upper left corner */
+        if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
+          FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+        if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
+          FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+        
+        /* upper right corner */
+        if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
+          FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+        if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
+          FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+        
+        /* lower left corner */
+        if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
+          FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+        if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
+          FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+        
+        /* lower right corner */
+        if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
+          FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+        if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
+          FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
       }
     }
+  }
+  
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_rfbox(VDI_Workstation *vwk)
@@ -596,193 +622,199 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
     col = get_color(vwk, ni);
 
     switch(vwk->fill_a.interior)
+    {
+    case FIS_HOLLOW:
+      /* Just draw the frame. Maybe. */
+      break;
+    case FIS_SOLID:
+      x_values = calloc(radius+1, sizeof(int));
+      if(!x_values)
       {
-      case FIS_HOLLOW:
-	/* Just draw the frame. Maybe. */
-	break;
-      case FIS_SOLID:
-	x_values = calloc(radius+1, sizeof(int));
-	if(!x_values)
-	  {
-	    EDEBUG("v_rfbox: Not enough memory to allocate circle buffers!\n");
-	    return;
-	  }
-
-	ul_xc = org.x1 + radius;
-	ul_yc = org.y1 + radius;
-	ur_xc = org.x2 - radius;
-	ur_yc = org.y1 + radius;
-	ll_xc = org.x1 + radius;
-	ll_yc = org.y2 - radius;
-	lr_xc = org.x2 - radius;
-	lr_yc = org.y2 - radius;
-
-	x = 0;
-	y = radius;
-	p = 3-2*radius;
-	while(x < y)
-	  {
-	    /* add the points to a buffer
-	       which is used for filling */
-	    list_circle_points(x, y, radius, x_values);
-	    if(p < 0)
-	      p += 4*x+6;
-	    else
-	      {
-		p += 4*(x-y)+10;
-		y--;
-	      }
-	    x++;
-	  }
-	if(x == y)
-	  list_circle_points(x, y, radius, x_values);
-
-	/* Draw horizontal lines for each line 
-	   calculated previously using the
-	   x_values list */
-	/* Lines are mirrored around the x-axis
-	   and then mirrored around the y-axis */
-	/* this is only the "corner" scanlines */
-	for(y=-radius ; y<0 ; y++)
-	  {
-	    lin_l.x1 = lin_u.x1 = -x_values[y+radius] + ul_xc;
-	    lin_l.x2 = lin_u.x2 =  x_values[y+radius] + ur_xc;
-	    lin_u.y1 = lin_u.y2 =  y + ul_yc;
-	    lin_l.y1 = lin_l.y2 = -y + ll_yc;
-	    if(do_lineclip(&lin_u, &vwk->clip))
-	      FBhline(vwk->fb, lin_u.x1, lin_u.x2, lin_u.y1, col);
-	    if(do_lineclip(&lin_l, &vwk->clip))
-	      FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
-	  }
-	/* Draw the middle lines */
-	for(y=ul_yc ; y<=ll_yc ; y++) {
-	  /* have to set these for every line, because of clipping */
-	  lin_l.x1 = org.x1;
-	  lin_l.x2 = org.x2;
-	  lin_l.y1 = lin_l.y2 = y;
-	  if(do_lineclip(&lin_l, &vwk->clip))
-	    FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
-	} 
-
-	free(x_values);
-
-	break;
-      case FIS_PATTERN:
-      case FIS_HATCH:
-      case FIS_USER:
-	EDEBUG("v_circle: Unimplemented filling style, %d!\n", vwk->fill_a.interior);
-	break;
-      default:
-	EDEBUG("v_circle: Unknown filling style, %d!\n", vwk->fill_a.interior);
-	break;
+        EDEBUG("v_rfbox: Not enough memory to allocate circle buffers!\n");
+        return;
       }
-
+      
+      ul_xc = org.x1 + radius;
+      ul_yc = org.y1 + radius;
+      ur_xc = org.x2 - radius;
+      ur_yc = org.y1 + radius;
+      ll_xc = org.x1 + radius;
+      ll_yc = org.y2 - radius;
+      lr_xc = org.x2 - radius;
+      lr_yc = org.y2 - radius;
+      
+      x = 0;
+      y = radius;
+      p = 3-2*radius;
+      while(x < y)
+      {
+        /* add the points to a buffer
+           which is used for filling */
+        list_circle_points(x, y, radius, x_values);
+        if(p < 0)
+          p += 4*x+6;
+        else
+        {
+          p += 4*(x-y)+10;
+          y--;
+        }
+        x++;
+      }
+      if(x == y)
+        list_circle_points(x, y, radius, x_values);
+      
+      /* Draw horizontal lines for each line 
+         calculated previously using the
+         x_values list */
+      /* Lines are mirrored around the x-axis
+         and then mirrored around the y-axis */
+      /* this is only the "corner" scanlines */
+      for(y=-radius ; y<0 ; y++)
+      {
+        lin_l.x1 = lin_u.x1 = -x_values[y+radius] + ul_xc;
+        lin_l.x2 = lin_u.x2 =  x_values[y+radius] + ur_xc;
+        lin_u.y1 = lin_u.y2 =  y + ul_yc;
+        lin_l.y1 = lin_l.y2 = -y + ll_yc;
+        if(do_lineclip(&lin_u, &vwk->clip))
+          FBhline(vwk->fb, lin_u.x1, lin_u.x2, lin_u.y1, col);
+        if(do_lineclip(&lin_l, &vwk->clip))
+          FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+      }
+      /* Draw the middle lines */
+      for(y=ul_yc ; y<=ll_yc ; y++) {
+        /* have to set these for every line, because of clipping */
+        lin_l.x1 = org.x1;
+        lin_l.x2 = org.x2;
+        lin_l.y1 = lin_l.y2 = y;
+        if(do_lineclip(&lin_l, &vwk->clip))
+          FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+      } 
+      
+      free(x_values);
+      
+      break;
+    case FIS_PATTERN:
+    case FIS_HATCH:
+    case FIS_USER:
+      EDEBUG("v_circle: Unimplemented filling style, %d!\n", vwk->fill_a.interior);
+      break;
+    default:
+      EDEBUG("v_circle: Unknown filling style, %d!\n", vwk->fill_a.interior);
+      break;
+    }
+    
     /* Don't draw frame if FIS_SOLID */
     if(vwk->fill_a.perimeter && (vwk->fill_a.interior!=FIS_SOLID))
-      {
-	lin.x1 = org.x1 + radius;
-	lin.x2 = org.x2 - radius;
-	lin.y1 = lin.y2 = org.y1;
-	if(do_lineclip(&lin, &vwk->clip))
-	  FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
-	lin.x1 = org.x1 + radius;
-	lin.x2 = org.x2 - radius;
-	lin.y1 = lin.y2 = org.y2;
-	if(do_lineclip(&lin, &vwk->clip))
-	  FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
-	lin.x1 = lin.x2 = org.x1;
-	lin.y1 = org.y1 + radius;
-	lin.y2 = org.y2 - radius;
-	if(do_lineclip(&lin, &vwk->clip))
-	  FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
-	lin.x1 = lin.x2 = org.x2;
-	lin.y1 = org.y1+ radius;
-	lin.y2 = org.y2 - radius;
-	if(do_lineclip(&lin, &vwk->clip))
-	  FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
-
-
-	if(radius > 0) {
-	  /* do the rounded corners */
-	  ul_xc = org.x1 + radius;
-	  ul_yc = org.y1 + radius;
-	  ur_xc = org.x2 - radius;
-	  ur_yc = org.y1 + radius;
-	  ll_xc = org.x1 + radius;
-	  ll_yc = org.y2 - radius;
-	  lr_xc = org.x2 - radius;
-	  lr_yc = org.y2 - radius;
-
-	  x = 0;
-	  y = radius;
-	  p = 3-2*radius;
-
-	  while(x < y) {
-	    /* upper left corner */
-	    if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-	      FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
-	    if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-	      FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
-
-	    /* upper right corner */
-	    if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-	      FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
-	    if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-	      FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
-
-	    /* lower left corner */
-	    if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-	      FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
-	    if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-	      FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
-
-	    /* lower right corner */
-	    if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-	      FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
-	    if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-	      FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
-
-	    if(p < 0)
-	      p += 4*x + 6;
-	    else {
-	      p += 4*(x-y) + 10;
-	      y--;
-	    }
-	    x++;
-	  }
-	  if(x == y) {
-	    /* upper left corner */
-	    if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-	      FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
-	    if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-	      FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
-
-	    /* upper right corner */
-	    if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-	      FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
-	    if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-	      FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
-
-	    /* lower left corner */
-	    if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-	      FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
-	    if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-	      FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
-
-	    /* lower right corner */
-	    if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-	      FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
-	    if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-	      FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
-	  }
-	}
+    {
+      lin.x1 = org.x1 + radius;
+      lin.x2 = org.x2 - radius;
+      lin.y1 = lin.y2 = org.y1;
+      if(do_lineclip(&lin, &vwk->clip))
+        FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
+      lin.x1 = org.x1 + radius;
+      lin.x2 = org.x2 - radius;
+      lin.y1 = lin.y2 = org.y2;
+      if(do_lineclip(&lin, &vwk->clip))
+        FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
+      lin.x1 = lin.x2 = org.x1;
+      lin.y1 = org.y1 + radius;
+      lin.y2 = org.y2 - radius;
+      if(do_lineclip(&lin, &vwk->clip))
+        FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
+      lin.x1 = lin.x2 = org.x2;
+      lin.y1 = org.y1+ radius;
+      lin.y2 = org.y2 - radius;
+      if(do_lineclip(&lin, &vwk->clip))
+        FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
+      
+      
+      if(radius > 0) {
+        /* do the rounded corners */
+        ul_xc = org.x1 + radius;
+        ul_yc = org.y1 + radius;
+        ur_xc = org.x2 - radius;
+        ur_yc = org.y1 + radius;
+        ll_xc = org.x1 + radius;
+        ll_yc = org.y2 - radius;
+        lr_xc = org.x2 - radius;
+        lr_yc = org.y2 - radius;
+        
+        x = 0;
+        y = radius;
+        p = 3-2*radius;
+        
+        while(x < y) {
+          /* upper left corner */
+          if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
+            FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+          if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
+            FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+          
+          /* upper right corner */
+          if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
+            FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+          if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
+            FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+          
+          /* lower left corner */
+          if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
+            FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+          if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
+            FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+          
+          /* lower right corner */
+          if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
+            FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+          if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
+            FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
+          
+          if(p < 0)
+            p += 4*x + 6;
+          else {
+            p += 4*(x-y) + 10;
+            y--;
+          }
+          x++;
+        }
+        if(x == y) {
+          /* upper left corner */
+          if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
+            FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+          if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
+            FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+          
+          /* upper right corner */
+          if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
+            FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+          if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
+            FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+          
+          /* lower left corner */
+          if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
+            FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+          if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
+            FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+          
+          /* lower right corner */
+          if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
+            FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+          if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
+            FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
+        }
       }
+    }
   }
+  
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_justified(VDI_Workstation *vwk)
 {
   EDEBUG("v_justified: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 

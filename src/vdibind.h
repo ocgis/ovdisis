@@ -253,7 +253,7 @@ extern void vex_keyv(int  handle,
                                        int scan));
 extern void vq_extnd(int, int, int *);
 extern void vq_key_s(int, int *);
-extern void vq_color(int, int, int, int *);
+extern int  vq_color(int, int, int, int *);
 extern void vql_attributes(int, int *);
 extern void vqm_attributes(int, int *);
 extern void vqf_attributes(int, int *);

@@ -111,6 +111,9 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
 
   IDEBUG("vro_cpyfm: %d,%d -> %d,%d  w: %d h: %d mode: %d\n",fbb->s_xmin, fbb->s_ymin,
 	 fbb->d_xmin, fbb->d_ymin, fbb->b_wd, fbb->b_ht, vdipb->intin[0]);
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vrt_cpyfm(VDI_Workstation *vwk)
@@ -240,10 +243,16 @@ void vdi_vrt_cpyfm(VDI_Workstation *vwk)
 
   IDEBUG("vrt_cpyfm: %d,%d -> %d,%d  w: %d h: %d mode: %d\n",fbb->s_xmin, fbb->s_ymin,
 	 fbb->d_xmin, fbb->d_ymin, fbb->b_wd, fbb->b_ht, vdipb->intin[0]);
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vr_trnfm(VDI_Workstation *vwk)
 {
   EDEBUG("vr_trnfm: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 

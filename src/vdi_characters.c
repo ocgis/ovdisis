@@ -54,81 +54,129 @@ void vdi_characters(VDI_Workstation *vwk)
 void vdi_vq_chcells(VDI_Workstation *vwk)
 {
   EDEBUG("vq_chcells: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 2;
 }
 
 void vdi_v_exit_cur(VDI_Workstation *vwk)
 {
   EDEBUG("v_exit_cur: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_enter_cur(VDI_Workstation *vwk)
 {
   EDEBUG("v_enter_cur: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curup(VDI_Workstation *vwk)
 {
   EDEBUG("v_curup: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curdown(VDI_Workstation *vwk)
 {
   EDEBUG("v_curdown: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curright(VDI_Workstation *vwk)
 {
   EDEBUG("v_curright: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curleft(VDI_Workstation *vwk)
 {
   EDEBUG("v_curleft: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curhome(VDI_Workstation *vwk)
 {
   EDEBUG("v_curhome: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_eeos(VDI_Workstation *vwk)
 {
   EDEBUG("v_eeos: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_eeol(VDI_Workstation *vwk)
 {
   EDEBUG("v_eeol: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curaddress(VDI_Workstation *vwk)
 {
   EDEBUG("v_curaddress: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_curtext(VDI_Workstation *vwk)
 {
   EDEBUG("v_curtext: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_rvon(VDI_Workstation *vwk)
 {
   EDEBUG("v_rvon: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_rvoff(VDI_Workstation *vwk)
 {
   EDEBUG("v_rvoff: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vq_curaddress(VDI_Workstation *vwk)
 {
   EDEBUG("vq_curaddress: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 2;
 }
 
 void vdi_v_hardcopy(VDI_Workstation *vwk)
 {
   EDEBUG("v_hardcopy: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 

@@ -35,6 +35,8 @@ void v_opnwk(int work_in[11], int *handle, int work_out[57])
     o_vdipb.intin[i] = work_in[i];
 
   o_vdipb.contrl[ROUTINE] = 1;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 11;
   vdi_call(&o_vdipb);
 
   for(i=0 ; i<45 ; i++)
@@ -49,6 +51,8 @@ void v_clswk(int handle)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 2;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -61,6 +65,8 @@ void v_opnvwk(int work_in[11], int *handle, int work_out[57])
 
   o_vdipb.contrl[VDI_HANDLE] = *handle;
   o_vdipb.contrl[ROUTINE] = 100;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 11;
   vdi_call(&o_vdipb);
 
   for(i=0 ; i<45 ; i++)
@@ -75,6 +81,8 @@ void v_clsvwk(int handle)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 101;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -82,6 +90,8 @@ void v_clrwk(int handle)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 3;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -89,6 +99,8 @@ void v_updwk(int handle)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 4;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -104,6 +116,8 @@ void vs_clip(int handle, int clipping, int pxy[4])
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 129;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -113,6 +127,8 @@ int vswr_mode(int handle, int mode)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 32;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -127,6 +143,8 @@ void vs_color(int handle, int index, int rgb[3])
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 14;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 4;
   vdi_call(&o_vdipb);
 }
 
@@ -139,6 +157,7 @@ void v_gtext(int handle, int x, int y, char *string)
   
   while((o_vdipb.intin[i++] = (int)*string++) != 0);
 
+  o_vdipb.contrl[N_PTSIN] = 1;
   o_vdipb.contrl[N_INTIN] = --i;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -152,6 +171,8 @@ int vst_color(int handle, int index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 22;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -165,6 +186,8 @@ void vst_height(int handle, int height, int *t_width, int *t_height,
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 12;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *t_width = o_vdipb.ptsout[0];
@@ -180,6 +203,8 @@ int vst_point(int handle, int height, int *t_width, int *t_height,
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 107;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   *t_width = o_vdipb.ptsout[0];
@@ -196,6 +221,8 @@ int vst_effects(int handle, int attribute)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 106;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -208,6 +235,8 @@ void vst_alignment(int handle, int h_in, int v_in, int *h_out, int *v_out)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 39;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 2;
   vdi_call(&o_vdipb);
 
   *h_out = o_vdipb.intout[0];
@@ -220,6 +249,8 @@ int vst_rotation(int handle, int rot)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 13;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -231,6 +262,8 @@ int vst_font(int handle, int index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 21;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -242,6 +275,8 @@ int vst_load_fonts(int handle, int rsrvd)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 119;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -253,6 +288,8 @@ void vst_unload_fonts(int handle, int select)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 120;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -266,6 +303,8 @@ int vst_arbpt (int   handle,
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 246;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   *wchar = o_vdipb.ptsout[0];
@@ -281,12 +320,13 @@ void v_pline(int handle, int nr, int *coords)
   int i;
 
   for(i=0 ; i<nr ; i++)
-    {
-      o_vdipb.ptsin[i*2+0] = coords[i*2+0];
-      o_vdipb.ptsin[i*2+1] = coords[i*2+1];
-    }
-
+  {
+    o_vdipb.ptsin[i*2+0] = coords[i*2+0];
+    o_vdipb.ptsin[i*2+1] = coords[i*2+1];
+  }
+  
   o_vdipb.contrl[N_PTSIN] = nr;
+  o_vdipb.contrl[N_INTIN] = 0;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 6;
   vdi_call(&o_vdipb);
@@ -298,6 +338,8 @@ int vsl_color(int handle, int index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 17;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -310,6 +352,8 @@ int vsl_width(int handle, int width)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 16;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   return o_vdipb.ptsout[0];
@@ -321,6 +365,8 @@ int vsl_type(int handle, int type)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 15;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -332,6 +378,8 @@ void vsl_udsty(int handle, int lmask)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 113;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -342,6 +390,8 @@ void vsl_ends(int handle, int lbeg, int lend)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 108;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 2;
   vdi_call(&o_vdipb);
 }
 
@@ -350,12 +400,13 @@ void v_pmarker(int handle, int nr, int *coords)
   int i;
 
   for(i=0 ; i<nr ; i++)
-    {
-      o_vdipb.ptsin[i*2+0] = coords[i*2+0];
-      o_vdipb.ptsin[i*2+1] = coords[i*2+1];
-    }
-
+  {
+    o_vdipb.ptsin[i*2+0] = coords[i*2+0];
+    o_vdipb.ptsin[i*2+1] = coords[i*2+1];
+  }
+  
   o_vdipb.contrl[N_PTSIN] = nr;
+  o_vdipb.contrl[N_INTIN] = 0;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 7;
   vdi_call(&o_vdipb);
@@ -367,6 +418,8 @@ int vsm_color(int handle, int index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 20;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -379,6 +432,8 @@ int vsm_height(int handle, int height)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 19;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   return o_vdipb.ptsout[1];
@@ -390,6 +445,8 @@ int vsm_type(int handle, int type)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 18;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -400,14 +457,15 @@ void v_fillarea(int handle, int nr, int *coords)
   int i;
 
   for(i=0 ; i<nr ; i++)
-    {
-      o_vdipb.ptsin[i*2+0] = coords[i*2+0];
-      o_vdipb.ptsin[i*2+1] = coords[i*2+1];
-    }
-
-  o_vdipb.contrl[N_PTSIN] = nr;
+  {
+    o_vdipb.ptsin[i*2+0] = coords[i*2+0];
+    o_vdipb.ptsin[i*2+1] = coords[i*2+1];
+  }
+  
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 9;
+  o_vdipb.contrl[N_PTSIN] = nr;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -420,6 +478,8 @@ void vr_recfl(int handle, int coords[4])
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 114;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -431,6 +491,8 @@ void v_contourfill(int handle, int x, int y, int index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 103;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -440,6 +502,8 @@ int vsf_color(int handle, int index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 25;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -451,6 +515,8 @@ int vsf_interior(int handle, int interior)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 23;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -462,6 +528,8 @@ int vsf_style(int handle, int style)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 24;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -475,9 +543,10 @@ void vsf_udpat(int handle, int *pat, int nbpl)
     for(j=0 ; j<16 ; j++)
       o_vdipb.intin[i*16+j] = (unsigned short)pat[i*16+j];
 
-  o_vdipb.contrl[N_INTIN] = nbpl*16;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 112;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = nbpl * 16;
   vdi_call(&o_vdipb);
 }
 
@@ -487,6 +556,8 @@ int vsf_perimeter(int handle, int perimeter)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 104;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   return o_vdipb.intout[0];
@@ -502,6 +573,8 @@ void v_bar(int handle, int pxy[4])
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 1;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -522,6 +595,8 @@ void v_arc(int handle, int x, int y, int rad, int abeg, int aend)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 2;
+  o_vdipb.contrl[N_PTSIN] = 4;
+  o_vdipb.contrl[N_INTIN] = 2;
   vdi_call(&o_vdipb);
 }
 
@@ -542,6 +617,8 @@ void v_pieslice(int handle, int x, int y, int rad, int abeg, int aend)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 3;
+  o_vdipb.contrl[N_PTSIN] = 4;
+  o_vdipb.contrl[N_INTIN] = 2;
   vdi_call(&o_vdipb);
 }
 
@@ -557,6 +634,8 @@ void v_circle(int handle, int x, int y, int rad)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 4;
+  o_vdipb.contrl[N_PTSIN] = 3;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -570,6 +649,8 @@ void v_ellipse(int handle, int x, int y, int xrad, int yrad)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 5;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -586,6 +667,8 @@ void v_ellarc(int handle, int x, int y, int xrad, int yrad, int abeg, int aend)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 6;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -602,6 +685,8 @@ void v_ellpie(int handle, int x, int y, int xrad, int yrad, int abeg, int aend)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 7;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -615,6 +700,8 @@ void v_rbox(int handle, int pxy[4])
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 8;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -628,13 +715,15 @@ void v_rfbox(int handle, int pxy[4])
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 9;
+  o_vdipb.contrl[N_PTSIN] = 2;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
 void v_justified(int handle, int x, int y, char *string, int len, int wext, int cext)
 {
   int i;
-
+  
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = len;
@@ -642,18 +731,19 @@ void v_justified(int handle, int x, int y, char *string, int len, int wext, int 
   
   o_vdipb.intin[0] = wext;
   o_vdipb.intin[1] = cext;
-
+  
   i=0;
   while(string[i])
-    {
-      o_vdipb.intin[i+2] = (short)string[i];
-      i++;
-    }
-  o_vdipb.contrl[N_INTIN] = i+2;
-
+  {
+    o_vdipb.intin[i+2] = (short)string[i];
+    i++;
+  }
+  
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 11;
   o_vdipb.contrl[SUBROUTINE] = 10;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = i+2;
   vdi_call(&o_vdipb);
 }
 
@@ -673,6 +763,8 @@ void vro_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 109;
+  o_vdipb.contrl[N_PTSIN] = 4;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -694,6 +786,8 @@ void vrt_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest, int i
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 121;
+  o_vdipb.contrl[N_PTSIN] = 4;
+  o_vdipb.contrl[N_INTIN] = 3;
   vdi_call(&o_vdipb);
 }
 
@@ -706,6 +800,8 @@ void vr_trnfm(int handle, MFDB *src, MFDB *dest)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 110;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -716,6 +812,8 @@ void v_get_pixel(int handle, int x, int y, int *p_val, int *p_index)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 105;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *p_val = o_vdipb.intout[0];
@@ -731,6 +829,8 @@ void vsc_form(int handle, int data[37])
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 111;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 37;
   vdi_call(&o_vdipb);
 }
 
@@ -738,14 +838,15 @@ void vex_timv(int handle, void *newr, void *oldr, int *time)
 {
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
-  o_vdipb.contrl[9] = MSW(oldr);
-  o_vdipb.contrl[10] = LSW(oldr);
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 118;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *time = o_vdipb.intout[0];
+  *(long *)oldr = ((long)o_vdipb.contrl[9] << 16) +  o_vdipb.contrl[10];
 }
 
 void v_show_c(int handle, int reset)
@@ -754,6 +855,8 @@ void v_show_c(int handle, int reset)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 122;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 }
 
@@ -761,6 +864,8 @@ void v_hide_c(int handle)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 123;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -768,6 +873,8 @@ void vq_mouse(int handle, int *buttons, int *x, int *y)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 124;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *buttons = o_vdipb.intout[0];
@@ -782,36 +889,42 @@ vex_butv (int  handle,
 {
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
-  o_vdipb.contrl[9] = MSW(oldr);
-  o_vdipb.contrl[10] = LSW(oldr);
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 125;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
+
+  *(long *)oldr = ((long)o_vdipb.contrl[9] << 16) +  o_vdipb.contrl[10];
 }
 
 void vex_motv(int handle, void *newr, void *oldr)
 {
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
-  o_vdipb.contrl[9] = MSW(oldr);
-  o_vdipb.contrl[10] = LSW(oldr);
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   o_vdipb.contrl[ROUTINE] = 126;
   vdi_call(&o_vdipb);
+
+  *(long *)oldr = ((long)o_vdipb.contrl[9] << 16) +  o_vdipb.contrl[10];
 }
 
 void vex_curv(int handle, void *newr, void *oldr)
 {
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
-  o_vdipb.contrl[9] = MSW(oldr);
-  o_vdipb.contrl[10] = LSW(oldr);
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   o_vdipb.contrl[ROUTINE] = 127;
   vdi_call(&o_vdipb);
+
+  *(long *)oldr = ((long)o_vdipb.contrl[9] << 16) +  o_vdipb.contrl[10];
 }
 
 void vq_extnd(int handle, int ext, int work_out[57])
@@ -822,6 +935,8 @@ void vq_extnd(int handle, int ext, int work_out[57])
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 102;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   for(i=0 ; i<45 ; i++)
@@ -834,29 +949,38 @@ void vq_key_s(int handle, int *keys)
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 128;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *keys = o_vdipb.intout[0];
 }
 
-void vq_color(int handle, int index, int flag, int rgb[3])
+int
+vq_color(int handle, int index, int flag, int rgb[3])
 {
   o_vdipb.intin[0] = index;
   o_vdipb.intin[1] = flag;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 26;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 2;
   vdi_call(&o_vdipb);
 
   rgb[0] = o_vdipb.intout[1];
   rgb[1] = o_vdipb.intout[2];
   rgb[2] = o_vdipb.intout[3];
+
+  return o_vdipb.intout[0];
 }
 
 void vql_attributes(int handle, int attr[6])
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 35;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   attr[0] = o_vdipb.intout[0];
@@ -872,6 +996,8 @@ void vqm_attributes(int handle, int attr[5])
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 36;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   attr[0] = o_vdipb.intout[0];
@@ -886,6 +1012,8 @@ void vqf_attributes(int handle, int attr[5])
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 37;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   attr[0] = o_vdipb.intout[0];
@@ -899,6 +1027,8 @@ void vqt_attributes(int handle, int attr[10])
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 38;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   attr[0] = o_vdipb.intout[0];
@@ -917,19 +1047,20 @@ void vqt_attributes(int handle, int attr[10])
 void vqt_extent(int handle, char *string, int coords[8])
 {
   int i;
-
+  
   i=0;
   while(string[i])
-    {
-      o_vdipb.intin[i] = (short)string[i];
-      i++;
-    }
-  o_vdipb.contrl[N_INTIN] = i;
-
+  {
+    o_vdipb.intin[i] = (short)string[i];
+    i++;
+  }
+  
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 116;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = i;
   vdi_call(&o_vdipb);
-
+  
   for(i=0 ; i<8 ; i++)
     coords[i] = o_vdipb.ptsout[i];
 }
@@ -940,6 +1071,8 @@ int vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 117;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   *cwidth = o_vdipb.ptsout[0];
@@ -957,6 +1090,8 @@ int vqt_name(int handle, int index, char *fontname)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 130;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   for(i=0 ; i<33 ; i++)
@@ -970,6 +1105,8 @@ void vqt_fontinfo(int handle, int *first, int *last,
 {
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 131;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *first = o_vdipb.intout[0];
@@ -991,6 +1128,8 @@ void vqin_mode(int handle, int dev, int *mode)
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 115;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 1;
   vdi_call(&o_vdipb);
 
   *mode = o_vdipb.intout[0];
@@ -1001,6 +1140,8 @@ void vq_chcells(int handle, int *rows, int *cols)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 1;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *rows = o_vdipb.intout[0];
@@ -1012,6 +1153,8 @@ void v_exit_cur(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 2;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1020,6 +1163,8 @@ void v_enter_cur(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 3;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1028,6 +1173,8 @@ void v_curup(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 4;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1036,6 +1183,8 @@ void v_curdown(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 5;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1044,6 +1193,8 @@ void v_curright(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 6;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1052,6 +1203,8 @@ void v_curleft(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 7;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1060,6 +1213,8 @@ void v_curhome(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 8;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1068,6 +1223,8 @@ void v_eeos(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 9;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1076,6 +1233,8 @@ void v_eeol(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 10;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1087,6 +1246,8 @@ void vs_curaddress(int handle, int row, int col)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 11;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 2;
   vdi_call(&o_vdipb);
 }
 
@@ -1096,15 +1257,16 @@ void v_curtext(int handle, char *string)
 
   i=0;
   while(string[i])
-    {
-      o_vdipb.intin[i] = (short)string[i];
-      i++;
-    }
-  o_vdipb.contrl[N_INTIN] = i;
-
+  {
+    o_vdipb.intin[i] = (short)string[i];
+    i++;
+  }
+  
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 12;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = i;
   vdi_call(&o_vdipb);
 }
 
@@ -1113,6 +1275,8 @@ void v_rvon(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 13;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1121,6 +1285,8 @@ void v_rvoff(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 14;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1129,6 +1295,8 @@ void vq_curaddress(int handle, int *row, int *col)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 15;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 
   *row = o_vdipb.intout[0];
@@ -1140,6 +1308,8 @@ void v_hardcopy(int handle)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 17;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
 }
 
@@ -1152,12 +1322,14 @@ void vex_keyv(int  handle,
                                 int scan)) {
   o_vdipb.contrl[7] = MSW(keyv);
   o_vdipb.contrl[8] = LSW(keyv);
-  o_vdipb.contrl[9] = MSW(old_keyv);
-  o_vdipb.contrl[10] = LSW(old_keyv);
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 132;
+  o_vdipb.contrl[N_PTSIN] = 0;
+  o_vdipb.contrl[N_INTIN] = 0;
   vdi_call(&o_vdipb);
+
+  *(long *)old_keyv = ((long)o_vdipb.contrl[9] << 16) +  o_vdipb.contrl[10];
 }
 
 int vq_gdos(void) {

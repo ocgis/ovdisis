@@ -21,6 +21,7 @@
 ** Exported
 **
 ** 1999-01-02 CG
+** 1999-05-22 CG
 */
 void
 vdi_vsc_form (VDI_Workstation * vwk) {
@@ -41,6 +42,9 @@ vdi_vsc_form (VDI_Workstation * vwk) {
   fprintf (stderr,
            "vdi_mouse.c: vdi_vsc_form: mf_bg = %d\n",
            new_mouse->mf_bg);
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 
@@ -49,10 +53,14 @@ vdi_vsc_form (VDI_Workstation * vwk) {
 ** Implementetation of v_show_c()
 **
 ** 1999-01-03 CG
+** 1999-05-22 CG
 */
 void
 vdi_v_show_c (VDI_Workstation *vwk) {
   increase_mouse_visibility ();
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 
@@ -61,15 +69,22 @@ vdi_v_show_c (VDI_Workstation *vwk) {
 ** Implementetation of v_hide_c()
 **
 ** 1999-01-03 CG
+** 1999-05-22 CG
 */
 void vdi_v_hide_c(VDI_Workstation *vwk)
 {
   decrease_mouse_visibility ();
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vq_mouse(VDI_Workstation *vwk)
 {
   EDEBUG("vq_mouse: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 1;
+  vdipb->contrl[N_INTOUT] = 1;
 }
 
 
@@ -123,6 +138,9 @@ void vdi_vex_motv(VDI_Workstation *vwk)
 void vdi_vex_curv(VDI_Workstation *vwk)
 {
   EDEBUG("vex_curv: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 

@@ -50,6 +50,8 @@ void vdi_vs_color(VDI_Workstation *vwk)
   if(vwk->inq.attr.planes < 16)
     ADEBUG("vs_color: Which means cmap colour %d is set to: %u, %u, %u\n",
 	   ni, vwk->fb->cmap->red[ni], vwk->fb->cmap->green[ni], vwk->fb->cmap->blue[ni]);
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vq_color(VDI_Workstation *vwk)
@@ -61,33 +63,34 @@ void vdi_vq_color(VDI_Workstation *vwk)
   if(i > vwk->dev.attr.colors)
     vdipb->intout[0] = -1;    /* Color out of range */
   else
+  {
+    ni = gem2tos_color(vwk->inq.attr.planes, i);
+    vdipb->intout[0] = i;
+    
+    /* Return the actual colour */
+    if(vdipb->intin[1] && (vwk->inq.attr.planes < 16))
     {
-      ni = gem2tos_color(vwk->inq.attr.planes, i);
-      vdipb->intout[0] = i;
-
-      /* Return the actual colour */
-      if(vdipb->intin[1] && (vwk->inq.attr.planes < 16))
-	{
-	  vdipb->intout[1] = (short)((vwk->fb->cmap->red[ni]   * 1000) / 65535);
-	  vdipb->intout[2] = (short)((vwk->fb->cmap->green[ni] * 1000) / 65535);
-	  vdipb->intout[3] = (short)((vwk->fb->cmap->blue[ni]  * 1000) / 65535);
-
-	  ADEBUG("vq_color: Cmap colour %d is %u, %u, %u\n",
-		 ni,vwk->fb->cmap->red[ni],vwk->fb->cmap->green[ni],vwk->fb->cmap->blue[ni]);
-	  ADEBUG("vq_color: Which means VDI colour %d is %u, %u, %u\n",
-		 i,vdipb->intout[1],vdipb->intout[2],vdipb->intout[3]);
-	}
-      else /* Return the set value, or value of virtual pen if TC mode */
-	{
-	  vdipb->intout[1] = (short)vwk->vdi_cmap.red[i];
-	  vdipb->intout[2] = (short)vwk->vdi_cmap.green[i];
-	  vdipb->intout[3] = (short)vwk->vdi_cmap.blue[i];
-
-	  ADEBUG("vq_color: VDI colour %d was set to %u, %u, %u\n",
-		 i,vdipb->intout[1],vdipb->intout[2],vdipb->intout[3]);
-	}
+      vdipb->intout[1] = (short)((vwk->fb->cmap->red[ni]   * 1000) / 65535);
+      vdipb->intout[2] = (short)((vwk->fb->cmap->green[ni] * 1000) / 65535);
+      vdipb->intout[3] = (short)((vwk->fb->cmap->blue[ni]  * 1000) / 65535);
+      
+      ADEBUG("vq_color: Cmap colour %d is %u, %u, %u\n",
+             ni,vwk->fb->cmap->red[ni],vwk->fb->cmap->green[ni],vwk->fb->cmap->blue[ni]);
+      ADEBUG("vq_color: Which means VDI colour %d is %u, %u, %u\n",
+             i,vdipb->intout[1],vdipb->intout[2],vdipb->intout[3]);
     }
-
+    else /* Return the set value, or value of virtual pen if TC mode */
+    {
+      vdipb->intout[1] = (short)vwk->vdi_cmap.red[i];
+      vdipb->intout[2] = (short)vwk->vdi_cmap.green[i];
+      vdipb->intout[3] = (short)vwk->vdi_cmap.blue[i];
+      
+      ADEBUG("vq_color: VDI colour %d was set to %u, %u, %u\n",
+             i,vdipb->intout[1],vdipb->intout[2],vdipb->intout[3]);
+    }
+  }
+  
+  vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 4;
 }
 
@@ -117,6 +120,7 @@ void vdi_v_get_pixel(VDI_Workstation *vwk)
       vdipb->intout[1] = tc;
     }
 
+  vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 2;
 }
 
@@ -127,6 +131,7 @@ void vdi_v_get_pixel(VDI_Workstation *vwk)
 ** workstation and let the handler do the calls.
 **
 ** 1998-12-26 CG
+** 1999-05-22 CG
 */
 void
 vdi_vex_timv (VDI_Workstation *vwk) {
@@ -151,11 +156,18 @@ vdi_vex_timv (VDI_Workstation *vwk) {
 void vdi_vq_key_s(VDI_Workstation *vwk)
 {
   EDEBUG("vq_key_s: Call not implemented!\n");
+
+  /* Return number of returned values */
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 1;
 }
 
 void vdi_vqin_mode(VDI_Workstation *vwk)
 {
   EDEBUG("vqin_mode: Call not implemented!\n");
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 1;
 }
 
 

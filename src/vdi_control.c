@@ -285,6 +285,9 @@ vdi_v_clswk (VDI_Workstation *vwk)
    */
 
   wk_open[w] = WS_NOTOPEN;
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 
@@ -422,6 +425,9 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
   wsfree (v);
   wk_open[v] = WS_NOTOPEN;
 
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
+
   ADEBUG("v_clsvwk: Virtual workstation, handle %d freed\n", v + 1);
 }
 
@@ -446,11 +452,16 @@ void vdi_v_clrwk(VDI_Workstation *vwk)
 
   for (; mem < end; mem++)
     *mem = fill;
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_v_updwk(VDI_Workstation *vwk)
 {
   EDEBUG("v_updwk: Call not implemented!\n");
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 void vdi_vs_clip(VDI_Workstation *vwk)
@@ -473,6 +484,9 @@ void vdi_vs_clip(VDI_Workstation *vwk)
   }
   ADEBUG("vs_clip: Clipping for handle %d set to: %d, %d, %d, %d.\n",
     vwk->handle, vwk->clip.x1, vwk->clip.y1, vwk->clip.x2, vwk->clip.y2);
+
+  vdipb->contrl[N_PTSOUT] = 0;
+  vdipb->contrl[N_INTOUT] = 0;
 }
 
 
@@ -480,6 +494,7 @@ void vdi_vs_clip(VDI_Workstation *vwk)
 ** Exported
 **
 ** 1998-12-26 CG
+** 1999-05-22 CG
 */
 void
 vdi_vswr_mode (VDI_Workstation * vwk) {
@@ -507,6 +522,7 @@ vdi_vswr_mode (VDI_Workstation * vwk) {
   vwk->write_mode = vdipb->intin[0];
   vdipb->intout[0] = vwk->write_mode;
 
+  vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 1;
 }
 
