@@ -39,7 +39,7 @@ while test $# -gt 0; do
       echo $exec_prefix
       ;;
     --version)
-      echo @VERSION@
+      echo @OVDISIS_VERSION@
       ;;
     --cflags)
       echo $ofbis_cflags -I@OSISINCLUDE@

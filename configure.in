@@ -1,8 +1,14 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(otestis.c)
 
-PACKAGE=ovdisis
-VERSION=0.0.2
+. $srcdir/OVDISIS-VERSION
+
+dnl libtool versioning
+LT_RELEASE=$OVDISIS_MAJOR_VERSION.$OVDISIS_MINOR_VERSION
+LT_CURRENT=`expr $OVDISIS_MAJOR_VERSION + $OVDISIS_MINOR_VERSION`
+LT_REVISION=$OVDISIS_MICRO_VERSION
+LT_AGE=$OVDISIS_MINOR_VERSION
+LT_VERSION_INFO="-version-info $LT_CURRENT:$LT_REVISION:$LT_AGE"
 
 dnl Check system type
 AC_CANONICAL_SYSTEM
