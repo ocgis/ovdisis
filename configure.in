@@ -69,6 +69,17 @@ dnl Decide which visuals to build
    )
   ])
 
+  AC_ARG_ENABLE(mw, [  --disable-mw        Do not check for Microwindows],
+                    ,
+  [AC_CHECK_LIB(mw,mwFoo,
+     AC_CHECK_HEADER(mw/mw.h,[
+       AC_DEFINE(HAVE_LIBMW)
+       AC_DEFINE(HAVE_MW_H)
+       build_mw_visual=true
+     ])
+   )
+  ])
+
   ifdef([AM_CHECK_LIBOFBIS], 
       [AM_CHECK_LIBOFBIS(0.1.0, , 
         [AC_MSG_WARN([oFBis user interface will not be used.])])], 
@@ -88,6 +99,11 @@ dnl Decide which visuals to build
   if test "x${build_ggi_visual}" != "x"
   then
       AVAILABLE_VISUALS="${AVAILABLE_VISUALS} ggi"
+  fi
+
+  if test "x${build_mw_visual}" != "x"
+  then
+      AVAILABLE_VISUALS="${AVAILABLE_VISUALS} mw"
   fi
 
   AC_MSG_CHECKING(which visuals to build)
@@ -112,4 +128,4 @@ AC_SUBST(AVAILABLE_VISUALS)
 AC_SUBST(OVDISIS_VERSION)
 AC_SUBST(LT_VERSION_INFO)
 
-AC_OUTPUT(fntread/Makefile src/Makefile src/visuals/Makefile src/visuals/ggi/Makefile src/visuals/ofbis/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
+AC_OUTPUT(fntread/Makefile src/Makefile src/visuals/Makefile src/visuals/ggi/Makefile src/visuals/mw/Makefile src/visuals/ofbis/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)

@@ -1,3 +1,3 @@
 SUBDIRS = @AVAILABLE_VISUALS@
 
-EXTRA_SUBDIRS = ofbis ggi
+EXTRA_SUBDIRS = ofbis ggi mw
