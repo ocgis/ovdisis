@@ -133,15 +133,26 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
 		   MFDB *            src,
 		   MFDB *            dst)
 {
-  if( srccor->x1 == srccor->x2  ||  srccor->y1 == srccor->y2 )
-    /* There's no point trying to copy a null area */
-    return;
+  RECT        tmpcor;
 
   /* Fix the coordinates so that the width and the height of the
    * rectangle are positive */
   fix_rect(srccor);
   fix_rect(dstcor);
 
+  /* Completely ignore what the user says what the destination 
+     width and height should be and recalculate them here.
+     They must be recalculated after the fix. */
+
+  dstcor->x2 = srccor->x2 - srccor->x1 + dstcor->x1;
+  dstcor->y2 = srccor->y2 - srccor->y1 + dstcor->y1;
+  tmpcor = *dstcor;
+
+  /* check first if clipping takes away everything,
+     if destination is the screen */
+  if(!dst->fd_addr && !do_rectclip(dstcor, &vwk->clip)) {
+    return;
+  }
 
   /* See if we can use GGI functions */
   if( src->fd_addr == NULL ) {
@@ -151,10 +162,10 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
       switch( mode ) {
       case S_ONLY:
     	ggiCopyBox( VISUAL_T(vwk->visual->private),
-		    srccor->x1,
-		    srccor->y1,
-		    srccor->x2 - srccor->x1 + 1,
-		    srccor->y2 - srccor->y1 + 1,
+		    srccor->x1 + dstcor->x1 - tmpcor.x1,
+		    srccor->y1 + dstcor->y1 - tmpcor.y1,
+		    dstcor->x2 - dstcor->x1 + 1,
+		    dstcor->y2 - dstcor->y1 + 1,
 		    dstcor->x1,
 		    dstcor->y1);
 	return;
@@ -184,10 +195,16 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
 	h = min( srccor->y2 - srccor->y1  ,  dstcor->y2 - dstcor->y1 );
 
 	for( y = 0 ; y < h ; y++ ) {
-	  for( x = srccor->x1  ;  x < w ; x++ ) {
+	  for( x = 0 ;  x < w ; x++ ) {
 	    /* Get the display-dependent pixel formats */
-	    ggiGetPixel( *vis, srccor->x1 + x, srccor->y1 + y, &pixel_src );
-	    ggiGetPixel( *vis, dstcor->x1 + x, dstcor->y1 + y, &pixel_dst );
+	    ggiGetPixel( *vis, 
+			 srccor->x1 + x + dstcor->x1 - tmpcor.x1, 
+			 srccor->y1 + y + dstcor->y1 - tmpcor.y1, 
+			 &pixel_src );
+	    ggiGetPixel( *vis, 
+			 dstcor->x1 + x, 
+			 dstcor->y1 + y, 
+			 &pixel_dst );
 
 	    ggiUnmapPixel( *vis, pixel_src, &color_src);
 	    ggiUnmapPixel( *vis, pixel_dst, &color_dst);
