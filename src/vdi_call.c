@@ -32,6 +32,180 @@
 #include "vdi_raster.h"
 #include "vdi_various.h"
 
+
+#ifdef VDI_STRACE
+typedef struct
+{
+  char * name;
+} VDICB;
+
+static
+VDICB
+vdidebug[] =
+{
+  /*   0 */
+  { NULL },
+  { "v_opnwk" },
+  { "v_clswk" },
+  { "v_clrwk" },
+  { "v_updwk" },
+  /*   5 */
+  { "characters" },
+  { "v_pline" },
+  { "v_pmarker" },
+  { "v_gtext" },
+  { "v_fillarea" },
+  /*  10 */
+  { NULL },
+  { "gdps" },
+  { "vst_height" },
+  { "vst_rotation" },
+  { "vs_color" },
+  /*  15 */
+  { "vsl_type" },
+  { "vsl_width" },
+  { "vsl_color" },
+  { "vsm_type" },
+  { "vsm_height" },
+  /*  20 */
+  { "vsm_color" },
+  { "vst_font" },
+  { "vst_color" },
+  { "vsf_interior" },
+  { "vsf_style" },
+  /*  25 */
+  { "vsf_color" },
+  { "vq_color" },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  30 */
+  { NULL },
+  { "vsm_string" },
+  { "vswr_mode" },
+  { "vsin_mode" },
+  { NULL },
+  /*  35 */
+  { "vql_attributes" },
+  { "vqm_attributes" },
+  { "vqf_attributes" },
+  { "vqt_attributes" },
+  { "vst_alignment" },
+  /*  40 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  45 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  50 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  55 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  60 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  65 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  70 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  75 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  80 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  85 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  90 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /*  95 */
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  { NULL },
+  /* 100 */
+  { "v_opnvwk" },
+  { "v_clsvwk" },
+  { "vq_extnd" },
+  { "v_contourfill" },
+  { "vsf_perimeter" },
+  /* 105 */
+  { "v_get_pixel" },
+  { "vst_effects" },
+  { "vst_point" },
+  { "vsl_ends" },
+  { "vro_cpyfm" },
+  /* 110 */
+  { "vr_trnfm" },
+  { "vsc_form" },
+  { "vsf_udpat" },
+  { "vsl_udsty" },
+  { "vr_recfl" },
+  /* 115 */
+  { "vqin_mode" },
+  { "vqt_extent" },
+  { "vqt_width" },
+  { "vex_timv" },
+  { NULL },
+  /* 120 */
+  { NULL },
+  { "vrt_cpyfm" },
+  { "v_show_c" },
+  { "v_hide_c" },
+  { "vq_mouse" },
+  /* 125 */
+  { "vex_butv" },
+  { "vex_motv" },
+  { "vex_curv" },
+  { "vq_key_s" },
+  { "vs_clip" },
+  /* 130 */
+  { "vqt_name" },
+  { "vqt_fontinfo" }
+};
+#endif VDI_STRACE
+
+
 VdiFunction *vdi_functions[] = {
   /*   0 */ UNUSED, vdi_v_opnwk, vdi_v_clswk, vdi_v_clrwk, vdi_v_updwk,
   /*   5 */ vdi_characters, vdi_v_pline, vdi_v_pmarker, vdi_v_gtext, vdi_v_fillarea,
@@ -87,8 +261,15 @@ void vdi_call(VDIPB *vdiparblk)
         if(vdi_functions[vdipb->contrl[ROUTINE]]) {
           if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
             /* Call our function */
+#ifdef VDI_STRACE
+            IDEBUG("vdi_call: Call to VDI nr %d %s, handle %d.\n",
+                   vdipb->contrl[ROUTINE],
+                   vdidebug[vdipb->contrl[ROUTINE]].name,
+                   vdipb->contrl[VDI_HANDLE]);
+#else
             IDEBUG("vdi_call: Call to VDI nr %d, handle %d.\n",
                    vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
+#endif
             vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
             IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
                    vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
