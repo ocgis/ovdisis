@@ -245,6 +245,7 @@ int do_stuff()
   fontname[32] = '\0';
   printf("otestis: Fontname='%s'\n",fontname);
 
+  vst_alignment(vh2, 0, 0, &i, &i);
   vst_effects(vh2, 0);
   /* 6x6 font */
   vst_point(vh2, 8, &i, &i, &i, &i);
@@ -260,7 +261,8 @@ int do_stuff()
   fontname[32] = '\0';
   printf("otestis: Fontname='%s'\n",fontname);
 
-  vst_effects(vh2, 0);
+  vst_alignment(vh2, 0, 0, &i, &i);
+  vst_effects(vh2, THICKENED);
   /* 8x16 font */
   vst_point(vh2, 10, &i, &i, &i, &i);
   for(i=0 ; i<8 ; i++)
@@ -268,7 +270,7 @@ int do_stuff()
       vst_color(vh2, i);
       v_gtext(vh2, 180, i*16+20, "NoCrew");
     }
-  vst_effects(vh2, UNDERLINED);
+  vst_effects(vh2, THICKENED | UNDERLINED);
   vst_alignment(vh2, 1, 0, &i, &i);
   v_gtext(vh2, 180, 8*16+20, "NoCrew");
   vqt_name(vh2, 1, fontname);
