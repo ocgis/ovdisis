@@ -1,7 +1,7 @@
 /*
 ** ggi_visual_init.c
 **
-** Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+** Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "ggi_visual_init.h"
 #include "ggi_visual_mouse.h"
 #include "ggi_visual_mutex.h"
+#include "ggi_visual_text.h"
 #include "ggi_visual_various.h"
 
 VDI_Visual *
