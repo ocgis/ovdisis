@@ -22,40 +22,40 @@
 #include "various.h"
 
 int
-ofbis_visual_get_pixel (void * fb,
+ofbis_visual_get_pixel (VWKREF vwk,
 			int    x,
 			int    y) {
-  return FBgetpixel(FB_T(fb), x, y);
+  return FBgetpixel(FB_T(vwk->visual->private), x, y);
 }
 
 
 void
-ofbis_visual_put_pixel (void * fb,
+ofbis_visual_put_pixel (VWKREF vwk,
 			int    x,
 			int    y,
 			int    c) {
-  FBputpixel(FB_T(fb), x, y, c);
+  FBputpixel(FB_T(vwk->visual->private), x, y, ofbis_native_colour(vwk,c));
 }
 
 
 void
-ofbis_visual_hline (void * fb,
+ofbis_visual_hline (VWKREF vwk,
 		    int    x1,
 		    int    x2,
 		    int    y,
 		    int    c) {
-  FBhline(FB_T(fb), x1, x2, y, c);
+  FBhline(FB_T(vwk->visual->private), x1, x2, y, ofbis_native_colour(vwk,c));
 }
 
 
 void
-ofbis_visual_line (void * fb,
+ofbis_visual_line (VWKREF vwk,
 		   int    x1,
 		   int    y1,
 		   int    x2,
 		   int    y2,
 		   int    c) {
-  FBline(FB_T(fb), x1, y1, x2, y2, c);
+  FBline(FB_T(vwk->visual->private), x1, y1, x2, y2, ofbis_native_colour(vwk,c));
 }
 
 
@@ -321,12 +321,13 @@ ofbis_visual_bitbltt (VDI_Workstation * vwk,
 
 
 void
-ofbis_visual_put_char (void * fb,
+ofbis_visual_put_char (VWKREF vwk,
                        int    x,
                        int    y,
                        int    col,
                        int    ch) {
-  FBputchar(FB_T(fb), x, y, col, 0, ch);
+  FBputchar(FB_T(vwk->visual->private), x, y, ofbis_native_colour(vwk,col),
+	    (vwk->write_mode == MD_REPLACE)?0:0x80000000, ch);
 }
 
 
