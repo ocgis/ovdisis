@@ -118,8 +118,12 @@ ofbis_visual_bitblt (VDI_Workstation * vwk,
       /* block is in machine dependent format */
 
       fbb->s_nxwd = 2;
-      fbb->s_nxln = src->fd_wdwidth * 2;
-      fbb->s_nxpl = src->fd_wdwidth * 2 * src->fd_h;
+      if(FB_T(vwk->visual->private)->finf.type == FB_TYPE_PACKED_PIXELS) {
+	fbb->s_nxln = (fbb->b_wd * fbb->plane_ct) / 8;
+      } else { /* assume planes of some kind */
+	fbb->s_nxln = src->fd_wdwidth * 2;
+	fbb->s_nxpl = src->fd_wdwidth * 2 * src->fd_h;
+      }
     }      
 
     /*
@@ -149,8 +153,12 @@ ofbis_visual_bitblt (VDI_Workstation * vwk,
       /* destination should be in machine dependent format */
 
       fbb->d_nxwd = 2;
-      fbb->d_nxln = dst->fd_wdwidth * 2;
-      fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
+      if(FB_T(vwk->visual->private)->finf.type == FB_TYPE_PACKED_PIXELS) {
+	fbb->d_nxln = (fbb->b_wd * fbb->plane_ct) / 8;
+      } else { /* assume planes of some kind */
+	fbb->d_nxln = dst->fd_wdwidth * 2;
+	fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
+      }
     }
 
     /*
