@@ -211,6 +211,14 @@ void init_fill(VDI_Workstation *wk)
   /* skip user defined pattern for now */
 }
 
+void init_device(VDI_Workstation *wk)
+{
+  int i;
+
+  for(i = 1 ; i <= 4 ; i++)
+    wk->device_mode[i] = REQUEST_MODE;
+}
+
 
 static void insert_font(FontInfo **fonts, FontInfo *new)
 {
@@ -354,6 +362,14 @@ void copy_line(VDI_Workstation *wk1, VDI_Workstation *wk2)
 void copy_fill(VDI_Workstation *wk1, VDI_Workstation *wk2)
 {
   wk2->fill_a = wk1->fill_a;
+}
+
+void copy_device(VDI_Workstation *wk1, VDI_Workstation *wk2)
+{
+  int i;
+
+  for(i = 1 ; i <= 4 ; i++)
+    wk2->device_mode[i] = wk1->device_mode[i];
 }
 
 /* This should probably really reserve new and copy the data */
