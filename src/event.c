@@ -27,7 +27,7 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
-static pthread_t event_handler_thread;
+
 
 /* This is needed for the timer handler */
 static VDI_Workstation * global_vwk;
@@ -35,13 +35,21 @@ static VDI_Workstation * global_vwk;
 /* If this is positive the mouse cursor is visible */
 static int mouse_visibility = 0;
 
+static pthread_t event_handler_thread;
 pthread_cond_t key_cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t key_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+
+/* This is used to generate the 20ms VDI timer tics */
+static struct itimerval timer_value = {{0, 50000}, {0, 50000}};
+static struct itimerval old_timer_value;
 
 /* Mouse cursor coordinates */
 static int mouse_x = 0;
 static int mouse_y = 0;
 
+/* Used for timer handler */
+static struct sigaction old_sa;
 
 static
 MFORM
@@ -184,7 +192,6 @@ event_handler (VDI_Workstation * vwk) {
   unsigned int     buttons = 0;
   int              enable_keyboard;
   int              key_next_index;
-  static int       key_index_looped = 0;
 
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
@@ -215,7 +222,7 @@ event_handler (VDI_Workstation * vwk) {
 	    "spare for the ascii buffer\n", KEY_BUFFER_LENGTH);
     enable_keyboard = 0;
   }
-  key_first_index = -1;
+  key_first_index = 0;
   key_next_index = 0;
   key_amount = 0;
   key_buffer_length = KEY_BUFFER_LENGTH;
@@ -234,23 +241,19 @@ event_handler (VDI_Workstation * vwk) {
         
         key_scancode_buffer[key_next_index] = visual_event.key.keycode;
         key_ascii_buffer[key_next_index] = visual_event.key.ascii;
+
+        /* We always write the new events (good policy?) */
+	key_next_index = (key_next_index + 1) % KEY_BUFFER_LENGTH;
+
         key_amount++;
-        
-        if(key_first_index == -1)
-        {
-          key_first_index = 0;
-        }
-        else if(key_index_looped && key_amount == KEY_BUFFER_LENGTH)
-        {
-          key_first_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
-        }
-        
-        if(key_amount >= KEY_BUFFER_LENGTH) {
-          key_index_looped = 1;
-          key_amount = KEY_BUFFER_LENGTH;
-        }
-        key_next_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
-        
+
+	/* But we cannot store more than the size of the buffer, so we
+	 * discard the older event to make room for the new event to occur*/
+        if( key_amount == KEY_BUFFER_LENGTH ) {
+	  key_amount = KEY_BUFFER_LENGTH-1;
+          key_first_index = (key_first_index + 1) % KEY_BUFFER_LENGTH;
+	}
+	
         pthread_mutex_unlock(&key_mutex);
         pthread_cond_broadcast(&key_cond);
       }
@@ -302,10 +305,9 @@ event_handler (VDI_Workstation * vwk) {
 }
 
 
-static struct itimerval timer_value = {{0, 50000}, {0, 50000}};
-static struct itimerval old_timer_value;
 
-static struct sigaction old_sa;
+
+
 
 /*
 ** Description
@@ -332,7 +334,8 @@ start_event_handler (VDI_Workstation * vwk)
   /* Install a timer handler */
   sa.sa_handler = &timer_handler;
   sigemptyset(&sa.sa_mask);
-  sa.sa_flags = SA_NOMASK | SA_INTERRUPT;
+
+  sa.sa_flags = SA_NODEFER;
   sa.sa_flags &= ~SA_RESTART;
   sigaction(SIGALRM, &sa, &old_sa);
 
@@ -347,17 +350,23 @@ start_event_handler (VDI_Workstation * vwk)
 void
 stop_event_handler (void)
 {
-  if(key_scancode_buffer)
-    free(key_scancode_buffer);
-  if(key_ascii_buffer)
-    free(key_ascii_buffer);
+  /* We stop the reception of events before freeing the buffers */
+  setitimer(ITIMER_REAL, &old_timer_value, NULL);
+  sigaction(SIGALRM, &old_sa, &old_sa);
+
+  pthread_cancel(event_handler_thread);
+
+  if( key_scancode_buffer )
+    free( key_scancode_buffer );
+
+  if( key_ascii_buffer )
+    free( key_ascii_buffer );
+
   key_scancode_buffer = NULL;
   key_ascii_buffer = NULL;
 
-  sigaction(SIGALRM, &old_sa, &old_sa);
-  setitimer(ITIMER_REAL, &old_timer_value, &old_timer_value);
 
-  pthread_cancel(event_handler_thread);
+  ADEBUG("event.c: event handler stopped\n");
 }
 
 
