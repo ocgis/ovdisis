@@ -20,6 +20,7 @@
 
 #include "event.h"
 #include "inits.h"
+#include "ovdi_more.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -221,7 +222,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   wk[w].physical->curv = NULL;
   wk[w].physical->motv = NULL;
   wk[w].physical->timv = NULL;
-  wk[w].physical->keyv = NULL;
+  wk[w].physical->keyv = ovdi_keyv; /* Default key handler */
 
   /* Start event handler */
   start_event_handler (wk[w].physical);
