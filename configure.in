@@ -41,4 +41,4 @@ dnl AC_TYPE_SIGNAL
 dnl AC_FUNC_VPRINTF
 dnl AC_CHECK_FUNCS(select strerror)
 
-AC_OUTPUT(src/Makefile vdibind/Makefile vdi_dump/Makefile Makefile)
+AC_OUTPUT(fntread/Makefile src/Makefile vdibind/Makefile vdi_dump/Makefile Makefile)

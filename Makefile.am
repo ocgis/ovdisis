@@ -1,4 +1,4 @@
-SUBDIRS = src vdibind vdi_dump
+SUBDIRS = src vdibind vdi_dump fntread
 
 CFLAGS = -Ivdibind -Isrc
 
