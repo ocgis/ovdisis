@@ -176,6 +176,9 @@ typedef	struct
   void (*motv) (int mx, int my);
   void (*timv) (void);
   void (*keyv) (void);
+
+  /* Process ID for owner of this workstation */
+  int pid;
 } VDI_Workstation;
 
 typedef struct

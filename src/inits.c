@@ -135,21 +135,21 @@ void init_cmap(VDI_Workstation *wk)
 	   wk->fb->cmap->len, wk->fb->cmap);
 
     for (i = 0; i < wk->fb->cmap->len; i++) {
-      wk->fb->cmap->red[i] =
+      wk->fb->cmap->red[i]   =
 	default_cmap[wk->inq.attr.planes]->red[i];
       wk->fb->cmap->green[i] =
 	default_cmap[wk->inq.attr.planes]->green[i];
-      wk->fb->cmap->blue[i] =
+      wk->fb->cmap->blue[i]  =
 	default_cmap[wk->inq.attr.planes]->blue[i];
 
       ti = gem2tos_color(wk->inq.attr.planes, i);
 
-      wk->vdi_cmap.red[i] =
-	((int)default_cmap[wk->inq.attr.planes]->red[ti] * 1000) / 65535;
+      wk->vdi_cmap.red[i]   =
+	((int)default_cmap[wk->inq.attr.planes]->red[ti]   * 1000) / 65535;
       wk->vdi_cmap.green[i] =
 	((int)default_cmap[wk->inq.attr.planes]->green[ti] * 1000) / 65535;
-      wk->vdi_cmap.blue[i] =
-	((int)default_cmap[wk->inq.attr.planes]->blue[ti] * 1000) / 65535;
+      wk->vdi_cmap.blue[i]  =
+	((int)default_cmap[wk->inq.attr.planes]->blue[ti]  * 1000) / 65535;
     }
     /* Put the changed cmap on to the FrameBuffer */
     wk->fb->cmap->start = 0;
@@ -167,9 +167,9 @@ void init_cmap(VDI_Workstation *wk)
       /* Convert colour index as in 8 bpl mode */
       ti = gem2tos_color(8, i);
 
-      wk->vdi_cmap.red[i] = ((int)default_cmap[8]->red[ti] * 1000) / 65535;
+      wk->vdi_cmap.red[i]   = ((int)default_cmap[8]->red[ti]   * 1000) / 65535;
       wk->vdi_cmap.green[i] = ((int)default_cmap[8]->green[ti] * 1000) / 65535;
-      wk->vdi_cmap.blue[i] = ((int)default_cmap[8]->blue[ti] * 1000) / 65535;
+      wk->vdi_cmap.blue[i]  = ((int)default_cmap[8]->blue[ti]  * 1000) / 65535;
     }
     break;
 
@@ -261,8 +261,13 @@ void init_text(VDI_Workstation *wk)
 
 
 
-/* Copy functions */
-
+/* Copy functions
+ *
+ * Some of these functions check if the pid of the workstations
+ * are different. If they are, things are initiated as well as 
+ * copied.
+ */
+ 
 void copy_workstation(VDI_Workstation *wk1, VDI_Workstation *wk2)
 {
   int i;
@@ -278,12 +283,55 @@ void copy_workstation(VDI_Workstation *wk1, VDI_Workstation *wk2)
 
 void copy_cmap(VDI_Workstation *wk1, VDI_Workstation *wk2)
 {
-  int i;
+  int i, ti;
 
+  /* Copy the cmap from the physical workstation. */
   for(i = 0; i < wk1->dev.attr.colors; i++) {
     wk2->vdi_cmap.red[i]   = wk1->vdi_cmap.red[i];
     wk2->vdi_cmap.green[i] = wk1->vdi_cmap.green[i];
     wk2->vdi_cmap.blue[i]  = wk1->vdi_cmap.blue[i];
+  }
+
+  /* If we're within the same process, no need to do more. */
+  if(wk1->pid == wk2->pid)
+    return;
+
+  /* In case we are in different processes, initialize the 
+   * framebuffer cmap with the new values.
+   */
+  switch (wk1->inq.attr.planes) {
+  case 1:
+  case 2:
+  case 4:
+  case 8:
+    /* wk2->fb->cmap is set by FBgetcmap */
+    FBgetcmap(wk2->fb);
+    ADEBUG("v_opnwk: FB cmap length %d allocated: %p\n",
+	   wk2->fb->cmap->len, wk2->fb->cmap);
+
+    for (i = 0; i < wk2->fb->cmap->len; i++) {
+      ti = tos2gem_color(wk2->inq.attr.planes, i);
+
+      wk2->fb->cmap->red[i]   = (wk2->vdi_cmap.red[ti]   * 65536) / 1000;
+      wk2->fb->cmap->green[i] = (wk2->vdi_cmap.green[ti] * 65536) / 1000;
+      wk2->fb->cmap->blue[i]  = (wk2->vdi_cmap.blue[ti]  * 65536) / 1000;
+    }
+    /* Put the changed cmap on to the FrameBuffer */
+    wk2->fb->cmap->start = 0;
+    wk2->fb->cmap->len = (1 << wk2->inq.attr.planes);
+    wk2->fb->cmap->end = (1 << wk2->inq.attr.planes) - 1;
+
+    sleep(1);			/* This is apparently needed in 8 bit mode (oFBis bug?) */
+
+    FBputcmap(wk2->fb, wk2->fb->cmap);
+    break;
+
+  case 16: /* TrueColor mode, nothing to be done */
+    break;
+  default:
+    /* Unknown mode, do nothing */
+    /* Perhaps it would be better to exit here? */
+    break;
   }
 }
 
@@ -307,5 +355,13 @@ void copy_text(VDI_Workstation *wk1, VDI_Workstation *wk2)
 {
   wk2->text_a = wk1->text_a;
   wk2->fonts = wk1->fonts;
+
+  /* If we're within the same process, don't do more. */
+  if(wk1->pid == wk2->pid)
+    return;
+    
+  /* FIX ME! */
+  /* I'm lazy for now, and just initializing without copying! */
+  init_text(wk2);  
 }
 

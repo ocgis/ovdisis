@@ -175,7 +175,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   
   wk[w].physical = new_ws;
 
-  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC | FB_NO_KBD)) == NULL) {
+  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC /* | FB_NO_KBD */ )) == NULL) {
     wsfree (w);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: Error opening FrameBuffer!\n");
@@ -187,6 +187,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   wk[w].vwk = wk[w].physical;	/* Link workstation to physical */
 
   wk[w].physical->handle = w + 1;	/* used for debugging */
+  wk[w].physical->pid = getpid();	/* pid of current process */
 
   ADEBUG("v_opnwk: Physical workstation, handle %d opened: %p\n", w + 1, wk[w].physical);
   ADEBUG("v_opnwk: FrameBuffer opened: %p\n", wk[w].physical->fb);
@@ -328,21 +329,25 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   wk_open[v] = WS_VIRTUAL;
   wk[v].physical = physical;	/* link virtual to physical, sort of */
 
-  if ((wk[v].vwk->fb = FBopen(NULL, FB_KEEP_CURRENT_VC | FB_NO_KBD)) == NULL) {
-    wsfree (v);
-    vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
-    EDEBUG("v_opnvwk: Error opening FrameBuffer!\n");
-    return;
+  wk[v].vwk->handle = v + 1;	/* used for debugging */
+  wk[v].vwk->pid = getpid();	/* pid of current process */
+
+  /* If the virtual workstation is opened from a different
+   * process than the physical, we need to open the
+   * frame buffer again, using the same console.
+   */
+  if(wk[v].vwk->pid != wk[v].physical->pid) {
+    if ((wk[v].vwk->fb = FBopen(NULL, FB_KEEP_CURRENT_VC /* | FB_NO_KBD */)) == NULL) {
+      wsfree (v);
+      vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
+      EDEBUG("v_opnvwk: Error opening FrameBuffer!\n");
+      return;
+    }
+  } else { /* Otherwise we use the same framebuffer */
+    wk[v].vwk->fb = wk[v].physical->fb;
   }
 
   ADEBUG ("ovdisis: vdi_control.c: fb = 0x%x\n", wk[v].vwk->fb);
-
-  wk[v].vwk->handle = v + 1;	/* used for debugging */
-
-  /*
-  ** FIXME add check: if in same process as physical wk then copy otherwise
-  ** initialize
-  */
 
   /* Copy some things */
   copy_workstation(wk[v].physical, wk[v].vwk);
@@ -351,9 +356,6 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   copy_line(wk[v].physical, wk[v].vwk);
   copy_fill(wk[v].physical, wk[v].vwk);
   copy_text(wk[v].physical, wk[v].vwk);
-
-  /* Initialize some things */
-  init_text (wk[v].vwk);
 
   /* make the changes the user wants */
   /* intin[0] - workstation (1-10 == screen) */
