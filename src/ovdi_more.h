@@ -16,5 +16,6 @@
 #define _OVDI_MORE_H_
 
 extern int ovdi_getchar(int);
+extern void ovdi_keyv(int, int, int);
 
 #endif /* _OVDI_MORE_H_ */
