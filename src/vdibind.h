@@ -17,6 +17,10 @@
 
 #include <sys/types.h>
 
+/* FIXME */
+typedef signed short   int16_t;
+typedef unsigned short u_int16_t;
+
 #ifndef WORD
 #define WORD int16_t
 #define UWORD u_int16_t
@@ -283,5 +287,10 @@ extern void vq_curaddress(int, int *, int *);
 extern void v_hardcopy(int);
 extern int  vq_gdos(void);
 extern int  vq_vgdos(void);
+extern void vrq_string (int    handle,
+			int    maxlen,
+			int    echo,
+			int *  outxy,
+			char * str);
 
 #endif /* _VDIBIND_H_ */

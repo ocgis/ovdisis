@@ -16,40 +16,15 @@
 #define _OVDISIS_H_
 
 #include <ofbis.h>
-#include "vdibind.h" /* for VDI definitions */
+#include "ovdisis_types.h"
+#include "vdibind.h"        /* for VDI definitions */
 
 #define MSW(a) ((unsigned short)((unsigned long)(a) >> 16))
 #define LSW(a) ((unsigned short)((unsigned long)(a) & 0xffffUL))
 
-/* Defines for vdipb->contrl[] */
-#define ROUTINE 0
-#define N_PTSIN 1
-#define N_PTSOUT 2
-#define N_INTIN 3
-#define N_INTOUT 4
-#define SUBROUTINE 5
-#define VDI_HANDLE 6
-
 
 extern VDIPB *vdipb;
 
-
-typedef struct _fontinfo
-{
-  short id,size;
-  char name[32];
-  short first,last;
-  short top,ascent,half,descent,bottom;
-  short wchar,wcell;
-  short left,right,thick,underline;
-  unsigned short light,skew;
-  short flags;
-  short *character_offset;
-  short *horizontal_offset;
-  unsigned char *data;
-  short formwidth,formheight;
-  struct _fontinfo *next;
-} FontInfo;
 
 typedef struct
 {

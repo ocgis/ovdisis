@@ -32,6 +32,20 @@
 #include "vdibind.h"
 #endif /* __TOS__ */
 
+/* FIXME */
+#define ovdi_getchar(vid) my_getchar(vid)
+
+char
+my_getchar (int vid) {
+  int outxy[] = { 0, 0 };
+  char str[10];
+
+  vrq_string (vid, 1, 0, outxy, str);
+
+  return str[0];
+}
+
+
 int do_stuff(void);
 
 /* Hmm, nice main() */

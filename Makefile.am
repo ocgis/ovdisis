@@ -4,7 +4,12 @@ INCLUDES = -Isrc
 
 noinst_PROGRAMS = otestis
 otestis_SOURCES = otestis.c
-otestis_LDADD = src/.libs/libovdisis.a
+
+if USE_LIBTOOL
+  otestis_LDADD = src/.libs/libovdisis.a
+else
+  otestis_LDADD = src/libovdisis.a
+endif
 
 bin_SCRIPTS = ovdisis-config
 

@@ -12,7 +12,7 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
 AM_CONFIG_HEADER(config.h)
 
 dnl Set CFLAGS
-CFLAGS="$CFLAGS -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce"
+dnl CFLAGS="$CFLAGS -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce"
 
 dnl Enable extra arguments
 AC_ARG_WITH(ofbis, [  --with-ofbis=DIR        Use uninstalled copy of ofbis])
@@ -27,9 +27,6 @@ dnl Use this instead of AC_PROG_RANLIB because
 dnl this works with cross-compiling.
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 
-dnl Create libtool
-AM_PROG_LIBTOOL
-
 dnl Checks for header files.
 AC_HEADER_STDC
 dnl AC_CHECK_HEADERS(fcntl.h sys/ioctl.h sys/time.h unistd.h)
@@ -40,55 +37,73 @@ dnl AC_C_INLINE
 dnl AC_TYPE_OFF_T
 dnl AC_HEADER_TIME
 
-AC_CHECK_LIB(m,main)
-AC_CHECK_LIB(pthread,pthread_create)
 
-if test x$with_ofbis = xyes ; then
-  AC_MSG_ERROR([
-*** Directory must be specified for --with-ofbis])
-fi
-
-if test x$with_ofbis = x ; then 
-  # Look for separately installed ofbis
-
-  AM_PATH_OFBIS(0.0.8,,
-    AC_MSG_ERROR([
-*** oFBis 0.0.7 or better is required. The latest version of oFBis
-*** is always available from ftp://ftp.nocrew.org.]),
-    ofbis)
-
-  ofbis_cflags=$OFBIS_CFLAGS
-  ofbis_libs=$OFBIS_LIBS
+if test x$target_os = xmint; then
+  build_bindings_only=true
+  use_libtool=false
+  echo "Target OS is MiNT: Will only build VDI bindings"
 else
-  # Use uninstalled ofbis (assume they got the version right)
+  build_bindings_only=false
+  use_libtool=true
 
-  if test -x $with_ofbis/ofbis-config ; then 
-    :
-  else
-    AC_MSG_ERROR([oFBis directory ($with_ofbis) not present or not configured])
+  AC_CHECK_LIB(m,main)
+  AC_CHECK_LIB(pthread,pthread_create)
+
+  if test x$with_ofbis = xyes ; then
+    AC_MSG_ERROR([
+*** Directory must be specified for --with-ofbis])
   fi
 
-  # For use in ovdisis-config
-  ofbis_cflags=`$with_ofbis/ofbis-config --cflags`
-  ofbis_libs=`$with_ofbis/ofbis-config --libs`
+  if test x$with_ofbis = x ; then 
+    # Look for separately installed ofbis
 
-  ofbis_release=`$with_ofbis/ofbis-config --version | sed 's%\\.[[0-9]]*$%%'`
+    AM_PATH_OFBIS(0.0.8,,
+      AC_MSG_ERROR([
+*** oFBis 0.0.7 or better is required. The latest version of oFBis
+*** is always available from ftp://ftp.nocrew.org.]),
+      ofbis)
 
-  # canonicalize relative paths
-  case $with_ofbis in 
-    /*)
-      ofbis_dir=$with_ofbis
-      ;;
-    *)
-      ofbis_dir="\$(top_builddir)/$with_ofbis"
-      ;;
-  esac
+    ofbis_cflags=$OFBIS_CFLAGS
+    ofbis_libs=$OFBIS_LIBS
+  else
+    # Use uninstalled ofbis (assume they got the version right)
 
-  OFBIS_CFLAGS="-I$ofbis_dir"
-  OFBIS_LIBS=$ofbis_dir/libofbis.la
+    if test -x $with_ofbis/ofbis-config ; then 
+      :
+    else
+      AC_MSG_ERROR([oFBis directory ($with_ofbis) not present or not configured])
+    fi
 
-  AC_SUBST(OFBIS_CFLAGS)
-  AC_SUBST(OFBIS_LIBS)
+    # For use in ovdisis-config
+    ofbis_cflags=`$with_ofbis/ofbis-config --cflags`
+    ofbis_libs=`$with_ofbis/ofbis-config --libs`
+
+    ofbis_release=`$with_ofbis/ofbis-config --version | sed 's%\\.[[0-9]]*$%%'`
+
+    # canonicalize relative paths
+    case $with_ofbis in 
+      /*)
+        ofbis_dir=$with_ofbis
+        ;;
+      *)
+        ofbis_dir="\$(top_builddir)/$with_ofbis"
+        ;;
+    esac
+
+    OFBIS_CFLAGS="-I$ofbis_dir"
+    OFBIS_LIBS=$ofbis_dir/libofbis.la
+
+    AC_SUBST(OFBIS_CFLAGS)
+    AC_SUBST(OFBIS_LIBS)
+  fi
+fi
+
+AM_CONDITIONAL(BUILD_BINDINGS_ONLY, test x$build_bindings_only = xtrue)
+AM_CONDITIONAL(USE_LIBTOOL, test x$use_libtool = xtrue)
+
+if test x$use_libtool = xtrue; then
+  dnl Create libtool
+  AM_PROG_LIBTOOL
 fi
 
 OSISINCLUDE=${includedir}/osis
