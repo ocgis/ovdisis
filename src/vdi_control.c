@@ -52,7 +52,7 @@ wsalloc (int id) {
                   IPC_CREAT | IPC_EXCL | 0644);
 
   if (shmid < 0) {
-    perror ("ovdisis: wsalloc: shmget");
+    /*    perror ("ovdisis: wsalloc: shmget"); */
     return NULL;
   }
 
@@ -319,7 +319,8 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
     
   /* none free found */
   if (v == MAX_HANDLES) {
-    wsfree (w);
+    wsdetach (w);
+    wsfree (v);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open virtual workstation */
     EDEBUG("v_opnvwk: We're all out of handles, I'm afraid!\n");
     return;
@@ -342,6 +343,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
    */
   if(wk[v].vwk->pid != wk[v].physical->pid) {
     if ((wk[v].vwk->fb = FBopen(NULL, FB_KEEP_CURRENT_VC /* | FB_NO_KBD */)) == NULL) {
+      wsdetach (w);
       wsfree (v);
       vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
       EDEBUG("v_opnvwk: Error opening FrameBuffer!\n");
@@ -421,6 +423,7 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
     FBclose(wk[v].vwk->fb);
     ADEBUG("v_clswk: FrameBuffer closed\n");  
 #endif
+
   }
 
   wsfree (v);
