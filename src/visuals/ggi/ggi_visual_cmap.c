@@ -41,37 +41,40 @@ ggi_visual_get_cmap (void * fb,
 
 void
 ggi_visual_put_cmap (VDI_Workstation * wk) {
-  int i;
-  ggi_color cmap[1 << wk->inq.attr.planes];
+  int       i;
+  ggi_color cmap[256];
+  int       number_of_pens;
+  int       number_of_planes; /* FIXME */
 
-  switch (wk->inq.attr.planes) {
-  case 1:
-  case 2:
-  case 4:
-  case 8:
-    for (i = 0; i < (1 << wk->inq.attr.planes); i++) {
-      int ti = gem2tos_color(wk->inq.attr.planes, i);
+  if(wk->inq.attr.planes >= 8)
+  {
+    number_of_pens = 256;
+    number_of_planes = 8;
+  }
+  else
+  {
+    number_of_pens = 1 << wk->inq.attr.planes;
+    number_of_planes = wk->inq.attr.planes;
+  }
 
-      cmap[ti].r = (wk->vdi_cmap.red[i] * 65535) / 1000;
-      cmap[ti].g = (wk->vdi_cmap.green[i] * 65535) / 1000;
-      cmap[ti].b = (wk->vdi_cmap.blue[i] * 65535) / 1000;
-      cmap[ti].a = 0xffff;
-    }
-
-    ggiSetPalette(VISUAL_T(wk->visual->private),
-                  0,
-                  1 << wk->inq.attr.planes,
-                  cmap);
-
-    for (i = 0; i < (1 << wk->inq.attr.planes); i++) {
-      COLOURS(wk->visual->private)[i] =
-        ggiMapColor(VISUAL_T(wk->visual->private), &cmap[i]);
-    }
-
-    break;
-
-  default:
-    ;
+  for (i = 0; i < number_of_pens; i++) {
+    int ti = gem2tos_color(number_of_planes, i);
+    
+    cmap[ti].r = (wk->vdi_cmap.red[i] * 65535) / 1000;
+    cmap[ti].g = (wk->vdi_cmap.green[i] * 65535) / 1000;
+    cmap[ti].b = (wk->vdi_cmap.blue[i] * 65535) / 1000;
+    cmap[ti].a = 0xffff;
+  }
+  
+  ggiSetPalette(VISUAL_T(wk->visual->private),
+		0,
+		number_of_pens - 1,
+		cmap);
+  
+  for(i = 0; i < number_of_pens; i++)
+  {
+    COLOURS(wk->visual->private)[i] =
+      ggiMapColor(VISUAL_T(wk->visual->private), &cmap[i]);
   }
 }
 

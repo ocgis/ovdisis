@@ -149,11 +149,10 @@ void init_cmap(VDI_Workstation *wk)
 	((int)default_cmap[wk->inq.attr.planes]->blue[ti]  * 1000) / 65535;
     }
 
-    VISUAL_PUT_CMAP (wk);
+    VISUAL_PUT_CMAP(wk);
     break;
 
   case 16:			/* TrueColor mode, use 256 virtual pens */
-    /* cmap not used in TrueColor mode */
     for (i = 0; i < default_cmap[8]->len; i++) {
       /* Convert colour index as in 8 bpl mode */
       ti = gem2tos_color(8, i);
@@ -162,6 +161,8 @@ void init_cmap(VDI_Workstation *wk)
       wk->vdi_cmap.green[i] = ((int)default_cmap[8]->green[ti] * 1000) / 65535;
       wk->vdi_cmap.blue[i]  = ((int)default_cmap[8]->blue[ti]  * 1000) / 65535;
     }
+
+    VISUAL_PUT_CMAP(wk);
     break;
 
   default:

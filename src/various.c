@@ -219,10 +219,8 @@ inline int gem2tos_color(int nbpl, int index)
       return ((unsigned int)index<16 ? gem2tos_4bpl[index] : 15);
     case 8:
       return ((unsigned int)index<16 ? gem2tos_4bpl[index] : (index<256 ? index : 255));
-    case 16: /* TrueColor mode, use 256 virtual pens */
+    default: /* TrueColor mode, use 256 virtual pens */
       return ((unsigned int)index<256 ? index : 255);
-    default:
-      return 0; /* Should never happen if I've done things correct */
     }
 }
 
@@ -239,10 +237,8 @@ inline int tos2gem_color(int nbpl, int index)
       return ((unsigned int)index<16 ? tos2gem_4bpl[index] : 15);
     case 8:
       return ((unsigned int)index<16 ? tos2gem_4bpl[index] : (index<256 ? index : 255));
-    case 16: /* TrueColor mode, use 256 virtual pens */
+    default: /* TrueColor mode, use 256 virtual pens */
       return ((unsigned int)index<256 ? index : 255);
-    default:
-      return 0; /* Should never happen if I've done things correct */
     }
 }
 
@@ -269,7 +265,7 @@ inline unsigned long get_color(VDI_Workstation *vwk, int index)
       /* FIXME
       return FBc24_to_cnative(vwk->fb, col);
       */
-      return 0;
+      return index;
     }
 }
 
