@@ -28,6 +28,8 @@
 #define TRUE 1
 #endif
 
+/* Define to use signal instead of sigaction */
+#define USE_SIGNAL 1
 
 /* This is needed for the timer handler */
 static VDI_Workstation * global_vwk;
@@ -48,8 +50,10 @@ static struct itimerval old_timer_value;
 static int mouse_x = 0;
 static int mouse_y = 0;
 
+#ifndef USE_SIGNAL
 /* Used for timer handler */
 static struct sigaction old_sa;
+#endif
 
 static
 MFORM
@@ -128,6 +132,9 @@ timer_handler (int signal_number)
   {
     global_vwk->timv ();
   }
+#ifdef USE_SIGNAL
+  signal(SIGALRM, &timer_handler);
+#endif
 }
 
 
@@ -317,7 +324,9 @@ event_handler (VDI_Workstation * vwk) {
 void
 start_event_handler (VDI_Workstation * vwk)
 {
+#ifndef USE_SIGNAL
   struct sigaction sa;
+#endif
 
   /* Initialize global vwk that is used by timer and mouse handlers */
   global_vwk = vwk;
@@ -332,12 +341,16 @@ start_event_handler (VDI_Workstation * vwk)
   }
 
   /* Install a timer handler */
+#ifdef USE_SIGNAL
+  signal(SIGALRM, &timer_handler);
+#else
   sa.sa_handler = &timer_handler;
   sigemptyset(&sa.sa_mask);
 
   sa.sa_flags = SA_NODEFER;
   sa.sa_flags &= ~SA_RESTART;
   sigaction(SIGALRM, &sa, &old_sa);
+#endif
 
   setitimer(ITIMER_REAL, &timer_value, &old_timer_value);
 }
@@ -352,7 +365,12 @@ stop_event_handler (void)
 {
   /* We stop the reception of events before freeing the buffers */
   setitimer(ITIMER_REAL, &old_timer_value, NULL);
+
+#ifdef USE_SIGNAL
+  signal(SIGALRM, SIG_DFL);
+#else
   sigaction(SIGALRM, &old_sa, &old_sa);
+#endif
 
   pthread_cancel(event_handler_thread);
 
