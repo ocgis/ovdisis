@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #include "ggi_visual.h"
+#include "ggi_visual_event.h"
 #include "ovdisis.h"
 #include "ovdisis_keyboard.h"
 

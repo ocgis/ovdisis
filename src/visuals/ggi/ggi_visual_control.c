@@ -17,6 +17,7 @@
 #include <stdlib.h>
 
 #include "ggi_visual.h"
+#include "ggi_visual_control.h"
 #include "ovdisis.h"
 
 void *

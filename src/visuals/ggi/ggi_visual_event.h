@@ -12,6 +12,8 @@
 **
 */
 
+#include "ovdisis.h"
+
 void
 ggi_visual_get_event (void *         fb,
 		      Visual_Event * visual_event);

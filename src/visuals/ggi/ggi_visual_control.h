@@ -12,15 +12,17 @@
 **
 */
 
+#include "ovdisis.h"
+
 void *
-ggi_visual_open (void);
+ggi_visual_open(void);
 
 void
-ggi_visual_close (void * fb);
+ggi_visual_close(void * fb);
 
 void
-ggi_visual_clear (VDI_Workstation * vwk);
+ggi_visual_clear(VWKREF vwk);
 
 void
-ggi_visual_set_write_mode (void * fb,
-			   int    write_mode);
+ggi_visual_set_write_mode(void * fb,
+                          int    write_mode);
