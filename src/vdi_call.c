@@ -15,6 +15,7 @@
 
 #define DEBUGLEVEL 0
 
+#include <netinet/in.h>
 #include <stdio.h>
 
 #include "ovdisis.h"
@@ -106,3 +107,44 @@ void vdi_call(VDIPB *vdiparblk)
 }
 
 
+#define FIX(dst, src, len, fun) \
+  for(i = 0; i < len; i++) \
+  { \
+    dst[i] = fun(src[i]); \
+  }
+
+void
+vdi_call_be32(VDIPB * vdiparblk)
+{
+  int              i;
+  WORD *           tmp_short;
+  static VDIPARBLK e_vdiparblk;
+  static VDIPB     o_vdipb =
+  {
+    e_vdiparblk.contrl,
+    e_vdiparblk.intin,
+    e_vdiparblk.ptsin,
+    e_vdiparblk.intout,
+    e_vdiparblk.ptsout
+  };
+
+  tmp_short = (short *)ntohl((long)vdiparblk->contrl);
+  FIX(e_vdiparblk.contrl, tmp_short, NR_CONTRL, ntohs);
+
+  tmp_short = (short *)ntohl((long)vdiparblk->intin);
+  FIX(e_vdiparblk.intin, tmp_short, e_vdiparblk.contrl[N_INTIN], ntohs);
+
+  tmp_short = (short *)ntohl((long)vdiparblk->ptsin);
+  FIX(e_vdiparblk.ptsin, tmp_short, e_vdiparblk.contrl[N_PTSIN] * 2, ntohs);
+
+  vdi_call(&o_vdipb);
+
+  tmp_short = (short *)ntohl((long)vdiparblk->contrl);
+  FIX(tmp_short, e_vdiparblk.contrl, NR_CONTRL, htons);
+
+  tmp_short = (short *)ntohl((long)vdiparblk->intout);
+  FIX(tmp_short, e_vdiparblk.intout,  e_vdiparblk.contrl[N_INTOUT], htons);
+
+  tmp_short = (short *)ntohl((long)vdiparblk->ptsout);
+  FIX(tmp_short, e_vdiparblk.ptsout, e_vdiparblk.contrl[N_PTSOUT] * 2, htons);
+}
