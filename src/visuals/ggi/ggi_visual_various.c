@@ -107,11 +107,19 @@ ggi_visual_hline (VWKREF vwk,
 		  int    x2,
 		  int    y,
 		  int    c) {
+  int start_x=x1, end_x=x2;
+  
+  if ( x2 < x1 ) {
+    start_x = x2;
+    end_x = x1;
+  }
+
   if( WRITE_MODE(vwk->visual->private) == MD_REPLACE ||
       WRITE_MODE(vwk->visual->private) == MD_TRANS ) {
     ggiSetGCForeground(VISUAL_T(vwk->visual->private),
 		       COLOR_MAPPED(vwk->visual->private)[c]);
-    ggiDrawHLine(VISUAL_T(vwk->visual->private), x1, y, x2 - x1 + 1);
+    ggiDrawHLine(VISUAL_T(vwk->visual->private), 
+		 start_x, y, end_x - start_x + 1);
   } else if ( WRITE_MODE(vwk->visual->private) == MD_XOR ) {
     /* There's a simple solution putting pixels, but there may be
      * a faster solution, searching for parts with the same color
@@ -121,10 +129,10 @@ ggi_visual_hline (VWKREF vwk,
     ggi_pixel cmppixel, pixel;
     ggi_color color;
     int i;
-    for ( xs = x1; xs < x2; xs = xe ) {
+    for ( xs = start_x; xs < end_x; xs = xe ) {
       ggiGetPixel(VISUAL_T(vwk->visual->private),xs,y,&pixel);
       for ( cmppixel = pixel, xe = xs + 1; 
-            xe < x2 && pixel == cmppixel; 
+            xe < end_x && pixel == cmppixel; 
             xe++ ) {
         ggiGetPixel(VISUAL_T(vwk->visual->private),xe,y,&pixel);
       }
@@ -144,11 +152,19 @@ ggi_visual_vline (VWKREF vwk,
 		  int    y1,
 		  int    y2,
 		  int    c) {
+  int start_y=y1, end_y=y2;
+  
+  if ( y2 < y1 ) {
+    start_y = y2;
+    end_y = y1;
+  }
+
   if( WRITE_MODE(vwk->visual->private) == MD_REPLACE ||
       WRITE_MODE(vwk->visual->private) == MD_TRANS ) {
     ggiSetGCForeground(VISUAL_T(vwk->visual->private),
 		       COLOR_MAPPED(vwk->visual->private)[c]);
-    ggiDrawVLine(VISUAL_T(vwk->visual->private), x, y1, y2 - y1 + 1);
+    ggiDrawVLine(VISUAL_T(vwk->visual->private), 
+		 x, start_y, end_y - start_y + 1);
   } else if ( WRITE_MODE(vwk->visual->private) != MD_ERASE ) {
     /* There's a simple solution putting pixels, but there may be
      * a faster solution, searching for parts with the same color
@@ -158,10 +174,10 @@ ggi_visual_vline (VWKREF vwk,
     int ys, ye;
     ggi_pixel cmppixel, pixel;
     ggi_color color;
-    for ( ys = y1; ys < y2; ys = ye ) {
+    for ( ys = start_y; ys < end_y; ys = ye ) {
       ggiGetPixel(VISUAL_T(vwk->visual->private),x,ys,&pixel);
       for ( cmppixel = pixel, ye = ys + 1; 
-            ye < y2 && pixel == cmppixel; 
+            ye < end_y && pixel == cmppixel; 
             ye++ ) {
         ggiGetPixel(VISUAL_T(vwk->visual->private),x,ye,&pixel);
       }
