@@ -143,14 +143,32 @@ void vdi_vqt_attributes(VDI_Workstation *vwk)
   vdipb->contrl[N_INTOUT]=6;
 }
 
+/* This is made really simple now, since we only use monospaced fonts */
 void vdi_vqt_extent(VDI_Workstation *vwk)
 {
-  EDEBUG("vqt_extent: Call not implemented!\n");
+  int width,height;
+
+  /* Doesn't take rotation into acount yet! */
+
+  width = vwk->text_a.font->wcell * vdipb->contrl[N_INTIN];
+  height = vwk->text_a.font->formheight;
+
+  vdipb->ptsout[0] = 0;
+  vdipb->ptsout[1] = 0;
+  vdipb->ptsout[2] = width;
+  vdipb->ptsout[3] = 0;
+  vdipb->ptsout[4] = width;
+  vdipb->ptsout[5] = height;
+  vdipb->ptsout[6] = 0;
+  vdipb->ptsout[7] = height;
 }
 
+/* Simple for monospaced fonts */
 void vdi_vqt_width(VDI_Workstation *vwk)
 {
-  EDEBUG("vqt_width: Call not implemented!\n");
+  vdipb->ptsout[0] = vwk->text_a.font->wcell;
+  vdipb->ptsout[2] = 0;
+  vdipb->ptsout[4] = 0;
 }
 
 /* I'm not sure I'm doing this the correct way. 
