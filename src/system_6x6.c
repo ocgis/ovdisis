@@ -1,5 +1,6 @@
 /* Converted by Tomas */
 
+#include <stdio.h>
 #include "ovdisis.h"
 
 #define FONTDATAMAX (6*256)
