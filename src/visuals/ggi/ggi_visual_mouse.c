@@ -12,7 +12,15 @@
 **
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
+
+#include "ggi_visual.h"
+
+
+static char saved[2000]; /* FIXME: Calculate size and put in private type */
+static int  saved_x = 0;
+static int  saved_y = 0;
 
 
 /*
@@ -20,10 +28,12 @@
 ** Save background before drawing mouse
 */
 void
-ggi_visual_save_mouse_bg (void * fb,
+ggi_visual_save_mouse_bg (void * private,
 			  int    x,
 			  int    y) {
-  fprintf(stderr, "Implement ggi_visual_save_mouse_bg\n");
+  ggiGetBox(VISUAL_T(private), x, y, 16, 16, saved);
+  saved_x = x;
+  saved_y = y;
 }
 
 
@@ -32,6 +42,6 @@ ggi_visual_save_mouse_bg (void * fb,
 ** Restore mouse background
 */
 void
-ggi_visual_restore_mouse_bg (void * fb) {
-  fprintf(stderr, "Implement ggi_visual_restore_mouse_bg\n");
+ggi_visual_restore_mouse_bg (void * private) {
+  ggiPutBox(VISUAL_T(private), saved_x, saved_y, 16, 16, saved);
 }
