@@ -1,7 +1,7 @@
 /*
 ** event.c
 **
-** Copyright 1998 Christer Gustavsson <cg@nocrew.org>
+** Copyright 1998 - 2000 Christer Gustavsson <cg@nocrew.org>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -42,6 +42,62 @@ pthread_mutex_t key_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int mouse_x = 0;
 static int mouse_y = 0;
 
+
+static
+MFORM
+mouse_cursor =
+{
+  /* mf_xhot    */
+  0,
+  /* mf_yhot    */
+  0,
+  /* mf_nplanes */
+  1,
+  /* mf_fg      */
+  1,
+  /* mf_bg      */
+  0,
+  /* mf_mask    */
+  {
+    0xc000,
+    0xe000,
+    0xf000,
+    0xf800,
+    0xfc00,
+    0xfe00,
+    0xff00,
+    0xff80,
+    0xffc0,
+    0xffe0,
+    0xfe00,
+    0xef00,
+    0xcf00,
+    0x8780,
+    0x0780,
+    0x0780
+  },
+  /* mf_data    */
+  {
+    0x0000,
+    0x4000,
+    0x6000,
+    0x7000,
+    0x7800,
+    0x7c00,
+    0x7e00,
+    0x7f00,
+    0x7f80,
+    0x7c00,
+    0x6c00,
+    0x4600,
+    0x0600,
+    0x0300,
+    0x0300,
+    0x0000
+  }
+};
+
+
 /* Character buffers from keyboard input 
  * These have to be global so that vsm_string can read them
  */
@@ -74,104 +130,49 @@ timer_handler (int signal_number) {
 static
 inline
 void
-draw_mouse_cursor (VDI_Workstation * vwk,
-                   int               x,
-                   int               y)
+draw_mouse_cursor(VDI_Workstation * vwk,
+                  int               x,
+                  int               y)
 {
   int xoff;
   int yoff;
-
-  unsigned short mask[] =
-  {
-#if 0
-    0xffff,
-    0xfffe,
-    0xfffc,
-    0xfff8,
-    0xfff0,
-    0xffe0,
-    0xffc0,
-    0xff80,
-    0xff00,
-    0xfe00,
-    0xfc00,
-    0xf800,
-    0xf000,
-    0xe000,
-    0xc000,
-    0x8000
-#else
-    0xc000,
-    0xe000,
-    0xf000,
-    0xf800,
-    0xfc00,
-    0xfe00,
-    0xff00,
-    0xff80,
-    0xffc0,
-    0xffe0,
-    0xfe00,
-    0xef00,
-    0xcf00,
-    0x8780,
-    0x0780,
-    0x0780
-#endif
-  };
   
-  unsigned short cursor[] =
+  for(yoff = 0; yoff < 16; yoff++)
   {
-#if 0
-    0x0000,
-    0x7ffc,
-    0x7ff8,
-    0x7ff0,
-    0x7fe0,
-    0x7fc0,
-    0x7f80,
-    0x7f00,
-    0x7e00,
-    0x7c00,
-    0x7800,
-    0x7000,
-    0x6000,
-    0x4000,
-    0x0000,
-    0x0000
-#else
-    0x0000,
-    0x4000,
-    0x6000,
-    0x7000,
-    0x7800,
-    0x7c00,
-    0x7e00,
-    0x7f00,
-    0x7f80,
-    0x7c00,
-    0x6c00,
-    0x4600,
-    0x0600,
-    0x0300,
-    0x0300,
-    0x0000
-#endif
-  };
-
-  for (yoff = 0; yoff < 16; yoff++) {
     unsigned short which = 0x8000;
-
-    for (xoff = 0; xoff < 16; xoff++) {
-      if (which & cursor[yoff]) {
-        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, gem2tos_color(vwk->inq.attr.planes, 1));
-      } else if (which & mask[yoff]) {
-        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, gem2tos_color(vwk->inq.attr.planes, 0));
+    
+    for(xoff = 0; xoff < 16; xoff++)
+    {
+      if(which & mouse_cursor.mf_data[yoff])
+      {
+        VISUAL_PUT_PIXEL(vwk,
+                         x + xoff,
+                         y + yoff,
+                         gem2tos_color(vwk->inq.attr.planes,
+                                       mouse_cursor.mf_fg));
+      }
+      else if(which & mouse_cursor.mf_mask[yoff])
+      {
+        VISUAL_PUT_PIXEL(vwk, x + xoff,
+                         y + yoff,
+                         gem2tos_color(vwk->inq.attr.planes,
+                                       mouse_cursor.mf_bg));
       }
 
       which >>= 1;
     }
   }
+}
+
+
+/*
+** Description
+** Set the mouse form
+*/
+void
+set_mouse_form(MFORM * cursor)
+{
+  mouse_cursor = *cursor;
 }
 
 

@@ -2,6 +2,7 @@
  * vdi_mouse.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ * Copyright 2000 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,29 +21,11 @@
 
 /*
 ** Exported
-**
-** 1999-01-02 CG
-** 1999-05-22 CG
 */
 void
-vdi_vsc_form (VDI_Workstation * vwk) {
-  MFORM * new_mouse = (MFORM *)&vdipb->intin[0];
-
-  fprintf (stderr,
-           "vdi_mouse.c: vdi_vsc_form: mf_xhot = %d\n",
-           new_mouse->mf_xhot);
-  fprintf (stderr,
-           "vdi_mouse.c: vdi_vsc_form: mf_yhot = %d\n",
-           new_mouse->mf_yhot);
-  fprintf (stderr,
-           "vdi_mouse.c: vdi_vsc_form: mf_nplanes = %d\n",
-           new_mouse->mf_nplanes);
-  fprintf (stderr,
-           "vdi_mouse.c: vdi_vsc_form: mf_fg = %d\n",
-           new_mouse->mf_fg);
-  fprintf (stderr,
-           "vdi_mouse.c: vdi_vsc_form: mf_bg = %d\n",
-           new_mouse->mf_bg);
+vdi_vsc_form (VDI_Workstation * vwk)
+{
+  set_mouse_form((MFORM *)&vdipb->intin[0]);
 
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
