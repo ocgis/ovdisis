@@ -1,0 +1,130 @@
+VDI calls:
+
+Functions marked with '*' are not VDI calls
+Functions with '!' are VDI calls which are implemented.
+None of the functions are complete though.
+
+  vdi_characters.c:
+    vdi_characters	*
+    vdi_vq_chcells
+    vdi_v_exit_cur
+    vdi_v_enter_cur
+    vdi_v_curup
+    vdi_v_curdown
+    vdi_v_curright
+    vdi_v_curleft
+    vdi_v_curhome
+    vdi_v_eeos
+    vdi_v_eeol
+    vdi_vs_curaddress
+    vdi_v_curtext
+    vdi_v_rvon
+    vdi_v_rvoff
+    vdi_vq_curaddress
+    vdi_v_hardcopy
+    
+  vdi_control.c:
+    vdi_v_opnwk		!
+    vdi_v_clswk		!
+    vdi_v_opnvwk	!
+    vdi_v_clsvwk	!
+    vdi_v_clrwk		!
+    vdi_v_updwk
+    vdi_vs_clip		!
+    vdi_vswr_mode	!
+    vdi_vq_extnd	!
+
+  vdi_div.c:
+    vdi_vs_color	!
+    vdi_vq_color	!
+    vdi_v_get_pixel	!
+    vdi_vex_timv
+    vdi_vq_key_s
+    vdi_vqin_mode
+
+  vdi_fill.c:
+    vdi_v_fillarea
+    vdi_vr_recfl	!
+    vdi_v_contour
+    vdi_vsf_color	!
+    vdi_vsf_interior	!
+    vdi_vsf_style	!
+    vdi_vsf_udpat	!
+    vdi_vsf_perimeter	!
+    vdi_vqf_attributes	!
+
+  vdi_gdps.c:
+    vdi_gdps		*
+    vdi_v_bar		!
+    vdi_v_arc		!
+    vdi_v_pieslice
+    vdi_v_circle	!
+    vdi_v_ellipse	!
+    vdi_v_ellarc	!
+    vdi_v_ellpie
+    vdi_v_rbox		!
+    vdi_v_rfbox		!
+    vdi_v_justified
+
+  vdi_line.c:
+    vdi_v_pline		!
+    vdi_vsl_color	!
+    vdi_vsl_width	!
+    vdi_vsl_type	!
+    vdi_vsl_udsty	!
+    vdi_vsl_ends	!
+    vdi_vql_attributes	!
+
+  vdi_marker.c:
+    vdi_v_pmarker	!
+    vdi_vsm_color	!
+    vdi_vsm_height	!
+    vdi_vsm_type	!
+    vdi_vqm_attributes	!
+
+  vdi_mouse.c:
+    vdi_vsc_form
+    vdi_v_show_c
+    vdi_v_hide_c
+    vdi_vq_mouse
+    vdi_vex_butv
+    vdi_vex_motv
+    vdi_vex_curv
+
+  vdi_raster.c:
+    vdi_vro_cpyfm	!
+    vdi_vrt_cpyfm	!
+    vdi_vr_trnfm
+
+  vdi_text.c:
+    vdi_v_gtext		!
+    vdi_vst_color	!
+    vdi_vst_height
+    vdi_vst_point	!
+    vdi_vst_effects	!
+    vdi_vst_alignment	!
+    vdi_vst_rotation	!
+    vdi_vqt_attributes	!
+    vdi_vqt_extent
+    vdi_vqt_width
+
+
+
+Other functions:
+
+  vdi_call.c:
+    vdi_call
+
+  ovdi_more.c:
+    ovdi_getchar
+
+  various.c:
+    do_pointclip
+    do_rectclip
+    do_lineclip
+    fix_rect
+    gem2tos_color
+    tos2gem_color
+    get_color
+
+

@@ -1,0 +1,77 @@
+This readme file now follows NELSO line length standard.
+
+  This piece of software is released under the terms of the GNU General
+  Public Licence version 2 or, at your choice, any higher version.
+  The GNU GPL is included with this package in the file COPYING.
+
+oVDIsis has changed a little from the last snapshot. Since oFBis now takes
+care of setting the dev and inq tab returned from v_opn[v]wk and v_extnd.
+
+See NEWS for changes.
+
+All parameters to and from vdi calls go through the VDIPB struct, 
+defined in vdidefs.h. This file also contains various standard VDI defines.
+
+To test my functions I've made c bindings for them. These are in the 
+vdibind/ directory. They're not really neccessary to have in oTOSis, but they
+make testing a lot easier.
+The VDIPB struct variable must be called o_vdipb if you use my vdibind.
+If you want to test the calls, be sure to have a VDIPARBLK struct and a VDIPB 
+struct and copy the VDIPARBLK's members to VDIPB's members, since a VDIPB 
+struct doesn't contain the arrays, but only pointers to them. (see otestis.c)
+
+oTOSis should use v_opnwk to open a physical workstation, and a FrameBuffer.
+On exit, it should do a v_clswk to close the same. The handle returned from
+v_opnwk is the handle the AES call graf_handle should return.
+
+To open a virtual workstation, you need to give a handle to a physical 
+workstation to the VDI call v_opnvwk and you will get a unique handle back for 
+the virtual workstation, or 0 (zero) if error.
+
+Ok, back to oTOSis. On a trap #2, VDI, a pointer to a VDIPB struct is placed
+in D1. This pointer should be the parameter to vdi_call().
+That's all you need to do, I hope.
+
+Most programs doesn't use v_opnwk, but only v_opnvwk with the screen handle 
+from graf_handle. Therefore oTOSis should initialize the VDI at some point.
+Later, oAESis will do this.
+
+The otestis.c program is made so that it's possible to compile the same c file 
+both with oVDIsis and normal TOS. Some #ifdefs had to be made. For example, 
+in TOS mode, v_opnwk cannot be called to open a physical workstation, since 
+one is already open. Instead it gets the handle from graf_handle, the way it 
+should be. Later, when oAESis is used, a testprogram would do it the TOS way. 
+I've made otestis.c compile in PureC for TOS mode, but it should be pretty 
+easy to use some other compiler as well.
+
+One notable thing you will notice if you run the testprogram in TOS mode and
+without NVDI, you will see a difference in the markers. oVDIsis' markers are
+more like NVDI's, mostly because they are easier to make and, in my oppinion,
+look better.
+
+With oVDIsis, the testprogram is ended by pressing first 'd', then 's'
+several times until two colors are changed. After that, 'a' will exit the
+program.
+  !!!!   With kernel 2.0.21, the key check seems to screw things up for
+ !    !  vs_color, and the computer may hang due to fatal error in oFBis.
+! NOTE ! This seems to work with 2.0.25, I haven't tried 2.0.22.
+ !    !  If you are using an old kernel, you may want to disable the key
+  !!!!   check. See top directory Makefile for this.
+
+From version 0.02 of oFBis, it takes care of fatal errors in a better way, so
+it shouldn't hang if an error occurs.
+
+See the file FUNCS for a list of all functions, implemented or not, and which
+c-file they are in.
+
+They're not complete yet, any of them. v_pline only does 1 pixel wide, no
+patterned lines. vr_recfl, v_bar and v_circle only works with solid or hollow.
+
+This snapshot needs oFBis v0.0.4 to work.
+
+
+That's all, hack loose.
+
+
+Tomas - tomas@nocrew.org
+

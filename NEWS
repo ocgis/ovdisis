@@ -1,0 +1,31 @@
+980206	Phew, it's been a while. I have made oVDIsis
+	compatible with oFBis 0.03 and tested it in
+	kernel 2.0.33.
+
+961207	TrueColor support with virtual pens.
+	Added v_clrwk and calls it from v_opnwk.
+
+961130	Made the VDI dump program. It's used to compare
+	the attributes in oVDIsis and normal VDI/NVDI.
+
+961129	Changed v_opnwk and v_opnvwk to use oFBis-0.02
+	new Line-A variables.
+
+961120	Circles, again only solid and hollow, added.
+	Last snapshot before remaking since oFBis from
+	now on will emulate Line-A, which oVDIsis will
+	use in some ways.
+
+961117	Fixed colour handling, but it seems to be linux
+	version 2.0.21 that was the problem. No problems
+	with 2.0.25.
+
+961112	First versions of v_bar and vr_recfl added. Only
+	solid or hollow rectangles supported.
+
+961027	The default GEM palette is set in v_opnwk, so don't
+	be afraid by the bright screen you will meet.
+	vs_color, vq_color and v_get_pixel is implemented.
+	It now needs oFBis-0.01!!
+
+961024	First snapshot, needs oFBis-0.00, not 0.01!
