@@ -5,6 +5,7 @@ GGI_VISUAL_SOURCES = \
 	ggi_visual_event.c ggi_visual_event.h \
 	ggi_visual_init.c \
 	ggi_visual_mouse.c ggi_visual_mouse.h \
+	ggi_visual_mutex.c ggi_visual_mutex.h \
 	ggi_visual_various.c ggi_visual_various.h
 
 EXTRA_DIST = $(GGI_VISUAL_SOURCES)
