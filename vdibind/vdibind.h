@@ -82,6 +82,8 @@ extern void vqf_attributes(int, int *);
 extern void vqt_attributes(int, int *);
 extern void vqt_extent(int, char *, int *);
 extern void vqt_width(int, char, int *, int *, int *);
+extern void vqt_name(int, int, char *);
+extern void vqt_fontinfo(int, int *, int *, int *, int *);
 extern void vqin_mode(int, int, int *);
 extern void vq_chcells(int, int *, int *);
 extern void v_exit_cur(int);

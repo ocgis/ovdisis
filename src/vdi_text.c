@@ -13,6 +13,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "ovdisis.h"
 #include "various.h"
@@ -152,10 +153,41 @@ void vdi_vqt_width(VDI_Workstation *vwk)
   EDEBUG("vqt_width: Call not implemented!\n");
 }
 
+/* I'm not sure I'm doing this the correct way. 
+   Will have to check it in TOS at some point! */
+void vdi_vqt_name(VDI_Workstation *vwk)
+{
+  int i;
+  FontInfo *fp = vwk->fonts;
 
+  for(i=0 ; i<vdipb->intin[0] ; i++) {
+    if(fp->next)
+      fp = fp->next;
+  }
 
+  for(i=0 ; i<32 ; i++)
+    vdipb->intout[i + 1] = (short)fp->name[i];
 
+  /* Bitmap font, actually only used by FSMGDOS and SpeedoGDOS,
+     but I set it anyway, just for the fun of it. */
+  vdipb->intout[32 + 1] = 0;
 
+  vdipb->intout[0] = fp->id;
+}
+
+void vdi_vqt_fontinfo(VDI_Workstation *vwk)
+{
+  vdipb->intout[0] = vwk->text_a.font->first;
+  vdipb->intout[1] = vwk->text_a.font->last;
+  vdipb->ptsout[0] = vwk->text_a.font->wcell;
+  vdipb->ptsout[1] = vwk->text_a.font->bottom;
+  vdipb->ptsout[3] = vwk->text_a.font->descent;
+  vdipb->ptsout[5] = vwk->text_a.font->half;
+  vdipb->ptsout[7] = vwk->text_a.font->ascent;
+  vdipb->ptsout[2] = vwk->text_a.font->left;
+  vdipb->ptsout[4] = vwk->text_a.font->right;
+  vdipb->ptsout[6] = vdipb->ptsout[2] + vdipb->ptsout[4];
+}
 
 
 

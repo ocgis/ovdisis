@@ -107,6 +107,8 @@ None of the functions are complete though.
     vdi_vqt_attributes	!
     vdi_vqt_extent
     vdi_vqt_width
+    vdi_vqt_name	!
+    vdi_vqt_fontinfo	!
 
 
 

@@ -890,6 +890,41 @@ void vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
   *h_offset = o_vdipb.ptsout[4];
 }
 
+int vqt_name(int handle, int index, char *fontname)
+{
+  int i;
+
+  o_vdipb.intin[0] = (short)index;
+
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 130;
+  vdi_call(&o_vdipb);
+
+  for(i=0 ; i<33 ; i++)
+    fontname[i] = o_vdipb.intout[i + 1];
+
+  return o_vdipb.intout[0];
+}
+
+void vqt_fontinfo(int handle, int *first, int *last, 
+		  int *dist, int *width, int *effects)
+{
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 131;
+  vdi_call(&o_vdipb);
+
+  *first = o_vdipb.intout[0];
+  *last = o_vdipb.intout[1];
+  *width = o_vdipb.ptsout[0];
+  dist[0] = o_vdipb.ptsout[1];
+  dist[1] = o_vdipb.ptsout[3];
+  dist[2] = o_vdipb.ptsout[5];
+  dist[3] = o_vdipb.ptsout[7];
+  effects[0] = o_vdipb.ptsout[2];
+  effects[1] = o_vdipb.ptsout[4];
+  effects[2] = o_vdipb.ptsout[6];
+}
+
 void vqin_mode(int handle, int dev, int *mode)
 {
   o_vdipb.intin[0] = dev;

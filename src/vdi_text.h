@@ -27,6 +27,8 @@ extern void vdi_vst_rotation(VDI_Workstation *);
 extern void vdi_vqt_attributes(VDI_Workstation *);
 extern void vdi_vqt_extent(VDI_Workstation *);
 extern void vdi_vqt_width(VDI_Workstation *);
+extern void vdi_vqt_name(VDI_Workstation *);
+extern void vdi_vqt_fontinfo(VDI_Workstation *);
 
 #endif /* _VDI_TEXT_H_ */
 

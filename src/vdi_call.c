@@ -54,7 +54,8 @@ VdiFunction *vdi_functions[] = {
   /* 110 */ vdi_vr_trnfm, vdi_vsc_form, vdi_vsf_udpat, vdi_vsl_udsty, vdi_vr_recfl,
   /* 115 */ vdi_vqin_mode, vdi_vqt_extent, vdi_vqt_width, vdi_vex_timv, UNUSED,
   /* 120 */ UNUSED, vdi_vrt_cpyfm, vdi_v_show_c, vdi_v_hide_c, vdi_vq_mouse,
-  /* 125 */ vdi_vex_butv, vdi_vex_motv, vdi_vex_curv, vdi_vq_key_s, vdi_vs_clip
+  /* 125 */ vdi_vex_butv, vdi_vex_motv, vdi_vex_curv, vdi_vq_key_s, vdi_vs_clip,
+  /* 130 */ vdi_vqt_name, vdi_vqt_fontinfo
 };
 
 VDIPB *vdipb;
@@ -64,29 +65,33 @@ extern int wk_open[MAX_HANDLES]; /* ----------- " ----------- */
 
 void vdi_call(VDIPB *vdiparblk)
 {
+  int no_opcodes = sizeof(vdi_functions) / sizeof(VdiFunction *);
+
   vdipb=vdiparblk;
 
-  if(vdipb->contrl[ROUTINE]==1) /* v_opnwk() is special */
-    {
-      vdi_functions[1]((VDI_Workstation *)NULL);
-      IDEBUG("vdi_call: Call to v_opnwk finished.\n");
-    }
-  else
-    {
-      if(vdi_functions[vdipb->contrl[ROUTINE]])
-	{
-	  if(wk_open[vdipb->contrl[VDI_HANDLE]-1])
-	    {
-	      vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
-	      IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
-		     vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
-	    }
-	  else
-	    EDEBUG("vdi_call: Handle %d not open!\n",vdipb->contrl[VDI_HANDLE]);
+  if(vdipb->contrl[ROUTINE]==1) { /* v_opnwk() is special */
+    vdi_functions[1]((VDI_Workstation *)NULL);
+    IDEBUG("vdi_call: Call to v_opnwk finished.\n");
+  } else {
+    if(vdipb->contrl[ROUTINE] >= 0 && vdipb->contrl[ROUTINE] <= no_opcodes) {
+      if(vdi_functions[vdipb->contrl[ROUTINE]]) {
+	if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
+
+	  /* Call our function */
+	  vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
+	  IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
+		 vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
+
+	} else {
+	  EDEBUG("vdi_call: Handle %d not open!\n",vdipb->contrl[VDI_HANDLE]);
 	}
-      else
+      } else {
 	EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
+      }
+    } else {
+      EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
     }
+  }
 }
 
 
