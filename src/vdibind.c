@@ -979,6 +979,7 @@ void vqt_fontinfo(int handle, int *first, int *last,
   dist[1] = o_vdipb.ptsout[3];
   dist[2] = o_vdipb.ptsout[5];
   dist[3] = o_vdipb.ptsout[7];
+  dist[4] = o_vdipb.ptsout[7]; /* FIXME: Atari compendium is incomplete */
   effects[0] = o_vdipb.ptsout[2];
   effects[1] = o_vdipb.ptsout[4];
   effects[2] = o_vdipb.ptsout[6];
