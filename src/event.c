@@ -25,11 +25,31 @@ static pthread_t event_handler_thread;
 
 /*
 ** Description
+** Map buttons in vdi format
+**
+** 1998-12-13 CG
+*/
+static
+unsigned int
+map_buttons (unsigned int ofbis_buttons) {
+  /*
+  ** FIXME: I'm not sure if the mapping is correct for the middle and the right
+  ** button.
+  */
+  return (((ofbis_buttons & 0x4) ? 0 : 1) |
+          ((ofbis_buttons & 0x2) ? 0 : 2) |
+          ((ofbis_buttons & 0x1) ? 0 : 4));
+}
+
+
+/*
+** Description
 ** This is the event handler that handles keyboard, mouse and timer events
 **
 ** 1998-10-13 CG
 ** 1998-10-14 CG
 ** 1998-12-06 CG
+** 1998-12-13 CG
 */
 static
 void
@@ -52,7 +72,7 @@ event_handler (VDI_Workstation * vwk) {
       /* Has one or more of the buttons changed? */
       if (fe.mouse.buttons != buttons) {
         if (vwk->butv != NULL) {
-          vwk->butv(fe.mouse.buttons);
+          vwk->butv (map_buttons (fe.mouse.buttons));
         }
         buttons = fe.mouse.buttons;
       }
@@ -132,14 +152,3 @@ stop_event_handler (void) {
   fprintf (stderr, "ovdisis: event.c: killed handler thread\n");
 #endif
 }
-
-
-/*
-** Revision history
-**
-** 1998-10-13 CG
-**            Created original
-**
-** 1998-10-14 CG
-**            Started to use pthread_create instead of clone.
-*/
