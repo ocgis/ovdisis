@@ -70,9 +70,11 @@ PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
 
+CFLAGS = -I../src
+
 noinst_LIBRARIES = libvdibind.a
 
-libvdibind_a_SOURCES = vdibind.c
+libvdibind_a_SOURCES = vdibind.c vdibind.h
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -86,7 +88,6 @@ LIBS = @LIBS@
 libvdibind_a_LIBADD = 
 libvdibind_a_OBJECTS =  vdibind.o
 AR = ar
-CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@

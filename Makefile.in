@@ -72,6 +72,8 @@ VERSION = @VERSION@
 
 SUBDIRS = src vdibind vdi_dump
 
+CFLAGS = -Ivdibind -Isrc
+
 noinst_PROGRAMS = otestis
 otestis_SOURCES = otestis.c
 otestis_LDADD = src/.libs/libovdisis.a vdibind/libvdibind.a
@@ -89,7 +91,6 @@ LIBS = @LIBS@
 otestis_OBJECTS =  otestis.o
 otestis_DEPENDENCIES =  src/.libs/libovdisis.a vdibind/libvdibind.a
 otestis_LDFLAGS = 
-CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@
