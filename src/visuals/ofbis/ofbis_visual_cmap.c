@@ -21,20 +21,35 @@
 #include "various.h"
 
 void
-ofbis_visual_set_cmap (void * fb,
+ofbis_visual_set_cmap (VWKREF wk,
 		       int    index,
 		       int    red,
 		       int    green,
 		       int    blue) {
-  FB_T(fb)->cmap->red[index]   = (unsigned short)(red   * 65535) / 1000;
-  FB_T(fb)->cmap->green[index] = (unsigned short)(green * 65535) / 1000;
-  FB_T(fb)->cmap->blue[index]  = (unsigned short)(blue  * 65535) / 1000;
-  
-  FB_T(fb)->cmap->start = index;
-  FB_T(fb)->cmap->end   = index;
-  FB_T(fb)->cmap->len   = 1;
+  switch (wk->inq.attr.planes) {
+  case 1:
+  case 2:
+  case 4:
+  case 8:
+    FB_T(wk->visual->private)->cmap->red[index]   = (unsigned short)(red   * 65535) / 1000;
+    FB_T(wk->visual->private)->cmap->green[index] = (unsigned short)(green * 65535) / 1000;
+    FB_T(wk->visual->private)->cmap->blue[index]  = (unsigned short)(blue  * 65535) / 1000;
+    
+    FB_T(wk->visual->private)->cmap->start = index;
+    FB_T(wk->visual->private)->cmap->end   = index;
+    FB_T(wk->visual->private)->cmap->len   = 1;
 
-  FBputcmap(FB_T(fb), FB_T(fb)->cmap);
+    FBputcmap(FB_T(wk->visual->private), FB_T(wk->visual->private)->cmap);
+    break;
+  case 15:
+  case 16:
+  case 24:
+  case 32:
+    COLOURS(wk->visual->private)[index] = (( ( (red * 65535/1000) >> 8) << 16) |
+					   ( ( (green * 65535/1000) >> 8) << 8) |
+					   ( ( (blue * 65535/1000) >> 8)));
+    break;
+  }
 }
 
 
@@ -108,7 +123,7 @@ ofbis_visual_free_cmap (VDI_Workstation * wk) {
   }
 }
 
-#undef fb
+/* #undef fb */
 
 int 
 ofbis_native_colour(VWKREF wk, int c) {
@@ -122,11 +137,12 @@ ofbis_native_colour(VWKREF wk, int c) {
   case 16:
   case 24:
   case 32:
+    if(c>255) {
+      fprintf(stderr, "Illegal colour value %d\n", c);
+      return FBc24_to_cnative(FB_T(wk->visual->private), 
+			      COLOURS(wk->visual->private)[255]);
+    }
     return FBc24_to_cnative(FB_T(wk->visual->private), 
 			    COLOURS(wk->visual->private)[c]);
   }
 }
-
-
-
-

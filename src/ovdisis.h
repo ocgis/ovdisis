@@ -132,7 +132,7 @@ typedef struct
         vwk->visual->set_write_mode(vwk->visual->private, write_mode)
 #define VISUAL_FREE_CMAP(vwk) vwk->visual->free_cmap(vwk)
 #define VISUAL_SET_CMAP(vwk, index, red, green, blue) \
-        vwk->visual->set_cmap(vwk->visual->private, index, red, green, blue)
+        vwk->visual->set_cmap(vwk, index, red, green, blue)
 #define VISUAL_GET_CMAP(vwk, index, red, green, blue) \
         vwk->visual->get_cmap(vwk->visual->private, index, red, green, blue)
 #define VISUAL_GET_PIXEL(vwk, x, y) \
@@ -217,7 +217,7 @@ typedef struct
   void   (*inquire)(void * private, Visual_Attr * attr);
   void   (*set_write_mode)(void *, int);  /* Set write mode */
   void   (*free_cmap)(VWKREF vwk);        /* Free colour map */
-  void   (*set_cmap)(void *, int, int, int, int); /* Set colour map entry */
+  void   (*set_cmap)(VWKREF, int, int, int, int); /* Set colour map entry */
   void   (*get_cmap)(void *, int, int *, int *, int *); /* Set colour map entry */
   void   (*put_cmap)(VWKREF vwk);         /* Put colourmap from workstation */
   int    (*get_pixel)(VWKREF, int, int);  /* Get pixel */
