@@ -20,6 +20,7 @@
 #include "ggi_visual_control.h"
 #include "ovdisis.h"
 
+
 void *
 ggi_visual_open (void) {
   ggi_visual_t vis;
@@ -49,6 +50,7 @@ ggi_visual_open (void) {
   }
 }
 
+
 void
 ggi_visual_close (void * private) {
   ggiClose(VISUAL_T(private));
@@ -58,10 +60,10 @@ ggi_visual_close (void * private) {
 
 
 void
-ggi_visual_clear (VDI_Workstation * vwk)
+ggi_visual_clear (VWKREF vwk)
 {
   ggiSetGCForeground(VISUAL_T(vwk->visual->private),
-                     COLOURS(vwk->visual->private)[0]);
+                     COLOR_MAPPED(vwk->visual->private)[0]);
   ggiDrawBox(VISUAL_T(vwk->visual->private),
              0,
              0,
@@ -73,6 +75,5 @@ ggi_visual_clear (VDI_Workstation * vwk)
 void
 ggi_visual_set_write_mode (void * vis,
 			   int    write_mode) {
-  fprintf(stderr, "Implement ggi_visual_set_write_mode\n");
+  WRITE_MODE(vis) = write_mode;
 }
-

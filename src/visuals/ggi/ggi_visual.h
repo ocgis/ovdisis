@@ -13,9 +13,14 @@
 */
 
 typedef struct {
-  ggi_visual_t vis;
-  ggi_pixel    colours[256];
+  ggi_visual_t vis;          /* This is the GGI visual */
+  ggi_pixel    color_mapped[256];
+  ggi_color    color_unmapped[256];
+  int          write_mode;   /* Takes values defined by the VDI */
 } private_t;
 
-#define VISUAL_T(private) (((private_t *)private)->vis)
-#define COLOURS(private) (((private_t *)private)->colours)
+
+#define VISUAL_T(private)       (((private_t *)private)->vis)
+#define COLOR_MAPPED(private)   (((private_t *)private)->color_mapped)
+#define COLOR_UNMAPPED(private) (((private_t *)private)->color_unmapped)
+#define WRITE_MODE(private)     (((private_t *)private)->write_mode)
