@@ -30,6 +30,12 @@ void vdi_v_pline(VDI_Workstation *vwk)
   
   ADEBUG ("ovdisis: vdi_line.c: vdi_v_pline: fb = 0x%x\n", vwk->fb);
   
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
   ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
   col = get_color(vwk, ni);
   
@@ -51,6 +57,10 @@ void vdi_v_pline(VDI_Workstation *vwk)
       }
     }
   }
+
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }

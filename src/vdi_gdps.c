@@ -67,6 +67,12 @@ void vdi_v_bar(VDI_Workstation *vwk)
 
   if(do_rectclip(&cor, &vwk->clip))
   {
+    /* Lock visual before operation */
+    VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+    /* Setup write mode */
+    VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
     ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
     col = get_color(vwk, ni);
     
@@ -115,6 +121,9 @@ void vdi_v_bar(VDI_Workstation *vwk)
       if(do_lineclip(&lin, &vwk->clip))
         VISUAL_LINE(vwk, lin.x2, lin.y1, lin.x2, lin.y2, col);
     }
+
+    /* Unock visual after operation */
+    VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
   }
 
   vdipb->contrl[N_PTSOUT] = 0;
@@ -224,6 +233,12 @@ void vdi_v_arc(VDI_Workstation *vwk)
   double angle, abeg, aend, astep;
   RECT lin,linp;
 
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
   x_center = vdipb->ptsin[0];
   y_center = vdipb->ptsin[1];
   radius = vdipb->ptsin[6];
@@ -252,6 +267,9 @@ void vdi_v_arc(VDI_Workstation *vwk)
     linp.y1 = linp.y2;
   }
 
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }
@@ -276,6 +294,12 @@ void vdi_v_circle(VDI_Workstation *vwk)
   int *x_values;
   unsigned long col;
   RECT lin_u, lin_l;
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
   x_center = vdipb->ptsin[0];
   y_center = vdipb->ptsin[1];
@@ -378,6 +402,9 @@ void vdi_v_circle(VDI_Workstation *vwk)
       set_circle_pixels(vwk, x, y, x_center, y_center, &vwk->clip, col);
   }
 
+  /* Unlock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }
@@ -390,6 +417,12 @@ void vdi_v_ellipse(VDI_Workstation *vwk)
   unsigned long col;
   double angle, abeg, aend, astep;
   RECT lin,linp;
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
   x_center = vdipb->ptsin[0];
   y_center = vdipb->ptsin[1];
@@ -416,6 +449,9 @@ void vdi_v_ellipse(VDI_Workstation *vwk)
     linp.y1 = linp.y2;
   }
 
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }
@@ -427,6 +463,12 @@ void vdi_v_ellarc(VDI_Workstation *vwk)
   unsigned long col;
   double angle, abeg, aend, astep;
   RECT lin,linp;
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
   x_center = vdipb->ptsin[0];
   y_center = vdipb->ptsin[1];
@@ -457,6 +499,9 @@ void vdi_v_ellarc(VDI_Workstation *vwk)
     linp.y1 = linp.y2;
   }
 
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }
@@ -478,6 +523,12 @@ void vdi_v_rbox(VDI_Workstation *vwk)
   int ul_xc,ul_yc, ur_xc,ur_yc, ll_xc,ll_yc, lr_xc,lr_yc;
   unsigned long col;
   RECT cor,lin,org;
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
   cor.x1 = vdipb->ptsin[0];
   cor.y1 = vdipb->ptsin[1];
@@ -593,6 +644,9 @@ void vdi_v_rbox(VDI_Workstation *vwk)
     }
   }
   
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }
@@ -604,6 +658,12 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
   int *x_values;
   unsigned long col;
   RECT cor,lin,org, lin_l, lin_u;
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
   cor.x1 = vdipb->ptsin[0];
   cor.y1 = vdipb->ptsin[1];
@@ -805,6 +865,9 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
     }
   }
   
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }

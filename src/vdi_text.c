@@ -27,6 +27,12 @@ void vdi_v_gtext(VDI_Workstation *vwk)
   int ch, i,endchar, ni, x,y,ly, w;
   unsigned long col;
 
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
   ni = gem2tos_color(vwk->inq.attr.planes, vwk->text_a.color);
   col = get_color(vwk, ni);
  
@@ -106,6 +112,9 @@ void vdi_v_gtext(VDI_Workstation *vwk)
 
     x += vwk->text_a.cellwidth;
   }
+
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
 
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;

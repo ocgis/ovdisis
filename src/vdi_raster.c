@@ -27,6 +27,13 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
   RECT srccor, dstcor;
 
   IDEBUG("vdi_vro_cpyfm entered\n");
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
   srccor.x1 = vdipb->ptsin[0];
   srccor.y1 = vdipb->ptsin[1];
   srccor.x2 = vdipb->ptsin[2];
@@ -41,6 +48,9 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
 
   VISUAL_BITBLT(vwk, vdipb->intin[0], &srccor, &dstcor, src, dst);
 
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
   IDEBUG("vdi_vro_cpyfm exited\n");
@@ -50,6 +60,12 @@ void vdi_vrt_cpyfm(VDI_Workstation *vwk)
 {
   MFDB *src,*dst;
   RECT srccor, dstcor;
+
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
   srccor.x1 = vdipb->ptsin[0];
   srccor.y1 = vdipb->ptsin[1];
@@ -75,6 +91,9 @@ void vdi_vrt_cpyfm(VDI_Workstation *vwk)
                  &dstcor,
                  src,
                  dst);
+
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
 
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;

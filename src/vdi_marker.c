@@ -25,6 +25,12 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
   unsigned long col;
   RECT cor;
 
+  /* Lock visual before operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+  /* Setup write mode */
+  VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
   ni = gem2tos_color(vwk->inq.attr.planes, vwk->marker_a.color);
   col = get_color(vwk, ni);
   
@@ -172,6 +178,10 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
     EDEBUG("v_pmarker: Unknown marker type %d found!",vwk->marker_a.type);
     break;
   }
+
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }

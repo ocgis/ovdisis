@@ -488,7 +488,7 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 
-  ADEBUG("v_clsvwk: Virtual workstation, handle %d freed\n", v + 1);
+  fprintf(stderr, "v_clsvwk: Virtual workstation, handle %d freed\n", v + 1);
 }
 
 void vdi_v_clrwk(VDI_Workstation *vwk)
@@ -533,20 +533,17 @@ void vdi_vs_clip(VDI_Workstation *vwk)
 
 /*
 ** Exported
-**
-** 1998-12-26 CG
-** 1999-05-22 CG
 */
 void
-vdi_vswr_mode (VDI_Workstation * vwk) {
-  VISUAL_SET_WRITE_MODE(vwk, vdipb->intin[0]);
-
+vdi_vswr_mode (VDI_Workstation * vwk)
+{
   vwk->write_mode = vdipb->intin[0];
   vdipb->intout[0] = vwk->write_mode;
 
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 1;
 }
+
 
 void vdi_vq_extnd(VDI_Workstation *vwk)
 {

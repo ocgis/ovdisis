@@ -34,7 +34,6 @@ static VDI_Workstation * global_vwk;
 /* If this is positive the mouse cursor is visible */
 static int mouse_visibility = 0;
 
-static pthread_mutex_t mouse_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t key_cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t key_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -70,15 +69,13 @@ timer_handler (int signal_number) {
 /*
 ** Description
 ** Draw the mouse cursor
-**
-** 1999-01-02 CG
-** 1999-08-29 CG
 */
 inline
 void
 draw_mouse_cursor (VDI_Workstation * vwk,
                    int               x,
-                   int               y) {
+                   int               y)
+{
   int xoff;
   int yoff;
 
@@ -121,7 +118,7 @@ draw_mouse_cursor (VDI_Workstation * vwk,
     0x0000,
     0x0000
   };
-  
+
   for (yoff = 0; yoff < 16; yoff++) {
     unsigned short which = 0x8000;
 
@@ -158,9 +155,17 @@ event_handler (VDI_Workstation * vwk) {
   setitimer (ITIMER_REAL, &timer_value, &old_timer_value);
 
   /* Save mouse background and draw mouse */
-  if (mouse_visibility > 0) {
-    VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
+  if (mouse_visibility > 0)
+  {
+    /* Lock visual before operation */
+    VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+    VISUAL_SET_WRITE_MODE(vwk, MD_REPLACE);
+    VISUAL_SAVE_MOUSE_BG(vwk, mouse_x, mouse_y);
     draw_mouse_cursor (vwk, mouse_x, mouse_y);
+
+    /* Unlock visual after operation */
+    VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
   }
 
   enable_keyboard = 1;
@@ -230,9 +235,11 @@ event_handler (VDI_Workstation * vwk) {
 
     case Visual_Mouse_Move_Event :
       /* Make sure the visibility isn't being updated */
-      pthread_mutex_lock (&mouse_mutex);
+      VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
       
-      if (mouse_visibility > 0) {
+      if (mouse_visibility > 0)
+      {
+        VISUAL_SET_WRITE_MODE(vwk, MD_REPLACE);
         VISUAL_RESTORE_MOUSE_BG (vwk);
       }
       
@@ -245,11 +252,13 @@ event_handler (VDI_Workstation * vwk) {
       }
       
       if (mouse_visibility > 0) {
+        VISUAL_SET_WRITE_MODE(vwk, MD_REPLACE);
         VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
         draw_mouse_cursor (vwk, mouse_x, mouse_y);
       }
-      
-      pthread_mutex_unlock (&mouse_mutex);
+        
+      /* Unlock visual after operation */
+      VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
       break;
 
     default:
@@ -310,40 +319,43 @@ stop_event_handler (void) {
 
 /*
 ** Exported
-**
-** 1999-01-03 CG
-** 1999-08-29 CG
 */
 void
-increase_mouse_visibility (void) {
-  pthread_mutex_lock (&mouse_mutex);
+increase_mouse_visibility (void)
+{
+  /* Lock visual before operation */
+  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_LOCK);
 
-  if (mouse_visibility == 0) {
+  if (mouse_visibility == 0)
+  {
+    VISUAL_SET_WRITE_MODE(global_vwk, MD_REPLACE);
     VISUAL_SAVE_MOUSE_BG (global_vwk, mouse_x, mouse_y);
     draw_mouse_cursor (global_vwk, mouse_x, mouse_y);
   }
 
   mouse_visibility++;
 
-  pthread_mutex_unlock (&mouse_mutex);
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_UNLOCK);
 }
 
 
 /*
 ** Exported
-**
-** 1999-01-03 CG
-** 1999-08-29 CG
 */
 void
-decrease_mouse_visibility (void) {
-  pthread_mutex_lock (&mouse_mutex);
+decrease_mouse_visibility (void)
+{
+  /* Lock visual before operation */
+  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_LOCK);
 
   mouse_visibility--;
 
   if (mouse_visibility == 0) {
+    VISUAL_SET_WRITE_MODE(global_vwk, MD_REPLACE);
     VISUAL_RESTORE_MOUSE_BG(global_vwk);
   }
 
-  pthread_mutex_unlock (&mouse_mutex);
+  /* Unlock visual after operation */
+  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_UNLOCK);
 }

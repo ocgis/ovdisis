@@ -42,6 +42,12 @@ void vdi_vr_recfl(VDI_Workstation *vwk)
 
   if(do_rectclip(&cor, &vwk->clip))
   {
+    /* Lock visual before operation */
+    VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
+
+    /* Setup write mode */
+    VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
+
     ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
     col = get_color(vwk, ni);
     
@@ -61,6 +67,9 @@ void vdi_vr_recfl(VDI_Workstation *vwk)
       EDEBUG("vr_recfl: Unknown filling style, %d!\n", vwk->fill_a.interior);
       break;
     }
+
+    /* Unock visual after operation */
+    VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
   }
 
   vdipb->contrl[N_PTSOUT] = 0;
