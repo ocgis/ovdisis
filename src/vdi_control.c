@@ -147,6 +147,7 @@ wsdetach (VDI_Workstation * ws)
 ** Implementation of the vdi function v_opnwk
 **
 ** 1998-10-13 CG
+** 1998-12-07 CG
 */
 void
 vdi_v_opnwk(VDI_Workstation *vwk)
@@ -212,6 +213,8 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   init_fill(wk[w].physical);
   init_text(wk[w].physical);
 
+  ADEBUG("v_opnwk: Default palette set\n");
+
   /* Reset event vectors */
   wk[w].physical->butv = NULL;
   wk[w].physical->curv = NULL;
@@ -220,9 +223,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   wk[w].physical->keyv = NULL;
 
   /* Start event handler */
-  init_event_handler (wk[w].physical);
-
-  ADEBUG("v_opnwk: Default palette set\n");
+  vdi_init_event_handler (wk[w].physical);
 
   vdipb->contrl[N_PTSOUT] = 6;
   vdipb->contrl[N_INTOUT] = 45;
@@ -234,6 +235,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
 ** Implementation of v_clswk
 **
 ** 1998-10-14 CG
+** 1998-12-07 CG
 */
 void
 vdi_v_clswk (VDI_Workstation *vwk)
@@ -251,7 +253,7 @@ vdi_v_clswk (VDI_Workstation *vwk)
   }
 
   /* Destroy event handler */
-  exit_event_handler ();
+  vdi_exit_event_handler ();
 
   /* cmap not used in TrueColor mode */
   if (wk[w].physical->inq.attr.planes < 16) {
@@ -293,7 +295,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
 {
   int i, v = 0, w;
   VDI_Workstation * physical;
-  VDI_Workstation * virtual;
+  VDI_Workstation * virtual = NULL;
 
   ADEBUG ("ovdisis: vdi_v_opnvwk: entering\n");
   w = vdipb->contrl[VDI_HANDLE] - 1;	/* Physical workstation */

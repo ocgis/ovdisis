@@ -23,18 +23,20 @@
 ** keyboard and timer events.
 **
 ** 1998-10-13 CG
+** 1998-12-07 CG
 */
 void
-init_event_handler (VDI_Workstation * vwk);
+vdi_init_event_handler (VDI_Workstation * vwk);
 
 /*
 ** Description
 ** Kill event handler loop
 **
 ** 1998-10-13 CG
+** 1998-12-07 CG
 */
 void
-exit_event_handler (void);
+vdi_exit_event_handler (void);
 
 #endif /* _EVENT_H_ */
 
