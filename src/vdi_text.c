@@ -101,6 +101,10 @@ void vdi_v_gtext(VDI_Workstation *vwk)
     w -= vwk->text_a.cellwidth;
   }
 
+  /* Set the current font in the visual. */
+  VISUAL_SET_FONT (vwk, vwk->text_a.font->data, vwk->text_a.font->wcell, 
+		   vwk->text_a.font->formheight);
+
   /* Draw the text, one character at a time */
   for( ; i < endchar ; i++) {
     ch = vdipb->intin[i] & 0xff;
@@ -166,9 +170,6 @@ void vdi_vst_point(VDI_Workstation *vwk)
   while(fp->next && fp->next->size <= vdipb->intin[0]) {
     fp = fp->next;
   }
-
-  /* We have found a best match in fp, now tell oFBis */
-  VISUAL_SET_FONT (vwk, fp->data, fp->wcell, fp->formheight);
 
   vdipb->ptsout[0] = vwk->text_a.textwidth = fp->wchar;
   vdipb->ptsout[1] = vwk->text_a.textheight = fp->top + fp->bottom;
