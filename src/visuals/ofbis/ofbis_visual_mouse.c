@@ -14,6 +14,7 @@
 
 #include <ofbis.h>
 
+#include "ofbis_visual.h"
 
 static int x_last = 0;
 static int y_last = 0;
@@ -25,9 +26,6 @@ static unsigned short mouse_background_buffer[16*16*2];
 /*
 ** Description
 ** Save background before drawing mouse
-**
-** 1999-01-02 CG
-** 1999-08-29 CG
 */
 void
 ofbis_visual_save_mouse_bg (void * fb,
@@ -36,7 +34,7 @@ ofbis_visual_save_mouse_bg (void * fb,
   FBBLTPBLK * mouse_background;
   
   /* Setup mouse background blit */
-  mouse_background = FBgetbltpblk ((FB *)fb);
+  mouse_background = FBgetbltpblk (FB_T(fb));
 
   mouse_background->s_xmin = x;
   mouse_background->s_ymin = y;
@@ -45,7 +43,7 @@ ofbis_visual_save_mouse_bg (void * fb,
   mouse_background->d_form = mouse_background_buffer;
   mouse_background->d_nxln = 16; /* FIXME for current resolution */
 
-  FBbitblt (((FB *)fb), mouse_background);
+  FBbitblt (FB_T(fb), mouse_background);
 
   x_last = x;
   y_last = y;
@@ -55,16 +53,13 @@ ofbis_visual_save_mouse_bg (void * fb,
 /*
 ** Description
 ** Restore mouse background
-**
-** 1999-01-02 CG
-** 1999-08-29 CG
 */
 void
 ofbis_visual_restore_mouse_bg (void * fb) {
   FBBLTPBLK * mouse_background;
   
   /* Setup mouse background blit */
-  mouse_background = FBgetbltpblk ((FB *)fb);
+  mouse_background = FBgetbltpblk (FB_T(fb));
   
   mouse_background->d_xmin = x_last;
   mouse_background->d_ymin = y_last;
@@ -73,5 +68,5 @@ ofbis_visual_restore_mouse_bg (void * fb) {
   mouse_background->s_form = mouse_background_buffer;
   mouse_background->s_nxln = 16; /* FIXME for current resolution */
 
-  FBbitblt (((FB*)fb), mouse_background);
+  FBbitblt (FB_T(fb), mouse_background);
 }

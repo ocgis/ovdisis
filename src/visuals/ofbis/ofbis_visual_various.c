@@ -17,6 +17,7 @@
 #include <ofbis.h>
 #include <stdio.h>
 
+#include "ofbis_visual.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -24,7 +25,7 @@ int
 ofbis_visual_get_pixel (void * fb,
 			int    x,
 			int    y) {
-  return FBgetpixel((FB *)fb, x, y);
+  return FBgetpixel(FB_T(fb), x, y);
 }
 
 
@@ -33,7 +34,7 @@ ofbis_visual_put_pixel (void * fb,
 			int    x,
 			int    y,
 			int    c) {
-  FBputpixel(((FB *)fb), x, y, c);
+  FBputpixel(FB_T(fb), x, y, c);
 }
 
 
@@ -43,7 +44,7 @@ ofbis_visual_hline (void * fb,
 		    int    x2,
 		    int    y,
 		    int    c) {
-  FBhline(((FB *)fb), x1, x2, y, c);
+  FBhline(FB_T(fb), x1, x2, y, c);
 }
 
 
@@ -54,7 +55,7 @@ ofbis_visual_line (void * fb,
 		   int    x2,
 		   int    y2,
 		   int    c) {
-  FBline(((FB *)fb), x1, y1, x2, y2, c);
+  FBline(FB_T(fb), x1, y1, x2, y2, c);
 }
 
 
@@ -87,7 +88,7 @@ ofbis_visual_bitblt (VDI_Workstation * vwk,
   }
 
   /* setup fbb according to the screen format */
-  fbb = FBgetbltpblk((FB *)vwk->visual->private);
+  fbb = FBgetbltpblk(FB_T(vwk->visual->private));
 
   /* dst size is the same as src size here, only that dst
      might have been clipped earlier */
@@ -164,7 +165,7 @@ ofbis_visual_bitblt (VDI_Workstation * vwk,
 
   } /* else destination is the screen, i.e. already setup by FBgetbltpblk() */
 
-  FBbitblt (((FB *)vwk->visual->private), fbb);
+  FBbitblt (FB_T(vwk->visual->private), fbb);
 
   FBfreebltpblk(fbb);
 
@@ -284,7 +285,7 @@ ofbis_visual_bitbltt (VDI_Workstation * vwk,
 
   } /* else destination is the screen, i.e. already setup by FBgetbltpblk() */
 
-  FBbitblt(((FB *)vwk->visual->private), fbb);
+  FBbitblt(FB_T(vwk->visual->private), fbb);
 
   FBfreebltpblk(fbb);
 
@@ -299,7 +300,7 @@ ofbis_visual_put_char (void * fb,
                        int    y,
                        int    col,
                        int    ch) {
-  FBputchar(((FB *)fb), x, y, col, 0, ch);
+  FBputchar(FB_T(fb), x, y, col, 0, ch);
 }
 
 
@@ -314,18 +315,18 @@ ofbis_visual_set_font (void * fb,
   fnt.width = width;
   fnt.height = height;
 
-  FBsetfont ((FB *)fb, &fnt);
+  FBsetfont (FB_T(fb), &fnt);
 }
 
 
 void
 ofbis_visual_inquire (void *        fb,
                       Visual_Attr * attr) {
-  attr->x_res = ((FB *)fb)->vinf.xres;
-  attr->y_res = ((FB *)fb)->vinf.yres;
-  attr->palette_size = ((1 << ((FB *)fb)->vinf.red.length) *
-                        (1 << ((FB *)fb)->vinf.green.length) *
-                        (1 << ((FB *)fb)->vinf.blue.length));
-  attr->number_of_colours = 1 << ((FB *)fb)->vinf.bits_per_pixel;
-  attr->bits_per_pixel = ((FB *)fb)->vinf.bits_per_pixel;
+  attr->x_res = FB_T(fb)->vinf.xres;
+  attr->y_res = FB_T(fb)->vinf.yres;
+  attr->palette_size = ((1 << FB_T(fb)->vinf.red.length) *
+                        (1 << FB_T(fb)->vinf.green.length) *
+                        (1 << FB_T(fb)->vinf.blue.length));
+  attr->number_of_colours = 1 << FB_T(fb)->vinf.bits_per_pixel;
+  attr->bits_per_pixel = FB_T(fb)->vinf.bits_per_pixel;
 }

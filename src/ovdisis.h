@@ -170,7 +170,8 @@ typedef struct {
 typedef enum {
   Visual_No_Event,
   Visual_Key_Event,
-  Visual_Mouse_Event
+  Visual_Mouse_Move_Event,
+  Visual_Mouse_Button_Event
 } Visual_Event_Type;
 
 typedef struct {
@@ -184,14 +185,19 @@ typedef struct {
   Visual_Event_Type type;
   int               x;
   int               y;
+} Visual_Mouse_Move_Event_Type;
+
+typedef struct {
+  Visual_Event_Type type;
   unsigned int      state;
   unsigned int      buttons;
-} Visual_Mouse_Event_Type;
+} Visual_Mouse_Button_Event_Type;
 
 typedef union {
-  Visual_Event_Type       type;
-  Visual_Key_Event_Type   key;
-  Visual_Mouse_Event_Type mouse;
+  Visual_Event_Type              type;
+  Visual_Key_Event_Type          key;
+  Visual_Mouse_Move_Event_Type   mouse_move;
+  Visual_Mouse_Button_Event_Type mouse_button;
 } Visual_Event;
 
 typedef struct vdi_workstation * VWKREF;

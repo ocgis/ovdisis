@@ -14,6 +14,7 @@
 
 #include <ofbis.h>
 
+#include "ofbis_visual.h"
 #include "ovdisis.h"
 
 void
@@ -21,7 +22,7 @@ ofbis_visual_get_event (void *         fb,
                         Visual_Event * visual_event) {
   FBEVENT fe;
 
-  FBgetevent ((FB *)fb, &fe);
+  FBgetevent (FB_T(fb), &fe);
 
   switch (fe.type) {
   case FBNoEvent :
@@ -36,12 +37,46 @@ ofbis_visual_get_event (void *         fb,
     break;
 
   case FBMouseEvent :
-    visual_event->type = Visual_Mouse_Event;
-    visual_event->mouse.x = fe.mouse.x;
-    visual_event->mouse.y = fe.mouse.y;
-    visual_event->mouse.state = fe.mouse.state;
-    visual_event->mouse.buttons = fe.mouse.buttons;
-    break;
+  {
+    if(fe.mouse.x || fe.mouse.y)
+    {
+      static int old_x = 0;
+      static int old_y = 0;
+
+      /* The mouse has been moved */
+      old_x += fe.mouse.x;
+      if(old_x < 0)
+      {
+        old_x = 0;
+      }
+      else if(old_x >= FB_T(fb)->vinf.xres)
+      {
+        old_x = FB_T(fb)->vinf.xres - 1;
+      }
+
+      old_y += fe.mouse.y;
+      if(old_y < 0)
+      {
+        old_y = 0;
+      }
+      else if(old_y >= FB_T(fb)->vinf.yres)
+      {
+        old_y = FB_T(fb)->vinf.yres - 1;
+      }
+
+      visual_event->type = Visual_Mouse_Move_Event;
+      visual_event->mouse_move.x = old_x;
+      visual_event->mouse_move.y = old_y;
+    }
+    else
+    {
+      /* A button has been pressed or released */
+      visual_event->type = Visual_Mouse_Button_Event;
+      visual_event->mouse_button.state = fe.mouse.state;
+      visual_event->mouse_button.buttons = fe.mouse.buttons;
+    }
+  }
+  break;
 
   default :
     ;

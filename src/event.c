@@ -236,51 +236,45 @@ event_handler (VDI_Workstation * vwk) {
 	pthread_mutex_unlock(&key_mutex);
 	pthread_cond_broadcast(&key_cond);
       } 
-    } else if (visual_event.type == Visual_Mouse_Event) {
-      /* Has one or more of the buttons changed? */
-      if (visual_event.mouse.buttons != buttons) {
-        if (vwk->butv != NULL) {
-          vwk->butv (map_buttons (visual_event.mouse.buttons));
-        }
-        buttons = visual_event.mouse.buttons;
+    } else if (visual_event.type == Visual_Mouse_Button_Event) {
+      if (vwk->butv != NULL) {
+        vwk->butv (map_buttons (visual_event.mouse_button.buttons));
+      }
+      buttons = visual_event.mouse_button.buttons;
+    } else if(visual_event.type == Visual_Mouse_Move_Event) {
+      /* Make sure the visibility isn't being updated */
+      pthread_mutex_lock (&mouse_mutex);
+      
+      if (mouse_visibility > 0) {
+        VISUAL_RESTORE_MOUSE_BG (vwk);
+      }
+        
+      mouse_x = visual_event.mouse_move.x;
+      mouse_y = visual_event.mouse_move.y;
+        
+      if (mouse_x < 0) {
+        mouse_x = 0;
+      } else if (mouse_x > vwk->dev.attr.xres) {
+        mouse_x = vwk->dev.attr.xres;
+      }
+      
+      if (mouse_y < 0) {
+        mouse_y = 0;
+      } else if (mouse_y > vwk->dev.attr.yres) {
+        mouse_y = vwk->dev.attr.yres;
       }
 
-      /* Has the mouse been moved? */
-      if ((visual_event.mouse.x != 0) || (visual_event.mouse.y != 0)) {
-        /* Make sure the visibility isn't being updated */
-        pthread_mutex_lock (&mouse_mutex);
-
-        if (mouse_visibility > 0) {
-          VISUAL_RESTORE_MOUSE_BG (vwk);
-        }
-        
-        mouse_x += visual_event.mouse.x;
-        mouse_y += visual_event.mouse.y;
-        
-        if (mouse_x < 0) {
-          mouse_x = 0;
-        } else if (mouse_x > vwk->dev.attr.xres) {
-          mouse_x = vwk->dev.attr.xres;
-        }
-        
-        if (mouse_y < 0) {
-          mouse_y = 0;
-        } else if (mouse_y > vwk->dev.attr.yres) {
-          mouse_y = vwk->dev.attr.yres;
-        }
-
-        /* Has a handler been installed? */
-        if (vwk->motv != NULL) {
-          vwk->motv (mouse_x, mouse_y);
-        }
-
-        if (mouse_visibility > 0) {
-          VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
-          draw_mouse_cursor (vwk, mouse_x, mouse_y);
-        }
-
-        pthread_mutex_unlock (&mouse_mutex);
+      /* Has a handler been installed? */
+      if (vwk->motv != NULL) {
+        vwk->motv (mouse_x, mouse_y);
       }
+      
+      if (mouse_visibility > 0) {
+        VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
+        draw_mouse_cursor (vwk, mouse_x, mouse_y);
+      }
+      
+      pthread_mutex_unlock (&mouse_mutex);
     } else {
       fprintf (stderr, "ovdisis: event.c: Unknown event\n");
     }

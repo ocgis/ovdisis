@@ -15,13 +15,13 @@
 #include <ggi/ggi.h>
 #include <stdio.h>
 
+#include "ggi_visual.h"
 #include "ovdisis.h"
 
 void *
 ggi_visual_open (void) {
   ggi_visual_t vis;
   int          err;
-  ggi_mode     suggested_mode;
 
   ggiInit();
 
@@ -44,8 +44,8 @@ ggi_visual_open (void) {
 
 void
 ggi_visual_close (void * vis) {
-  ggiClose((ggi_visual_t)vis);
-  ggiExit;
+  ggiClose(VISUAL_T(vis));
+  ggiExit();
 }
 
 void

@@ -15,6 +15,7 @@
 #include <ofbis.h>
 #include <unistd.h>
 
+#include "ofbis_visual.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -24,15 +25,15 @@ ofbis_visual_set_cmap (void * fb,
 		       int    red,
 		       int    green,
 		       int    blue) {
-  ((FB *)fb)->cmap->red[index]   = (unsigned short)(red   * 65535) / 1000;
-  ((FB *)fb)->cmap->green[index] = (unsigned short)(green * 65535) / 1000;
-  ((FB *)fb)->cmap->blue[index]  = (unsigned short)(blue  * 65535) / 1000;
+  FB_T(fb)->cmap->red[index]   = (unsigned short)(red   * 65535) / 1000;
+  FB_T(fb)->cmap->green[index] = (unsigned short)(green * 65535) / 1000;
+  FB_T(fb)->cmap->blue[index]  = (unsigned short)(blue  * 65535) / 1000;
   
-  ((FB *)fb)->cmap->start = index;
-  ((FB *)fb)->cmap->end   = index;
-  ((FB *)fb)->cmap->len   = 1;
+  FB_T(fb)->cmap->start = index;
+  FB_T(fb)->cmap->end   = index;
+  FB_T(fb)->cmap->len   = 1;
 
-  FBputcmap((FB *)fb, ((FB *)fb)->cmap);
+  FBputcmap(FB_T(fb), FB_T(fb)->cmap);
 }
 
 
@@ -42,13 +43,13 @@ ofbis_visual_get_cmap (void * fb,
 		       int *  red,
 		       int *  green,
 		       int *  blue) {
-  *red = (short)((((FB *)fb)->cmap->red[index]   * 1000) / 65535);
-  *green = (short)((((FB *)fb)->cmap->green[index] * 1000) / 65535);
-  *blue = (short)((((FB *)fb)->cmap->blue[index]  * 1000) / 65535);
+  *red = (short)((FB_T(fb)->cmap->red[index]   * 1000) / 65535);
+  *green = (short)((FB_T(fb)->cmap->green[index] * 1000) / 65535);
+  *blue = (short)((FB_T(fb)->cmap->blue[index]  * 1000) / 65535);
 }
 
 
-#define fb ((FB *)wk->visual->private)
+#define fb FB_T(wk->visual->private)
 
 void
 ofbis_visual_put_cmap (VDI_Workstation * wk) {
@@ -93,7 +94,7 @@ void
 ofbis_visual_free_cmap (VDI_Workstation * wk) {
   /* cmap not used in TrueColor mode */
   if (wk->inq.attr.planes < 16) {
-    FBfreecmap(((FB *)wk->visual->private)->cmap);
+    FBfreecmap(FB_T(wk->visual->private)->cmap);
     ADEBUG("v_clswk: FB cmap freed\n");
   }
 }

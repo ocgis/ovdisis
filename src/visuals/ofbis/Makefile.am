@@ -5,6 +5,7 @@ visualsdir = @VISUALSDIR@
 visuals_LTLIBRARIES = libovdisis_ofbis.la
 
 libovdisis_ofbis_la_SOURCES = \
+	ofbis_visual.h \
 	ofbis_visual_cmap.c ofbis_visual_cmap.h \
 	ofbis_visual_control.c ofbis_visual_control.h \
 	ofbis_visual_event.c ofbis_visual_event.h \

@@ -5,6 +5,7 @@ visualsdir = @VISUALSDIR@
 visuals_LTLIBRARIES = libovdisis_ggi.la
 
 libovdisis_ggi_la_SOURCES = \
+	ggi_visual.h \
 	ggi_visual_cmap.c ggi_visual_cmap.h \
 	ggi_visual_control.c ggi_visual_control.h \
 	ggi_visual_event.c ggi_visual_event.h \

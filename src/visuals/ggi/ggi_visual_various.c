@@ -15,6 +15,7 @@
 #include <ggi/ggi.h>
 #include <stdio.h>
 
+#include "ggi_visual.h"
 #include "ovdisis.h"
 
 int
@@ -31,7 +32,9 @@ ggi_visual_put_pixel (void * vis,
 		      int    x,
 		      int    y,
 		      int    c) {
-  ggiPutPixel((ggi_visual_t)vis, x, y, c);
+  ggi_color col1 = { 0, 0, 0xffff, 0xffff };
+
+  ggiPutPixel(VISUAL_T(vis), x, y, ggiMapColor(VISUAL_T(vis), &col1));
 }
 
 
@@ -41,8 +44,10 @@ ggi_visual_hline (void * vis,
 		  int    x2,
 		  int    y,
 		  int    c) {
-  ggiSetGCForeground((ggi_visual_t)vis, c);
-  ggiDrawHLine((ggi_visual_t)vis, x1, y, x2 - x1 + 1);
+  ggi_color col1 = { 0xffff, 0, 0, 0xffff };
+
+  ggiSetGCForeground(VISUAL_T(vis), ggiMapColor(VISUAL_T(vis), &col1));
+  ggiDrawHLine(VISUAL_T(vis), x1, y, x2 - x1 + 1);
 }
 
 
@@ -53,8 +58,10 @@ ggi_visual_line (void * vis,
 		 int    x2,
 		 int    y2,
 		 int    c) {
-  ggiSetGCForeground((ggi_visual_t)vis, c);
-  ggiDrawLine((ggi_visual_t)vis, x1, y1, x2, y2);
+  ggi_color col1 = { 0, 0xffff, 0, 0xffff };
+
+  ggiSetGCForeground(VISUAL_T(vis), ggiMapColor(VISUAL_T(vis), &col1));
+  ggiDrawLine(VISUAL_T(vis), x1, y1, x2, y2);
 }
 
 
@@ -88,8 +95,8 @@ ggi_visual_put_char (void * vis,
 		     int    y,
 		     int    col,
 		     int    ch) {
-  ggiSetGCForeground((ggi_visual_t)vis, col);
-  ggiPutc((ggi_visual_t)vis, x, y, ch);
+  ggiSetGCForeground(VISUAL_T(vis), col);
+  ggiPutc(VISUAL_T(vis), x, y, ch);
 }
 
 
@@ -103,9 +110,17 @@ ggi_visual_set_font (void * fb,
 
 
 void
-ggi_visual_inquire (void *        fb,
+ggi_visual_inquire (void *        vis,
 		    Visual_Attr * attr) {
-  fprintf(stderr, "Implement ggi_visual_inquire\n");
+  ggi_mode graphical_mode;
+
+  ggiGetMode(VISUAL_T(vis), &graphical_mode);
+
+  attr->x_res = graphical_mode.virt.x;
+  attr->y_res = graphical_mode.virt.y;
+  attr->palette_size = 1 << GT_DEPTH(graphical_mode.graphtype);
+  attr->number_of_colours = 1 << GT_DEPTH(graphical_mode.graphtype);
+  attr->bits_per_pixel = GT_DEPTH(graphical_mode.graphtype);
 }
 
 

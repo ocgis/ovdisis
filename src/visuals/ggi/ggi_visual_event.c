@@ -15,6 +15,7 @@
 #include <ggi/ggi.h>
 #include <stdio.h>
 
+#include "ggi_visual.h"
 #include "ovdisis.h"
 
 void
@@ -23,17 +24,16 @@ ggi_visual_get_event (void *         vis,
   gii_event event_buffer;
   int       err;
 
-  err = ggiEventRead((ggi_visual_t)vis,
+  err = ggiEventRead(VISUAL_T(vis),
                      &event_buffer,
                      emKey | emPointer);
 
   switch(event_buffer.any.type)
   {
   case evPtrAbsolute:
-    visual_event->type = Visual_Mouse_Event;
-    visual_event->mouse.x = event_buffer.pmove.x;
-    visual_event->mouse.y = event_buffer.pmove.y;
-    /* FIXME: Buttons? */
+    visual_event->type = Visual_Mouse_Move_Event;
+    visual_event->mouse_move.x = event_buffer.pmove.x;
+    visual_event->mouse_move.y = event_buffer.pmove.y;
     break;
 
   case evPtrRelative:
