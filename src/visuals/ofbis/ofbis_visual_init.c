@@ -18,6 +18,7 @@
 #include "ofbis_visual_cmap.h"
 #include "ofbis_visual_control.h"
 #include "ofbis_visual_event.h"
+#include "ofbis_visual_init.h"
 #include "ofbis_visual_mouse.h"
 #include "ofbis_visual_mutex.h"
 #include "ofbis_visual_various.h"
