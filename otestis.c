@@ -46,6 +46,7 @@ int do_stuff()
   int i,vp1,vh1,vh2,pxy[16];
   int work_in[11] = { 1,1,1,1,1,1,1,1,1,1,2 };
   int work_out[57];
+  char fontname[33];
 
 #ifdef __TOS__
   vp1 = graf_handle(&i,&i,&i,&i);
@@ -239,6 +240,9 @@ int do_stuff()
     }
   vst_effects(vh2, UNDERLINED);
   v_gtext(vh2, 70, i*8, "NoCrew");
+  vqt_name(vh2, 1, fontname);
+  fontname[32] = '\0';
+  printf("otestis: Fontname='%s'\n",fontname);
 
   vst_effects(vh2, 0);
   /* 6x6 font */
@@ -250,6 +254,9 @@ int do_stuff()
     }
   vst_effects(vh2, UNDERLINED);
   v_gtext(vh2, 130, i*6, "NoCrew");
+  vqt_name(vh2, 1, fontname);
+  fontname[32] = '\0';
+  printf("otestis: Fontname='%s'\n",fontname);
 
   vst_effects(vh2, 0);
   /* 8x16 font */
@@ -261,6 +268,9 @@ int do_stuff()
     }
   vst_effects(vh2, UNDERLINED);
   v_gtext(vh2, 180, i*16, "NoCrew");
+  vqt_name(vh2, 1, fontname);
+  fontname[32] = '\0';
+  printf("otestis: Fontname='%s'\n",fontname);
   
 
   /* Test v_get_pixel, it works, trust me! :) */
