@@ -23,7 +23,11 @@
 #define UWORD @U_INT16_T@
 #endif /* WORD */
 
+#ifdef __GNUC__
 #define PACKED __attribute__ ((packed))
+#else
+#define PACKED
+#endif
 
 #define NR_CONTRL 15
 #define NR_INTIN 132
@@ -262,17 +266,10 @@ extern void v_show_c(int, int);
 extern void v_hide_c(int);
 extern void vq_mouse(int, int *, int *, int *);
 extern void vex_butv(int  handle,
-                     void (*butv)(int bstate),
-                     void *(*old_butv) (int bstate));
+                     void *butv,
+                     void **old_butv);
 extern void vex_motv(int, void *, void *);
 extern void vex_curv(int, void *, void *);
-extern void vex_keyv(int  handle,
-                     void (*keyv)(int state,
-                                  int ascii,
-                                  int scan),
-                     void *(*old_keyv)(int state,
-                                       int ascii,
-                                       int scan));
 extern void vq_extnd(int, int, int *);
 extern void vq_key_s(int, int *);
 extern int  vq_color(int, int, int, int *);

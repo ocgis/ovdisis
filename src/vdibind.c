@@ -884,9 +884,9 @@ void vq_mouse(int handle, int *buttons, int *x, int *y)
 }
 
 void
-vex_butv (int  handle,
-          void (*newr)(int bstate),
-          void *(*oldr)(int bstate))
+vex_butv (int     handle,
+          void *  newr,
+          void ** oldr)
 {
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);

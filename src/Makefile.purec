@@ -21,8 +21,9 @@ ovdisis.lib: $(OBJECTS)
 
 vdibind.h: vdibind.h.in
 	cat $< | sed s/@S_INT16_T@/signed\ short/g | \
-                 sed s/@U_INT16_T@/unsigned\ short/g | \
-                 sed s:__attribute__\ \(\(packed\)\):/**/:g> vdibind.h
+                 sed s/@U_INT16_T@/unsigned\ short/g > vdibind.h
+
+vdibind.o: vdibind.h
 
 .c.o:
 	$(CC) $(CFLAGS) -O$@ $<
