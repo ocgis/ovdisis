@@ -1910,7 +1910,7 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-  min_ofbis_version=0.0.7
+  min_ofbis_version=0.0.8
   echo $ac_n "checking for oFBis - version >= $min_ofbis_version""... $ac_c" 1>&6
 echo "configure:1916: checking for oFBis - version >= $min_ofbis_version" >&5
   no_ofbis=""

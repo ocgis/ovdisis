@@ -16,9 +16,30 @@
 
 #include "ovdisis.h"
 
-void vdi_vsc_form(VDI_Workstation *vwk)
-{
-  EDEBUG("vsc_form: Call not implemented!\n");
+/*
+** Exported
+**
+** 1999-01-02 CG
+*/
+void
+vdi_vsc_form (VDI_Workstation * vwk) {
+  MFORM * new_mouse = (MFORM *)&vdipb->intin[0];
+
+  fprintf (stderr,
+           "vdi_mouse.c: vdi_vsc_form: mf_xhot = %d\n",
+           new_mouse->mf_xhot);
+  fprintf (stderr,
+           "vdi_mouse.c: vdi_vsc_form: mf_yhot = %d\n",
+           new_mouse->mf_yhot);
+  fprintf (stderr,
+           "vdi_mouse.c: vdi_vsc_form: mf_nplanes = %d\n",
+           new_mouse->mf_nplanes);
+  fprintf (stderr,
+           "vdi_mouse.c: vdi_vsc_form: mf_fg = %d\n",
+           new_mouse->mf_fg);
+  fprintf (stderr,
+           "vdi_mouse.c: vdi_vsc_form: mf_bg = %d\n",
+           new_mouse->mf_bg);
 }
 
 void vdi_v_show_c(VDI_Workstation *vwk)

@@ -148,6 +148,20 @@ typedef struct vdi_rectangle
   int v_y2;
 } VRECT;
 
+/***********************************************************/
+
+typedef struct
+{
+  short mf_xhot;
+  short mf_yhot;
+  short mf_nplanes;
+  short mf_fg;
+  short mf_bg;
+  short mf_mask[16];
+  short mf_data[16];
+} MFORM;
+
+/***********************************************************/
 
 /* oVDIsis call function */
 
