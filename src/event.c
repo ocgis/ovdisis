@@ -34,10 +34,21 @@ static unsigned short mouse_background_buffer[16*16*2];
 static int mouse_visibility = 0;
 
 static pthread_mutex_t mouse_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t key_cond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t key_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* Mouse cursor coordinates */
 static int mouse_x = 0;
 static int mouse_y = 0;
+
+/* Character buffers from keyboard input 
+ * These have to be global so that vsm_string can read them
+ */
+int *key_scancode_buffer, *key_ascii_buffer;
+int key_first_index, key_amount, key_buffer_length;
+
+#define KEY_BUFFER_LENGTH 4096
+
 
 /*
 ** Description
@@ -218,6 +229,8 @@ event_handler (VDI_Workstation * vwk) {
   unsigned int     buttons = 0;
   struct itimerval timer_value = {{0, 50000}, {0, 50000}};
   struct itimerval old_timer_value;
+  int enable_keyboard, key_next_index;
+  static key_index_looped = 0;
 
   /* Install a timer handler */
   signal (SIGALRM, &timer_handler);
@@ -229,15 +242,50 @@ event_handler (VDI_Workstation * vwk) {
     draw_mouse_cursor (vwk, mouse_x, mouse_y);
   }
 
+  enable_keyboard = 1;
+  key_scancode_buffer = (int *)malloc(KEY_BUFFER_LENGTH);
+  if(key_scancode_buffer == NULL) {
+    fprintf(stderr, "ovdisis: event.c: Incredible, not even %d bytes to "
+	    "spare for the scancode buffer\n", KEY_BUFFER_LENGTH);
+    enable_keyboard = 0;
+  }
+  key_ascii_buffer = (int *)malloc(KEY_BUFFER_LENGTH);
+  if(key_ascii_buffer == NULL) {
+    fprintf(stderr, "ovdisis: event.c: Incredible, not even %d bytes to "
+	    "spare for the ascii buffer\n", KEY_BUFFER_LENGTH);
+    enable_keyboard = 0;
+  }
+  key_first_index = -1;
+  key_next_index = 0;
+  key_amount = 0;
+  key_buffer_length = KEY_BUFFER_LENGTH;
+
   while (TRUE) {
     FBgetevent (vwk->fb, &fe);
 
-    if (fe.type == FBKeyEvent) {
-      if (vwk->keyv != NULL) {
-        vwk->keyv (fe.key.state,
-                   fe.key.ascii,
-                   fe.key.keycode);
-      }
+    if (fe.type == FBKeyEvent && enable_keyboard) {
+      /* We only care if the key is pressed down, not released
+       * Figure out how to make repeat if a key is held down.
+       */
+      if(fe.key.keycode & 0x80) {
+	pthread_mutex_lock(&key_mutex);
+	
+	key_scancode_buffer[key_next_index] = fe.key.keycode;
+	key_ascii_buffer[key_next_index] = fe.key.ascii;
+	key_amount++;
+	if(key_first_index == -1)
+	  key_first_index = 0;
+	else if(key_index_looped && key_amount == KEY_BUFFER_LENGTH)
+	  key_first_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
+	if(key_amount >= KEY_BUFFER_LENGTH) {
+	  key_index_looped = 1;
+	  key_amount = KEY_BUFFER_LENGTH;
+	}
+	key_next_index = (key_next_index+1) % KEY_BUFFER_LENGTH;
+	
+	pthread_mutex_unlock(&key_mutex);
+	pthread_cond_broadcast(&key_cond);
+      } 
     } else if (fe.type == FBMouseEvent) {
       /* Has one or more of the buttons changed? */
       if (fe.mouse.buttons != buttons) {
@@ -324,6 +372,13 @@ start_event_handler (VDI_Workstation * vwk)
 */
 void
 stop_event_handler (void) {
+  if(key_scancode_buffer)
+    free(key_scancode_buffer);
+  if(key_ascii_buffer)
+    free(key_ascii_buffer);
+  key_scancode_buffer = NULL;
+  key_ascii_buffer = NULL;
+
 #if 0
   fprintf (stderr, "ovdisis: event.c: killing handler thread\n");
   pthread_kill (event_handler_thread, SIGKILL);
