@@ -5,7 +5,7 @@ CSRCS = $(BINDINGS_SRC) $(TRAP_SRC)
 
 OBJS = $(CSRCS:.c=.o)
 
-all: libovdisis.a
+all: libovdisis.a vdibind.h
 
 libovdisis.a: $(OBJS)
 	$(AR) cru $@ $(OBJS)
