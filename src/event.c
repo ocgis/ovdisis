@@ -81,6 +81,7 @@ draw_mouse_cursor (VDI_Workstation * vwk,
 
   unsigned short mask[] =
   {
+#if 0
     0xffff,
     0xfffe,
     0xfffc,
@@ -97,10 +98,29 @@ draw_mouse_cursor (VDI_Workstation * vwk,
     0xe000,
     0xc000,
     0x8000
+#else
+    0xc000,
+    0xe000,
+    0xf000,
+    0xf800,
+    0xfc00,
+    0xfe00,
+    0xff00,
+    0xff80,
+    0xffc0,
+    0xffe0,
+    0xfe00,
+    0xef00,
+    0xcf00,
+    0x8780,
+    0x0780,
+    0x0780
+#endif
   };
   
   unsigned short cursor[] =
   {
+#if 0
     0x0000,
     0x7ffc,
     0x7ff8,
@@ -117,6 +137,24 @@ draw_mouse_cursor (VDI_Workstation * vwk,
     0x4000,
     0x0000,
     0x0000
+#else
+    0x0000,
+    0x4000,
+    0x6000,
+    0x7000,
+    0x7800,
+    0x7c00,
+    0x7e00,
+    0x7f00,
+    0x7f80,
+    0x7c00,
+    0x6c00,
+    0x4600,
+    0x0600,
+    0x0300,
+    0x0300,
+    0x0000
+#endif
   };
 
   for (yoff = 0; yoff < 16; yoff++) {
@@ -124,9 +162,9 @@ draw_mouse_cursor (VDI_Workstation * vwk,
 
     for (xoff = 0; xoff < 16; xoff++) {
       if (which & cursor[yoff]) {
-        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 1);
+        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, gem2tos_color(vwk->inq.attr.planes, 1));
       } else if (which & mask[yoff]) {
-        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 0);
+        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, gem2tos_color(vwk->inq.attr.planes, 0));
       }
 
       which >>= 1;
