@@ -224,7 +224,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   wk[w].physical->keyv = NULL;
 
   /* Start event handler */
-  init_event_handler (wk[w].physical);
+  start_event_handler (wk[w].physical);
 
   vdipb->contrl[N_PTSOUT] = 6;
   vdipb->contrl[N_INTOUT] = 45;
@@ -254,7 +254,7 @@ vdi_v_clswk (VDI_Workstation *vwk)
   }
 
   /* Destroy event handler */
-  exit_event_handler ();
+  stop_event_handler ();
 
   /* cmap not used in TrueColor mode */
   if (wk[w].physical->inq.attr.planes < 16) {

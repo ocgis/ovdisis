@@ -103,7 +103,7 @@ event_handler (VDI_Workstation * vwk) {
 ** 1998-12-07 CG
 */
 void
-init_event_handler (VDI_Workstation * vwk)
+start_event_handler (VDI_Workstation * vwk)
 {
   fprintf (stderr, "ovdisis: event.c: init_event_handler: Trying to create thread\n");
   /* Create a new thread */
@@ -125,7 +125,7 @@ init_event_handler (VDI_Workstation * vwk)
 ** 1998-12-07 CG
 */
 void
-exit_event_handler (void) {
+stop_event_handler (void) {
 #if 0
   fprintf (stderr, "ovdisis: event.c: killing handler thread\n");
   pthread_kill (event_handler_thread, SIGKILL);
