@@ -16,20 +16,32 @@
 #include "ovdisis_types.h"
 #include "vdibind.h"
 
+#define VDIBIND_REENTRANT 1
+
 /* set contrl[N_INTIN] & contrl[N_PTSIN] too ?? */
 
 #define MSW(a) ((unsigned short)((unsigned long)(a) >> 16))
 #define LSW(a) ((unsigned short)((unsigned long)(a) & 0xffffUL))
 
-VDIPARBLK e_vdiparblk;
-VDIPB o_vdipb = { e_vdiparblk.contrl,
-		  e_vdiparblk.intin, e_vdiparblk.ptsin,
-		  e_vdiparblk.intout, e_vdiparblk.ptsout };
+
+#define _DEFINE_VPB \
+  VDIPARBLK e_vdiparblk; \
+  VDIPB o_vdipb = { e_vdiparblk.contrl, \
+		    e_vdiparblk.intin, e_vdiparblk.ptsin, \
+		    e_vdiparblk.intout, e_vdiparblk.ptsout }
+
+#ifdef VDIBIND_REENTRANT
+#define DEFINE_VPB _DEFINE_VPB
+#else
+#define DEFINE_VPB
+_DEFINE_VPB;
+#endif
 
 extern void vdi_call(VDIPB *);
 
 void v_opnwk(int work_in[11], int *handle, int work_out[57])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<11 ; i++)
@@ -50,6 +62,7 @@ void v_opnwk(int work_in[11], int *handle, int work_out[57])
 
 void v_clswk(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 2;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -59,6 +72,7 @@ void v_clswk(int handle)
 
 void v_opnvwk(int work_in[11], int *handle, int work_out[57])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<11 ; i++)
@@ -80,6 +94,7 @@ void v_opnvwk(int work_in[11], int *handle, int work_out[57])
 
 void v_clsvwk(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 101;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -89,6 +104,7 @@ void v_clsvwk(int handle)
 
 void v_clrwk(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 3;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -98,6 +114,7 @@ void v_clrwk(int handle)
 
 void v_updwk(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 4;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -107,6 +124,7 @@ void v_updwk(int handle)
 
 void vs_clip(int handle, int clipping, int pxy[4])
 {
+  DEFINE_VPB;
   int i;
 
   o_vdipb.intin[0] = clipping;
@@ -124,6 +142,7 @@ void vs_clip(int handle, int clipping, int pxy[4])
 
 int vswr_mode(int handle, int mode)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = mode;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -137,6 +156,7 @@ int vswr_mode(int handle, int mode)
 
 void vs_color(int handle, int index, int rgb[3])
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
   o_vdipb.intin[1] = rgb[0];
   o_vdipb.intin[2] = rgb[1];
@@ -151,6 +171,7 @@ void vs_color(int handle, int index, int rgb[3])
 
 void v_gtext(int handle, int x, int y, char *string)
 {
+  DEFINE_VPB;
   int i=0;
 
   o_vdipb.ptsin[0] = x;
@@ -168,6 +189,7 @@ void v_gtext(int handle, int x, int y, char *string)
 
 int vst_color(int handle, int index)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -182,6 +204,7 @@ int vst_color(int handle, int index)
 void vst_height(int handle, int height, int *t_width, int *t_height,
 		int *c_width, int *c_height)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = 0;
   o_vdipb.ptsin[1] = height;
 
@@ -200,6 +223,7 @@ void vst_height(int handle, int height, int *t_width, int *t_height,
 int vst_point(int handle, int height, int *t_width, int *t_height,
 		int *c_width, int *c_height)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = height;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -218,6 +242,7 @@ int vst_point(int handle, int height, int *t_width, int *t_height,
 
 int vst_effects(int handle, int attribute)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = attribute;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -231,6 +256,7 @@ int vst_effects(int handle, int attribute)
 
 void vst_alignment(int handle, int h_in, int v_in, int *h_out, int *v_out)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = h_in;
   o_vdipb.intin[1] = v_in;
 
@@ -246,6 +272,7 @@ void vst_alignment(int handle, int h_in, int v_in, int *h_out, int *v_out)
 
 int vst_rotation(int handle, int rot)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = rot;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -259,6 +286,7 @@ int vst_rotation(int handle, int rot)
 
 int vst_font(int handle, int index)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -272,6 +300,7 @@ int vst_font(int handle, int index)
 
 int vst_load_fonts(int handle, int rsrvd)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = rsrvd;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -285,6 +314,7 @@ int vst_load_fonts(int handle, int rsrvd)
 
 void vst_unload_fonts(int handle, int select)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = select;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -300,6 +330,7 @@ int vst_arbpt (int   handle,
                int * hchar,
                int * wcell,
                int * hcell) {
+  DEFINE_VPB;
   o_vdipb.intin[0] = point;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -318,6 +349,7 @@ int vst_arbpt (int   handle,
 
 void v_pline(int handle, int nr, int *coords)
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<nr ; i++)
@@ -335,6 +367,7 @@ void v_pline(int handle, int nr, int *coords)
 
 int vsl_color(int handle, int index)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -348,6 +381,7 @@ int vsl_color(int handle, int index)
 
 int vsl_width(int handle, int width)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = width;
   o_vdipb.ptsin[1] = 0;
 
@@ -362,6 +396,7 @@ int vsl_width(int handle, int width)
 
 int vsl_type(int handle, int type)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = type;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -375,6 +410,7 @@ int vsl_type(int handle, int type)
 
 void vsl_udsty(int handle, int lmask)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = (unsigned short)lmask;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -386,6 +422,7 @@ void vsl_udsty(int handle, int lmask)
 
 void vsl_ends(int handle, int lbeg, int lend)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = lbeg;
   o_vdipb.intin[1] = lend;
 
@@ -398,6 +435,7 @@ void vsl_ends(int handle, int lbeg, int lend)
 
 void v_pmarker(int handle, int nr, int *coords)
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<nr ; i++)
@@ -415,6 +453,7 @@ void v_pmarker(int handle, int nr, int *coords)
 
 int vsm_color(int handle, int index)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -428,6 +467,7 @@ int vsm_color(int handle, int index)
 
 int vsm_height(int handle, int height)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = 0;
   o_vdipb.ptsin[1] = height;
 
@@ -442,6 +482,7 @@ int vsm_height(int handle, int height)
 
 int vsm_type(int handle, int type)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = type;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -455,6 +496,7 @@ int vsm_type(int handle, int type)
 
 void v_fillarea(int handle, int nr, int *coords)
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<nr ; i++)
@@ -472,6 +514,7 @@ void v_fillarea(int handle, int nr, int *coords)
 
 void vr_recfl(int handle, int coords[4])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<4 ; i++)
@@ -486,6 +529,7 @@ void vr_recfl(int handle, int coords[4])
 
 void v_contourfill(int handle, int x, int y, int index)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.intin[0] = index;
@@ -499,6 +543,7 @@ void v_contourfill(int handle, int x, int y, int index)
 
 int vsf_color(int handle, int index)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -512,6 +557,7 @@ int vsf_color(int handle, int index)
 
 int vsf_interior(int handle, int interior)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = interior;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -525,6 +571,7 @@ int vsf_interior(int handle, int interior)
 
 int vsf_style(int handle, int style)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = style;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -538,6 +585,7 @@ int vsf_style(int handle, int style)
 
 void vsf_udpat(int handle, int *pat, int nbpl)
 {
+  DEFINE_VPB;
   int i,j;
 
   for(i=0 ; i<nbpl ; i++)
@@ -553,6 +601,7 @@ void vsf_udpat(int handle, int *pat, int nbpl)
 
 int vsf_perimeter(int handle, int perimeter)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = perimeter;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -566,6 +615,7 @@ int vsf_perimeter(int handle, int perimeter)
 
 void v_bar(int handle, int pxy[4])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<4 ; i++)
@@ -581,6 +631,7 @@ void v_bar(int handle, int pxy[4])
 
 void v_arc(int handle, int x, int y, int rad, int abeg, int aend)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = 0;
@@ -603,6 +654,7 @@ void v_arc(int handle, int x, int y, int rad, int abeg, int aend)
 
 void v_pieslice(int handle, int x, int y, int rad, int abeg, int aend)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = 0;
@@ -625,6 +677,7 @@ void v_pieslice(int handle, int x, int y, int rad, int abeg, int aend)
 
 void v_circle(int handle, int x, int y, int rad)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = 0;
@@ -642,6 +695,7 @@ void v_circle(int handle, int x, int y, int rad)
 
 void v_ellipse(int handle, int x, int y, int xrad, int yrad)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = xrad;
@@ -657,6 +711,7 @@ void v_ellipse(int handle, int x, int y, int xrad, int yrad)
 
 void v_ellarc(int handle, int x, int y, int xrad, int yrad, int abeg, int aend)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = xrad;
@@ -675,6 +730,7 @@ void v_ellarc(int handle, int x, int y, int xrad, int yrad, int abeg, int aend)
 
 void v_ellpie(int handle, int x, int y, int xrad, int yrad, int abeg, int aend)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   o_vdipb.ptsin[2] = xrad;
@@ -693,6 +749,7 @@ void v_ellpie(int handle, int x, int y, int xrad, int yrad, int abeg, int aend)
 
 void v_rbox(int handle, int pxy[4])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<4 ; i++)
@@ -708,6 +765,7 @@ void v_rbox(int handle, int pxy[4])
 
 void v_rfbox(int handle, int pxy[4])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<4 ; i++)
@@ -723,6 +781,7 @@ void v_rfbox(int handle, int pxy[4])
 
 void v_justified(int handle, int x, int y, char *string, int len, int wext, int cext)
 {
+  DEFINE_VPB;
   int i;
   
   o_vdipb.ptsin[0] = x;
@@ -750,6 +809,7 @@ void v_justified(int handle, int x, int y, char *string, int len, int wext, int 
 
 void vro_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest)
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<8 ; i++)
@@ -771,6 +831,7 @@ void vro_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest)
 
 void vrt_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest, int index[2])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<8 ; i++)
@@ -794,6 +855,7 @@ void vrt_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest, int i
 
 void vr_trnfm(int handle, MFDB *src, MFDB *dest)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[7] = MSW(src);
   o_vdipb.contrl[8] = LSW(src);
   o_vdipb.contrl[9] = MSW(dest);
@@ -808,6 +870,7 @@ void vr_trnfm(int handle, MFDB *src, MFDB *dest)
 
 void v_get_pixel(int handle, int x, int y, int *p_val, int *p_index)
 {
+  DEFINE_VPB;
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
 
@@ -823,6 +886,7 @@ void v_get_pixel(int handle, int x, int y, int *p_val, int *p_index)
 
 void vsc_form(int handle, int data[37])
 {
+  DEFINE_VPB;
   int i;
 
   for(i=0 ; i<37 ; i++)
@@ -837,6 +901,7 @@ void vsc_form(int handle, int data[37])
 
 void vex_timv(int handle, void *newr, void *oldr, int *time)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
 
@@ -852,6 +917,7 @@ void vex_timv(int handle, void *newr, void *oldr, int *time)
 
 void v_show_c(int handle, int reset)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = reset;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -863,6 +929,7 @@ void v_show_c(int handle, int reset)
 
 void v_hide_c(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 123;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -872,6 +939,7 @@ void v_hide_c(int handle)
 
 void vq_mouse(int handle, int *buttons, int *x, int *y)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 124;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -888,6 +956,7 @@ vex_butv (int     handle,
           void *  newr,
           void ** oldr)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
 
@@ -902,6 +971,7 @@ vex_butv (int     handle,
 
 void vex_motv(int handle, void *newr, void *oldr)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
 
@@ -916,6 +986,7 @@ void vex_motv(int handle, void *newr, void *oldr)
 
 void vex_curv(int handle, void *newr, void *oldr)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[7] = MSW(newr);
   o_vdipb.contrl[8] = LSW(newr);
 
@@ -930,6 +1001,7 @@ void vex_curv(int handle, void *newr, void *oldr)
 
 void vq_extnd(int handle, int ext, int work_out[57])
 {
+  DEFINE_VPB;
   int i;
 
   o_vdipb.intin[0] = ext;
@@ -948,6 +1020,7 @@ void vq_extnd(int handle, int ext, int work_out[57])
 
 void vq_key_s(int handle, int *keys)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 128;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -960,6 +1033,7 @@ void vq_key_s(int handle, int *keys)
 int
 vq_color(int handle, int index, int flag, int rgb[3])
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = index;
   o_vdipb.intin[1] = flag;
 
@@ -978,6 +1052,7 @@ vq_color(int handle, int index, int flag, int rgb[3])
 
 void vql_attributes(int handle, int attr[6])
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 35;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -995,6 +1070,7 @@ void vql_attributes(int handle, int attr[6])
 
 void vqm_attributes(int handle, int attr[5])
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 36;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -1011,6 +1087,7 @@ void vqm_attributes(int handle, int attr[5])
 
 void vqf_attributes(int handle, int attr[5])
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 37;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -1026,6 +1103,7 @@ void vqf_attributes(int handle, int attr[5])
 
 void vqt_attributes(int handle, int attr[10])
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 38;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -1047,6 +1125,7 @@ void vqt_attributes(int handle, int attr[10])
 
 void vqt_extent(int handle, char *string, int coords[8])
 {
+  DEFINE_VPB;
   int i;
   
   i=0;
@@ -1068,6 +1147,7 @@ void vqt_extent(int handle, char *string, int coords[8])
 
 int vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = (short)ch;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -1085,6 +1165,7 @@ int vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
 
 int vqt_name(int handle, int index, char *fontname)
 {
+  DEFINE_VPB;
   int i;
 
   o_vdipb.intin[0] = (short)index;
@@ -1104,6 +1185,7 @@ int vqt_name(int handle, int index, char *fontname)
 void vqt_fontinfo(int handle, int *first, int *last, 
 		  int *dist, int *width, int *effects)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 131;
   o_vdipb.contrl[N_PTSIN] = 0;
@@ -1125,6 +1207,7 @@ void vqt_fontinfo(int handle, int *first, int *last,
 
 void vqin_mode(int handle, int dev, int *mode)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = dev;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -1138,6 +1221,7 @@ void vqin_mode(int handle, int dev, int *mode)
 
 void vq_chcells(int handle, int *rows, int *cols)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 1;
@@ -1151,6 +1235,7 @@ void vq_chcells(int handle, int *rows, int *cols)
 
 void v_exit_cur(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 2;
@@ -1161,6 +1246,7 @@ void v_exit_cur(int handle)
 
 void v_enter_cur(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 3;
@@ -1171,6 +1257,7 @@ void v_enter_cur(int handle)
 
 void v_curup(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 4;
@@ -1181,6 +1268,7 @@ void v_curup(int handle)
 
 void v_curdown(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 5;
@@ -1191,6 +1279,7 @@ void v_curdown(int handle)
 
 void v_curright(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 6;
@@ -1201,6 +1290,7 @@ void v_curright(int handle)
 
 void v_curleft(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 7;
@@ -1211,6 +1301,7 @@ void v_curleft(int handle)
 
 void v_curhome(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 8;
@@ -1221,6 +1312,7 @@ void v_curhome(int handle)
 
 void v_eeos(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 9;
@@ -1231,6 +1323,7 @@ void v_eeos(int handle)
 
 void v_eeol(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 10;
@@ -1241,6 +1334,7 @@ void v_eeol(int handle)
 
 void vs_curaddress(int handle, int row, int col)
 {
+  DEFINE_VPB;
   o_vdipb.intin[0] = row;
   o_vdipb.intin[1] = col;
 
@@ -1254,6 +1348,7 @@ void vs_curaddress(int handle, int row, int col)
 
 void v_curtext(int handle, char *string)
 {
+  DEFINE_VPB;
   int i;
 
   i=0;
@@ -1273,6 +1368,7 @@ void v_curtext(int handle, char *string)
 
 void v_rvon(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 13;
@@ -1283,6 +1379,7 @@ void v_rvon(int handle)
 
 void v_rvoff(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 14;
@@ -1293,6 +1390,7 @@ void v_rvoff(int handle)
 
 void vq_curaddress(int handle, int *row, int *col)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 15;
@@ -1306,6 +1404,7 @@ void vq_curaddress(int handle, int *row, int *col)
 
 void v_hardcopy(int handle)
 {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 5;
   o_vdipb.contrl[SUBROUTINE] = 17;
@@ -1321,6 +1420,7 @@ void vex_keyv(int  handle,
               void *(*old_keyv)(int state,
                                 int ascii,
                                 int scan)) {
+  DEFINE_VPB;
   o_vdipb.contrl[7] = MSW(keyv);
   o_vdipb.contrl[8] = LSW(keyv);
 
@@ -1349,6 +1449,7 @@ vrq_string (int    handle,
 	    int    echo,
 	    int *  outxy,
 	    char * str) {
+  DEFINE_VPB;
   int i;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -1375,6 +1476,7 @@ vsm_string (int   handle,
 	    int   echo,
 	    int * outxy,
 	    char * str) {
+  DEFINE_VPB;
   int i;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -1404,6 +1506,7 @@ vsm_string_raw (int   handle,
 		int   echo,
 		int * outxy,
 		int * str) {
+  DEFINE_VPB;
   int i;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
@@ -1431,6 +1534,7 @@ void
 vsin_mode (int handle,
 	   int device,
 	   int mode) {
+  DEFINE_VPB;
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 33;
   o_vdipb.contrl[N_PTSIN] = 0;
