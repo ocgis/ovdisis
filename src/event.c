@@ -152,24 +152,31 @@ draw_mouse_cursor(VDI_Workstation * vwk,
   int xoff;
   int yoff;
   int fg_col, bg_col;
-  
-  fg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_fg);
-  bg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_bg);
+  int x2;
 
-  for(yoff = 0; yoff < 16; yoff++)
-  {
+  if( mouse_cursor.mf_nplanes > 1 ) {
+    fg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_fg);
+    bg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_bg);
+  } else {
+    fg_col = 1;
+    bg_col = 0;
+  }
+
+  x2 = x+16;
+
+  for( yoff = 0  ;  yoff < 16  ;  yoff++ ) {
     unsigned short which = 0x8000;
-    
-    for(xoff = 0; xoff < 16; xoff++)
-    {
-      if(which & mouse_cursor.mf_data[yoff])
-      {
-	VISUAL_PUT_PIXEL(vwk, x + xoff, y + yoff, fg_col);
-      }
-      else if(which & mouse_cursor.mf_mask[yoff])
-      {
-        VISUAL_PUT_PIXEL(vwk, x + xoff, y + yoff, bg_col);
-      }
+
+    for( xoff = x  ;  xoff < x2  ;  xoff++ ) {
+
+      if( which & mouse_cursor.mf_data[yoff] )
+	{
+	  VISUAL_PUT_PIXEL(vwk, xoff, y + yoff, fg_col);
+	}
+      else if( which & mouse_cursor.mf_mask[yoff] )
+	{
+	  VISUAL_PUT_PIXEL(vwk, xoff, y + yoff, bg_col);
+	}
 
       which >>= 1;
     }
