@@ -8,3 +8,7 @@
 
 /* Define if you have the pthread library (-lpthread).  */
 #undef HAVE_LIBPTHREAD
+
+/* define if compiled symbols have a leading underscore */
+#undef WITH_SYMBOL_UNDERSCORE
+

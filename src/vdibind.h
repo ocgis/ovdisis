@@ -230,6 +230,13 @@ extern void vex_butv(int  handle,
                      void *(*old_butv) (int bstate));
 extern void vex_motv(int, void *, void *);
 extern void vex_curv(int, void *, void *);
+extern void vex_keyv(int  handle,
+                     void (*keyv)(int state,
+                                  int ascii,
+                                  int scan),
+                     void *(*old_keyv)(int state,
+                                       int ascii,
+                                       int scan));
 extern void vq_extnd(int, int, int *);
 extern void vq_key_s(int, int *);
 extern void vq_color(int, int, int, int *);
@@ -260,5 +267,3 @@ extern void vq_curaddress(int, int *, int *);
 extern void v_hardcopy(int);
 
 #endif /* _VDIBIND_H_ */
-
-

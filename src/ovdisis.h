@@ -175,7 +175,7 @@ typedef	struct
   void (*curv) (int mx, int my);
   void (*motv) (int mx, int my);
   void (*timv) (void);
-  void (*keyv) (void);
+  void (*keyv) (int state, int ascii, int scan);
 
   /* Process ID for owner of this workstation */
   int pid;

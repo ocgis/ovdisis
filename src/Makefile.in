@@ -65,8 +65,10 @@ host_alias = @host_alias@
 host_triplet = @host@
 target_alias = @target_alias@
 target_triplet = @target@
+AS = @AS@
 AWK = @AWK@
 CC = @CC@
+DLLTOOL = @DLLTOOL@
 LD = @LD@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
@@ -85,7 +87,7 @@ ovdisis_HEADERS = vdibind.h
 
 lib_LTLIBRARIES = libovdisis.la
 
-libovdisis_la_SOURCES =  	vdi_call.c vdi_characters.c vdi_control.c vdi_various.c vdi_fill.c 	vdi_gdps.c vdi_line.c vdi_marker.c vdi_mouse.c vdi_raster.c 	vdi_text.c various.c ovdi_more.c inits.c event.c 	system_6x6.c system_8x8.c system_8x16.c 	vdibind.c 	defcmap.h event.h fonts.h inits.h ovdi_more.h ovdisis.h various.h 	vdi_characters.h vdi_control.h vdi_fill.h vdi_gdps.h vdi_line.h 	vdi_marker.h vdi_mouse.h vdi_raster.h vdi_text.h vdi_various.h
+libovdisis_la_SOURCES =  	vdi_call.c vdi_characters.c vdi_control.c vdi_various.c vdi_fill.c 	vdi_gdps.c vdi_keyboard.c vdi_line.c vdi_marker.c vdi_mouse.c 	vdi_raster.c vdi_text.c various.c ovdi_more.c inits.c event.c 	system_6x6.c system_8x8.c system_8x16.c vdibind.c 	defcmap.h event.h fonts.h inits.h ovdi_more.h ovdisis.h various.h 	vdi_characters.h vdi_control.h vdi_fill.h vdi_gdps.h vdi_keyboard.h 	vdi_line.h 	vdi_marker.h vdi_mouse.h vdi_raster.h vdi_text.h vdi_various.h
 
 
 libovdisis_la_LDFLAGS = -version-info 0:1:0
@@ -101,9 +103,10 @@ LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 libovdisis_la_LIBADD = 
 libovdisis_la_OBJECTS =  vdi_call.lo vdi_characters.lo vdi_control.lo \
-vdi_various.lo vdi_fill.lo vdi_gdps.lo vdi_line.lo vdi_marker.lo \
-vdi_mouse.lo vdi_raster.lo vdi_text.lo various.lo ovdi_more.lo inits.lo \
-event.lo system_6x6.lo system_8x8.lo system_8x16.lo vdibind.lo
+vdi_various.lo vdi_fill.lo vdi_gdps.lo vdi_keyboard.lo vdi_line.lo \
+vdi_marker.lo vdi_mouse.lo vdi_raster.lo vdi_text.lo various.lo \
+ovdi_more.lo inits.lo event.lo system_6x6.lo system_8x8.lo \
+system_8x16.lo vdibind.lo
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -121,9 +124,10 @@ GZIP_ENV = --best
 DEP_FILES =  .deps/event.P .deps/inits.P .deps/ovdi_more.P \
 .deps/system_6x6.P .deps/system_8x16.P .deps/system_8x8.P \
 .deps/various.P .deps/vdi_call.P .deps/vdi_characters.P \
-.deps/vdi_control.P .deps/vdi_fill.P .deps/vdi_gdps.P .deps/vdi_line.P \
-.deps/vdi_marker.P .deps/vdi_mouse.P .deps/vdi_raster.P \
-.deps/vdi_text.P .deps/vdi_various.P .deps/vdibind.P
+.deps/vdi_control.P .deps/vdi_fill.P .deps/vdi_gdps.P \
+.deps/vdi_keyboard.P .deps/vdi_line.P .deps/vdi_marker.P \
+.deps/vdi_mouse.P .deps/vdi_raster.P .deps/vdi_text.P \
+.deps/vdi_various.P .deps/vdibind.P
 SOURCES = $(libovdisis_la_SOURCES)
 OBJECTS = $(libovdisis_la_OBJECTS)
 

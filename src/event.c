@@ -232,10 +232,11 @@ event_handler (VDI_Workstation * vwk) {
     FBgetevent (vwk->fb, &fe);
 
     if (fe.type == FBKeyEvent) {
-      fprintf (stderr,
-               "ovdisis: event.c: FBKeyEvent: state = 0x%x ascii = 0x%x\n",
-               fe.key.state,
-               fe.key.ascii);
+      if (vwk->keyv != NULL) {
+        vwk->keyv (fe.key.state,
+                   fe.key.ascii,
+                   fe.key.keycode);
+      }
     } else if (fe.type == FBMouseEvent) {
       /* Has one or more of the buttons changed? */
       if (fe.mouse.buttons != buttons) {

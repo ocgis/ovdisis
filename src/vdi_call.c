@@ -12,6 +12,8 @@
  *
  */
 
+#undef DEBUGLEVEL
+
 #include <stdio.h>
 
 #include "ovdisis.h"
@@ -23,11 +25,10 @@
 #include "vdi_gdps.h"
 #include "vdi_characters.h"
 #include "vdi_control.h"
+#include "vdi_keyboard.h"
 #include "vdi_mouse.h"
 #include "vdi_raster.h"
 #include "vdi_various.h"
-
-#undef DEBUGLEVEL
 
 VdiFunction *vdi_functions[] = {
   /*   0 */ UNUSED, vdi_v_opnwk, vdi_v_clswk, vdi_v_clrwk, vdi_v_updwk,
@@ -56,7 +57,7 @@ VdiFunction *vdi_functions[] = {
   /* 115 */ vdi_vqin_mode, vdi_vqt_extent, vdi_vqt_width, vdi_vex_timv, UNUSED,
   /* 120 */ UNUSED, vdi_vrt_cpyfm, vdi_v_show_c, vdi_v_hide_c, vdi_vq_mouse,
   /* 125 */ vdi_vex_butv, vdi_vex_motv, vdi_vex_curv, vdi_vq_key_s, vdi_vs_clip,
-  /* 130 */ vdi_vqt_name, vdi_vqt_fontinfo
+  /* 130 */ vdi_vqt_name, vdi_vqt_fontinfo, vdi_vex_keyv
 };
 
 VDIPB *vdipb;

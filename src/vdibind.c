@@ -2,6 +2,7 @@
  * vdibind.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1088,5 +1089,19 @@ void v_hardcopy(int handle)
   vdi_call(&o_vdipb);
 }
 
+void vex_keyv(int  handle,
+              void (*keyv)(int state,
+                           int ascii,
+                           int scan),
+              void *(*old_keyv)(int state,
+                                int ascii,
+                                int scan)) {
+  o_vdipb.contrl[7] = MSW(keyv);
+  o_vdipb.contrl[8] = LSW(keyv);
+  o_vdipb.contrl[9] = MSW(old_keyv);
+  o_vdipb.contrl[10] = LSW(old_keyv);
 
-
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 132;
+  vdi_call(&o_vdipb);
+}
