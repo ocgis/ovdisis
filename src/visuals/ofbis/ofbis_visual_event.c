@@ -49,65 +49,87 @@ map_key (FBKEYEVENT *            fe,
 
 void
 ofbis_visual_get_event (void *         fb,
-                        Visual_Event * visual_event) {
-  FBEVENT fe;
+                        Visual_Event * visual_event)
+{
+  static int new_button_event = FALSE;
+  static int old_buttons = 0;
+  static int old_state = 0;
+  FBEVENT    fe;
 
-  FBgetevent (FB_T(fb), &fe);
-
-  switch (fe.type) {
-  case FBNoEvent :
-    visual_event->type = Visual_No_Event;
-    break;
-
-  case FBKeyEvent :
-    visual_event->type = (fe.key.keycode & 0x80) ?
-      Visual_Key_Press_Event : Visual_Key_Release_Event;
-    map_key(&fe.key, &visual_event->key);
-    break;
-
-  case FBMouseEvent :
+  if(new_button_event)
   {
-    if(fe.mouse.x || fe.mouse.y)
-    {
-      static int old_x = 0;
-      static int old_y = 0;
-
-      /* The mouse has been moved */
-      old_x += fe.mouse.x;
-      if(old_x < 0)
-      {
-        old_x = 0;
-      }
-      else if(old_x >= FB_T(fb)->vinf.xres)
-      {
-        old_x = FB_T(fb)->vinf.xres - 1;
-      }
-
-      old_y += fe.mouse.y;
-      if(old_y < 0)
-      {
-        old_y = 0;
-      }
-      else if(old_y >= FB_T(fb)->vinf.yres)
-      {
-        old_y = FB_T(fb)->vinf.yres - 1;
-      }
-
-      visual_event->type = Visual_Mouse_Move_Event;
-      visual_event->mouse_move.x = old_x;
-      visual_event->mouse_move.y = old_y;
-    }
-    else
-    {
-      /* A button has been pressed or released */
-      visual_event->type = Visual_Mouse_Button_Event;
-      visual_event->mouse_button.state = fe.mouse.state;
-      visual_event->mouse_button.buttons = map_buttons(fe.mouse.buttons);
-    }
+    /* A button has been pressed or released */
+    visual_event->type = Visual_Mouse_Button_Event;
+    visual_event->mouse_button.state = old_state;
+    visual_event->mouse_button.buttons = map_buttons(old_buttons);
+    new_button_event = FALSE;
   }
-  break;
-
-  default :
-    ;
+  else
+  {
+    FBgetevent (FB_T(fb), &fe);
+    
+    switch (fe.type) {
+    case FBNoEvent :
+      visual_event->type = Visual_No_Event;
+      break;
+      
+    case FBKeyEvent :
+      visual_event->type = (fe.key.keycode & 0x80) ?
+        Visual_Key_Press_Event : Visual_Key_Release_Event;
+      map_key(&fe.key, &visual_event->key);
+      break;
+      
+    case FBMouseEvent :
+      if(fe.mouse.x || fe.mouse.y)
+      {
+        static int old_x       = 0;
+        static int old_y       = 0;
+        
+        /* The mouse has been moved */
+        old_x += fe.mouse.x;
+        if(old_x < 0)
+        {
+          old_x = 0;
+        }
+        else if(old_x >= FB_T(fb)->vinf.xres)
+        {
+          old_x = FB_T(fb)->vinf.xres - 1;
+        }
+        
+        old_y += fe.mouse.y;
+        if(old_y < 0)
+        {
+          old_y = 0;
+        }
+        else if(old_y >= FB_T(fb)->vinf.yres)
+        {
+          old_y = FB_T(fb)->vinf.yres - 1;
+        }
+        
+        visual_event->type = Visual_Mouse_Move_Event;
+        visual_event->mouse_move.x = old_x;
+        visual_event->mouse_move.y = old_y;
+        
+        if(old_buttons != fe.mouse.state)
+        {
+          old_buttons = fe.mouse.buttons;
+          old_state = fe.mouse.state;
+          new_button_event = TRUE;
+        }
+      }
+      else if(old_buttons != fe.mouse.buttons)
+      {
+        /* A button has been pressed or released */
+        visual_event->type = Visual_Mouse_Button_Event;
+        visual_event->mouse_button.state = fe.mouse.state;
+        visual_event->mouse_button.buttons = map_buttons(fe.mouse.buttons);
+        
+        old_buttons = fe.mouse.buttons;
+      }
+      break;
+      
+    default :
+      ;
+    }
   }
 }
