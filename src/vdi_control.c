@@ -20,7 +20,6 @@
 
 #include "event.h"
 #include "inits.h"
-#include "ovdi_more.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -213,6 +212,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   init_marker(wk[w].physical);
   init_line(wk[w].physical);
   init_fill(wk[w].physical);
+  init_device(wk[w].physical);
   init_text(wk[w].physical);
 
   ADEBUG("v_opnwk: Default palette set\n");
@@ -222,7 +222,6 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   wk[w].physical->curv = NULL;
   wk[w].physical->motv = NULL;
   wk[w].physical->timv = NULL;
-  wk[w].physical->keyv = ovdi_keyv; /* Default key handler */
 
   /* Start event handler */
   start_event_handler (wk[w].physical);
@@ -361,6 +360,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   copy_marker(wk[v].physical, wk[v].vwk);
   copy_line(wk[v].physical, wk[v].vwk);
   copy_fill(wk[v].physical, wk[v].vwk);
+  copy_device(wk[v].physical, wk[v].vwk);
   copy_text(wk[v].physical, wk[v].vwk);
 
   /* make the changes the user wants */
