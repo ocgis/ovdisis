@@ -2,7 +2,7 @@
  * vdibind.h
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
- * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+ * Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ extern void vro_cpyfm(int, int, int *, MFDB *, MFDB *);
 extern void vrt_cpyfm(int, int, int *, MFDB *, MFDB *, int *);
 extern void vr_trnfm(int, MFDB *, MFDB *);
 extern void v_get_pixel(int, int, int, int *, int *);
-extern void vsc_form(int, int *);
+extern void vsc_form(int, MFORM *);
 extern void vex_timv(int, void *, void *, int *);
 extern void v_show_c(int, int);
 extern void v_hide_c(int);

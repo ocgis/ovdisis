@@ -2,7 +2,7 @@
  * vdibind.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
- * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+ * Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -884,13 +884,15 @@ void v_get_pixel(int handle, int x, int y, int *p_val, int *p_index)
   *p_index = o_vdipb.intout[1];
 }
 
-void vsc_form(int handle, int data[37])
+void vsc_form(int handle, MFORM * data)
 {
   DEFINE_VPB;
   int i;
 
-  for(i=0 ; i<37 ; i++)
-    o_vdipb.intin[i] = data[i];
+  for(i = 0 ; sizeof(MFORM) / sizeof(WORD); i++)
+  {
+    o_vdipb.intin[i] = ((WORD *)data)[i];
+  }
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 111;
