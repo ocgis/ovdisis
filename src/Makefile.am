@@ -25,6 +25,7 @@ DRIVER_SRC = \
 PUREC_SRC = vdi_call_purec.s Makefile.purec
 
 EXTRA_DIST = $(BINDINGS_SRC) $(TRAP_SRC) $(DRIVER_SRC)
+BUILT_SOURCES = vdibind.h
 
 if BUILD_BINDINGS_ONLY
 lib_LIBRARIES = libovdisis.a
