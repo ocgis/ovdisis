@@ -136,7 +136,11 @@ draw_mouse_cursor(VDI_Workstation * vwk,
 {
   int xoff;
   int yoff;
+  int fg_col, bg_col;
   
+  fg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_fg);
+  bg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_bg);
+
   for(yoff = 0; yoff < 16; yoff++)
   {
     unsigned short which = 0x8000;
@@ -145,18 +149,11 @@ draw_mouse_cursor(VDI_Workstation * vwk,
     {
       if(which & mouse_cursor.mf_data[yoff])
       {
-        VISUAL_PUT_PIXEL(vwk,
-                         x + xoff,
-                         y + yoff,
-                         gem2tos_color(vwk->inq.attr.planes,
-                                       mouse_cursor.mf_fg));
+	VISUAL_PUT_PIXEL(vwk, x + xoff, y + yoff, fg_col);
       }
       else if(which & mouse_cursor.mf_mask[yoff])
       {
-        VISUAL_PUT_PIXEL(vwk, x + xoff,
-                         y + yoff,
-                         gem2tos_color(vwk->inq.attr.planes,
-                                       mouse_cursor.mf_bg));
+        VISUAL_PUT_PIXEL(vwk, x + xoff, y + yoff, bg_col);
       }
 
       which >>= 1;
@@ -321,7 +318,7 @@ start_event_handler (VDI_Workstation * vwk)
   if (pthread_create (&event_handler_thread,
                       NULL,
                       (void *) &event_handler,
-                      vwk) < 0)
+                      vwk) != 0)
   {
     ;
   }
@@ -349,7 +346,7 @@ stop_event_handler (void)
   signal(SIGALRM, SIG_DFL);
   setitimer(ITIMER_REAL, &old_timer_value, &old_timer_value);
 
-  pthread_kill_other_threads_np();
+  pthread_cancel(event_handler_thread);
 }
 
 
