@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/shm.h>
 
 #include "ovdisis.h"
 #include "various.h"
@@ -25,11 +26,124 @@ VDIWK wk[MAX_HANDLES];
 int wk_open[MAX_HANDLES];
 int first=1; /* Used to clear the above array first time */
 
-/* GDOS function */
+
+#define WSID(id) (0x424344 | id)
+
+/*
+** Description
+** Try to allocate a new workstation descriptor with a specified id.
+** If successfull the address will be returned. Otherwise NULL will be
+** returned.
+**
+** 1998-10-09 CG
+*/
+static
+VDI_Workstation *
+wsalloc (int id) {
+  int               shmid;
+  VDI_Workstation * ws;
+
+  shmid = shmget (WSID (id),
+                  sizeof (VDI_Workstation),
+                  IPC_CREAT | IPC_EXCL | 0644);
+
+  if (shmid < 0) {
+    perror ("ovdisis: wsalloc: shmget");
+    return NULL;
+  }
+
+  ws = (VDI_Workstation *)shmat (shmid, NULL, 0);
+
+  if ((int)ws == -1) {
+    perror ("ovdisis: wsalloc: shmat");
+    return NULL;
+  }
+
+  return ws;
+}
+
+
+/*
+** Description
+** Deallocate a workstation descriptor.
+**
+** 1998-10-09 CG
+*/
+static
+void
+wsfree (int id)
+{
+  int shmid;
+
+  shmid = shmget (WSID (id),
+                  sizeof (VDI_Workstation),
+                  0);
+
+  if (shmid < 0) {
+    perror ("ovdisis: wsfree: shmget");
+  }
+
+  if (shmctl(shmid, IPC_RMID, NULL) < 0) {
+    perror ("ovdisis: wsfree: shmctl");
+  }
+}
+
+
+/*
+** Description
+** Attach to a workstation descriptor. If the workstation doesn't exist,
+** NULL is returned.
+**
+** 1998-10-09 CG
+*/
+static
+VDI_Workstation *
+wsattach (int id)
+{
+  int               shmid;
+  VDI_Workstation * ws;
+
+  shmid = shmget (WSID (id),
+                  sizeof (VDI_Workstation),
+                  0);
+
+  if (shmid < 0) {
+    perror ("ovdisis: wsattach: shmget");
+    return NULL;
+  }
+
+  ws = (VDI_Workstation *)shmat (shmid, NULL, 0);
+
+  if ((int)ws == -1) {
+    perror ("ovdisis: wsattach: shmat");
+    return NULL;
+  }
+
+  return ws;
+}
+
+
+/*
+** Description
+** Detach from a workstation descriptor.
+**
+** 1998-10-09 CG
+*/
+static
+void
+wsdetach (VDI_Workstation * ws)
+{
+  if (shmdt ((char *)ws) < 0) {
+    perror ("ovdisis: wsdetach: shmdt");
+  }
+}
+
+
 /* vwk not used by this function */
 void vdi_v_opnwk(VDI_Workstation *vwk)
 {
-  int w;
+  int               w;
+  VDI_Workstation * new_ws;
 
   if(first) {
     for(w=0 ; w<MAX_HANDLES ; w++)
@@ -39,21 +153,20 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
 
   /* find first free handle */
   w=0;
-  while (w < MAX_HANDLES && wk_open[w] != WS_NOTOPEN)
+  while ((w < MAX_HANDLES) && ((new_ws = wsalloc (w)) == NULL)) {
     w++;
+  }
 
   if (w == MAX_HANDLES) {
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: No handles left to open physical workstation, sorry!\n");
     return;
   }
-  if ((wk[w].physical = (VDI_Workstation *) malloc((size_t) sizeof(VDI_Workstation))) == NULL) {
-    vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
-    EDEBUG("v_opnwk: Not enough memory for physical workstation!\n");
-    return;
-  }
+  
+  wk[w].physical = new_ws;
+
   if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC | FB_NO_KBD)) == NULL) {
-    free(wk[w].physical);
+    wsfree (w);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: Error opening FrameBuffer!\n");
     return;
@@ -96,7 +209,6 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
   vdipb->contrl[N_INTOUT] = 45;
 }
 
-/* GDOS function */
 /* vwk not used */
 void vdi_v_clswk(VDI_Workstation *vwk)
 {
@@ -125,7 +237,7 @@ void vdi_v_clswk(VDI_Workstation *vwk)
   /* It will here! */
   for (i = 0; i < MAX_HANDLES; i++)
     if (wk_open[i] && (wk[i].physical == wk[w].physical)) {
-      free(wk[i].vwk);
+      wsfree (i);
       wk_open[i] = WS_NOTOPEN;
       ADEBUG("v_clswk: Freed workstation, handle %d\n", i + 1);
     }
@@ -150,35 +262,38 @@ void vdi_v_clswk(VDI_Workstation *vwk)
 void vdi_v_opnvwk(VDI_Workstation *vwk)
 {
   int i, v = 0, w;
+  VDI_Workstation * physical;
+  VDI_Workstation * virtual;
 
   w = vdipb->contrl[VDI_HANDLE] - 1;	/* Physical workstation */
 
-  if (wk_open[w] != WS_PHYSICAL) {
+  physical = wsattach (w);
+
+  if (physical == NULL) {
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open virtual workstation */
     EDEBUG("v_opnvwk: Handle %d is not a physical workstation!\n", w + 1);
     return;
   }
   /* find first free handle */
-  while (v < MAX_HANDLES && wk_open[v] != WS_NOTOPEN)
+  while ((v < MAX_HANDLES) && ((virtual = wsalloc (v)) == NULL)) {
     v++;
-
+  }
+    
   /* none free found */
   if (v == MAX_HANDLES) {
+    wsfree (w);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open virtual workstation */
     EDEBUG("v_opnvwk: We're all out of handles, I'm afraid!\n");
     return;
   }
-  /* malloc space for new virtual workstation */
-  if ((wk[v].vwk = (VDI_Workstation *) malloc((size_t) sizeof(VDI_Workstation))) == NULL) {
-    vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open virtual workstation */
-    EDEBUG("v_opnvwk: Not enough memory for new workstation!\n");
-    return;
-  }
+
+  wk[v].vwk = virtual;
+
   ADEBUG("v_opnvwk: New virtual workstation, handle %d opened linked to %d\n", v + 1, w + 1);
 
   vdipb->contrl[VDI_HANDLE] = v + 1;	/* new vdi handle */
   wk_open[v] = WS_VIRTUAL;
-  wk[v].physical = wk[w].physical;	/* link virtual to physical, sort of */
+  wk[v].physical = physical;	/* link virtual to physical, sort of */
   wk[v].vwk->fb = wk[v].physical->fb;	/* same FB as physical workstation */
 
   wk[v].vwk->handle = v + 1;	/* used for debugging */
@@ -233,7 +348,7 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
       EDEBUG("v_clsvwk: Handle %d is not open\n", v + 1);
     return;
   }
-  free(wk[v].vwk);
+  wsfree (v);
   wk_open[v] = WS_NOTOPEN;
 
   ADEBUG("v_clsvwk: Virtual workstation, handle %d freed\n", v + 1);
