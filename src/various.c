@@ -247,6 +247,8 @@ inline unsigned long get_color(VDI_Workstation *vwk, int index)
   unsigned long col;
   unsigned char *c;
 
+  return index;
+
   if(vwk->inq.attr.planes < 16)
     return index;
   else /* TrueColor mode */
