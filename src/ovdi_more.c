@@ -27,7 +27,7 @@ static int keyv_state, keyv_ascii, keyv_keycode;
 
 int ovdi_getchar(int handle)
 {
-  int ascii;
+  int ascii=0;
 
   pthread_mutex_lock(&keyv_mutex);
   pthread_cond_wait(&keyv_cond, &keyv_mutex);
