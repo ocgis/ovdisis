@@ -28,12 +28,8 @@
 #define CLIP_OFF 0
 #define CLIP_ON 1
 #else
-#include "ovdi_more.h" /* for ovdi_getchar() */
 #include "vdibind.h"
 #endif /* __TOS__ */
-
-/* FIXME */
-#define ovdi_getchar(vid) my_getchar(vid)
 
 char
 my_getchar (int vid) {
@@ -313,12 +309,9 @@ int do_stuff()
   pxy[0]=400; pxy[1]=380; pxy[2]=580; pxy[3]=480;
   v_bar(vh2, pxy);
 
-#ifdef __TOS__
-  getchar();
-#else
-  while(ovdi_getchar(vp1) != 'a')
+  vsin_mode(vp1, STRING, REQUEST_MODE);
+  while(my_getchar(vp1) != 'a')
     ;
-#endif /* __TOS__ */
 
   {
     MFDB src,dst;
@@ -337,12 +330,8 @@ int do_stuff()
     vro_cpyfm(vh2, S_XOR_D, rc, &src, &dst);
 
     for(i=0 ; i<16 ; i++) {
-#ifdef __TOS__
-      getchar();
-#else
-      while(ovdi_getchar(vp1) != 'a')
+      while(my_getchar(vp1) != 'a')
 	;
-#endif /* __TOS__ */
 
       rc[4]-=3; rc[5]-=2;
       vro_cpyfm(vh2, NOT_S, rc, &src, &dst);
@@ -368,12 +357,8 @@ int do_stuff()
     vs_clip(vh2, CLIP_OFF, pxy);
   }
 
-#ifdef __TOS__
-  getchar();
-#else
-  while(ovdi_getchar(vp1) != 'a')
+  while(my_getchar(vp1) != 'a')
     ;
-#endif /* __TOS__ */
 
   pxy[0] = 1000;
   pxy[1] = 0;
@@ -394,12 +379,8 @@ int do_stuff()
   pxy[3] = 350;
   v_pline(vh2, 2, pxy);
 
-#ifdef __TOS__
-  getchar();
-#else
-  while(ovdi_getchar(vp1) != 'a')
+  while(my_getchar(vp1) != 'a')
     ;
-#endif /* __TOS__ */
   
   v_clsvwk(vh1);
   v_clsvwk(vh2);
