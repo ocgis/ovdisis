@@ -30,13 +30,17 @@ void vdi_vs_color(VDI_Workstation *vwk)
   vwk->vdi_cmap.blue[i]  = vdipb->intin[3];
 
   /* Don't put cmap if in TrueColor mode */
+#if 0
   if(vwk->inq.attr.planes < 16) {
+#endif
     VISUAL_SET_CMAP(vwk,
 		    ni,
 		    vwk->vdi_cmap.red[i],
 		    vwk->vdi_cmap.green[i],
 		    vwk->vdi_cmap.blue[i]);
+#if 0
     }
+#endif
 
   ADEBUG("vs_color: VDI colour %d is set to: %d, %d, %d\n",
 	 i,vwk->vdi_cmap.red[i],vwk->vdi_cmap.green[i],vwk->vdi_cmap.blue[i]);
