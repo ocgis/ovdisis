@@ -18,6 +18,7 @@
 #include "ggi_visual.h"
 #include "ggi_visual_various.h"
 #include "ovdisis.h"
+#include "various.h"
 
 int
 ggi_visual_get_pixel (VWKREF vwk,

@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #include "ggi_visual.h"
+#include "ggi_visual_mouse.h"
 
 
 static char saved[2000]; /* FIXME: Calculate size and put in private type */
