@@ -1,4 +1,4 @@
-INCLUDES = -I../vdibind/
+INCLUDES = -I../src/
 
 noinst_PROGRAMS = vdi_dump
 
