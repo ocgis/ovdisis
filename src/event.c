@@ -53,25 +53,6 @@ int key_first_index, key_amount, key_buffer_length;
 
 /*
 ** Description
-** Map buttons in vdi format
-**
-** 1998-12-13 CG
-*/
-static
-unsigned int
-map_buttons (unsigned int ofbis_buttons) {
-  /*
-  ** FIXME: I'm not sure if the mapping is correct for the middle and the right
-  ** buttons.
-  */
-  return (((ofbis_buttons & 0x4) ? 0 : 1) |
-          ((ofbis_buttons & 0x2) ? 0 : 2) |
-          ((ofbis_buttons & 0x1) ? 0 : 4));
-}
-
-
-/*
-** Description
 ** For each timer tick (20 ms) this routine is called and will call a
 ** callback routine that the user has setup.
 **
@@ -228,7 +209,7 @@ event_handler (VDI_Workstation * vwk) {
       } 
     } else if (visual_event.type == Visual_Mouse_Button_Event) {
       if (vwk->butv != NULL) {
-        vwk->butv (map_buttons (visual_event.mouse_button.buttons));
+        vwk->butv (visual_event.mouse_button.buttons);
       }
       buttons = visual_event.mouse_button.buttons;
     } else if(visual_event.type == Visual_Mouse_Move_Event) {

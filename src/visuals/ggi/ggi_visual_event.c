@@ -18,6 +18,8 @@
 #include "ggi_visual.h"
 #include "ovdisis.h"
 
+static int old_buttons = 0; /* FIXME */
+
 void
 ggi_visual_get_event (void *         vis,
 		      Visual_Event * visual_event) {
@@ -41,11 +43,17 @@ ggi_visual_get_event (void *         vis,
     break;
 
   case evPtrButtonPress:
-    fprintf(stderr, "evPtrButtonPress\n");
+    old_buttons |= (1 << (event_buffer.pbutton.button - 1));
+    visual_event->type = Visual_Mouse_Button_Event;
+    visual_event->mouse_button.buttons = old_buttons;
+    visual_event->mouse_button.state = 0;
     break;
 
   case evPtrButtonRelease:
-    fprintf(stderr, "evPtrButtonRelease\n");
+    old_buttons &= ~(1 << (event_buffer.pbutton.button - 1));
+    visual_event->type = Visual_Mouse_Button_Event;
+    visual_event->mouse_button.buttons = old_buttons;
+    visual_event->mouse_button.state = 0;
     break;
 
   case evKeyPress:

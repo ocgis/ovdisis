@@ -17,6 +17,24 @@
 #include "ofbis_visual.h"
 #include "ovdisis.h"
 
+
+/*
+** Description
+** Map buttons in vdi format
+*/
+static
+unsigned int
+map_buttons (unsigned int ofbis_buttons) {
+  /*
+  ** FIXME: I'm not sure if the mapping is correct for the middle and the right
+  ** buttons.
+  */
+  return (((ofbis_buttons & 0x4) ? 0 : 1) |
+          ((ofbis_buttons & 0x2) ? 0 : 2) |
+          ((ofbis_buttons & 0x1) ? 0 : 4));
+}
+
+
 void
 ofbis_visual_get_event (void *         fb,
                         Visual_Event * visual_event) {
@@ -73,7 +91,7 @@ ofbis_visual_get_event (void *         fb,
       /* A button has been pressed or released */
       visual_event->type = Visual_Mouse_Button_Event;
       visual_event->mouse_button.state = fe.mouse.state;
-      visual_event->mouse_button.buttons = fe.mouse.buttons;
+      visual_event->mouse_button.buttons = map_buttons(fe.mouse.buttons);
     }
   }
   break;
