@@ -2,7 +2,7 @@ SRCS = vdi_dump.c
 OBJS = vdi_dump.o
 EXEC = vdi_dump
 SUBDIROBJS = ../vdibind/vdibind.o ../src/ovdisis.a
-LDLIBS = -lfb
+LDLIBS = -lfb -lm
 
 PREREQ :=
 ifneq (.depend,$(wildcard .depend))

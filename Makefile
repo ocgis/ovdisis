@@ -1,6 +1,6 @@
 CC = gcc
 COPTIONS = -O2 -Wall -pipe
-LDLIBS = -lfb
+LDLIBS = -lfb -lm
 AR = ar
 DO_MAKE = $(MAKE) 'CC=$(CC)' 'COPTIONS=$(COPTIONS) -DDEBUGLEVEL=2' 'AR=$(AR)'
 EXEC = otestis
