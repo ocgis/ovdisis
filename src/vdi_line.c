@@ -43,11 +43,11 @@ void vdi_v_pline(VDI_Workstation *vwk)
     {
       if(cor.y1 == cor.y2)
       {
-        FBhline(vwk->fb, cor.x1, cor.x2, cor.y1, col);
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, cor.y1, col);
       }
       else
       {
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       }
     }
   }

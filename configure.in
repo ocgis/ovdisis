@@ -19,6 +19,7 @@ AM_CONFIG_HEADER(config.h)
 
 dnl Set CFLAGS
 dnl CFLAGS="$CFLAGS -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce"
+CFLAGS="$CFLAGS -Wall"
 
 dnl Enable extra arguments
 AC_ARG_WITH(ofbis, [  --with-ofbis=DIR        Use uninstalled copy of ofbis])
@@ -55,6 +56,7 @@ else
 
   AC_CHECK_LIB(m,main)
   AC_CHECK_LIB(pthread,pthread_create)
+  AC_CHECK_LIB(dl,dlopen)
 
   if test x$with_ofbis = xyes ; then
     AC_MSG_ERROR([
@@ -112,9 +114,12 @@ dnl Check for standard types
 OSIS_CHECK_TYPES
 
 OSISINCLUDE=${includedir}/osis
+AC_SUBST(OSISINCLUDE)
+
+VISUALSDIR=${libdir}/ovdisis/${OVDISIS_VERSION}
+AC_SUBST(VISUALSDIR)
 
 AC_SUBST(OVDISIS_VERSION)
 AC_SUBST(LT_VERSION_INFO)
-AC_SUBST(OSISINCLUDE)
 
-AC_OUTPUT(fntread/Makefile src/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
+AC_OUTPUT(fntread/Makefile src/Makefile src/visuals/Makefile src/visuals/ofbis/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)

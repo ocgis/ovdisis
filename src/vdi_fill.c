@@ -48,8 +48,9 @@ void vdi_vr_recfl(VDI_Workstation *vwk)
     switch(vwk->fill_a.interior)
     {
     case FIS_SOLID:
-      for(y=cor.y1 ; y<=cor.y2 ; y++)
-        FBhline(vwk->fb, cor.x1, cor.x2, y, col);
+      for(y=cor.y1 ; y<=cor.y2 ; y++) {
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, y, col);
+      }
       break;
     case FIS_PATTERN:
     case FIS_HATCH:

@@ -37,7 +37,7 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
       x = (int)vdipb->ptsin[0+n*2];
       y = (int)vdipb->ptsin[1+n*2];
       if(do_pointclip(x, y, &vwk->clip))
-        FBputpixel(vwk->fb, x, y, col);
+        VISUAL_PUT_PIXEL(vwk, x, y, col);
     }
     break;
   case M_PLUS:
@@ -48,13 +48,13 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
       cor.x2 = (int)vdipb->ptsin[0+n*2];
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = cor.y2 = (int)vdipb->ptsin[1+n*2];
       if(do_lineclip(&cor, &vwk->clip))
-        FBhline(vwk->fb, cor.x1, cor.x2, cor.y1, col);
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, cor.y1, col);
     }
     break;
   case M_ASTERISK:
@@ -65,27 +65,27 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
       cor.x2 = (int)vdipb->ptsin[0+n*2];
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = cor.y2 = (int)vdipb->ptsin[1+n*2];
       if(do_lineclip(&cor, &vwk->clip))
-        FBhline(vwk->fb, cor.x1, cor.x2, cor.y1, col);
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, cor.y1, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]-(int)(((float)vwk->marker_a.width*0.8)/2);
       cor.y1 = (int)vdipb->ptsin[1+n*2]-(int)(((float)vwk->marker_a.height*0.8)/2);
       cor.x2 = (int)vdipb->ptsin[0+n*2]+(int)(((float)vwk->marker_a.width*0.8)/2);
       cor.y2 = (int)vdipb->ptsin[1+n*2]+(int)(((float)vwk->marker_a.height*0.8)/2);
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]+(int)(((float)vwk->marker_a.width*0.8)/2);
       cor.y1 = (int)vdipb->ptsin[1+n*2]-(int)(((float)vwk->marker_a.height*0.8)/2);
       cor.x2 = (int)vdipb->ptsin[0+n*2]-(int)(((float)vwk->marker_a.width*0.8)/2);
       cor.y2 = (int)vdipb->ptsin[1+n*2]+(int)(((float)vwk->marker_a.height*0.8)/2);
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
     }
     break;
   case M_SQUARE:
@@ -96,26 +96,26 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
       cor.x2 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2; 
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = (int)vdipb->ptsin[1+n*2]-vwk->marker_a.height/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2; 
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = cor.y2 = (int)vdipb->ptsin[1+n*2]-vwk->marker_a.height/2; 
       if(do_lineclip(&cor, &vwk->clip))
-        FBhline(vwk->fb, cor.x1, cor.x2, cor.y1, col);
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, cor.y1, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBhline(vwk->fb, cor.x1, cor.x2, cor.y1, col);
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, cor.y1, col);
     }
     break;
   case M_CROSS:
@@ -126,14 +126,14 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = (int)vdipb->ptsin[1+n*2]-vwk->marker_a.height/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
     }
     break;
   case M_DIAMOND:
@@ -144,28 +144,28 @@ void vdi_v_pmarker(VDI_Workstation *vwk)
       cor.x2 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.y2 = (int)vdipb->ptsin[1+n*2];
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]-vwk->marker_a.width/2;
       cor.y1 = (int)vdipb->ptsin[1+n*2];
       cor.x2 = (int)vdipb->ptsin[0+n*2];
       cor.y2 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2];
       cor.y1 = (int)vdipb->ptsin[1+n*2]+vwk->marker_a.height/2;
       cor.x2 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y2 = (int)vdipb->ptsin[1+n*2];
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
       
       cor.x1 = (int)vdipb->ptsin[0+n*2]+vwk->marker_a.width/2;
       cor.y1 = (int)vdipb->ptsin[1+n*2];
       cor.x2 = (int)vdipb->ptsin[0+n*2];
       cor.y2 = (int)vdipb->ptsin[1+n*2]-vwk->marker_a.height/2;
       if(do_lineclip(&cor, &vwk->clip))
-        FBline(vwk->fb, cor.x1, cor.y1, cor.x2, cor.y2, col);
+        VISUAL_LINE(vwk, cor.x1, cor.y1, cor.x2, cor.y2, col);
     }
     break;
   default:

@@ -23,13 +23,13 @@
 #include "event.h"
 #include "ovdisis.h"
 
+#ifndef TRUE
+#define TRUE 1
+#endif
 static pthread_t event_handler_thread;
 
 /* This is needed for the timer handler */
 static VDI_Workstation * global_vwk;
-
-/* Used when saving / restoring mouse background */
-static unsigned short mouse_background_buffer[16*16*2];
 
 /* If this is positive the mouse cursor is visible */
 static int mouse_visibility = 0;
@@ -91,6 +91,7 @@ timer_handler (int signal_number) {
 ** Draw the mouse cursor
 **
 ** 1999-01-02 CG
+** 1999-08-29 CG
 */
 inline
 void
@@ -145,68 +146,14 @@ draw_mouse_cursor (VDI_Workstation * vwk,
 
     for (xoff = 0; xoff < 16; xoff++) {
       if (which & cursor[yoff]) {
-        FBputpixel (vwk->fb, x + xoff, y + yoff, 0xffff);
+        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 0xffff);
       } else if (which & mask[yoff]) {
-        FBputpixel (vwk->fb, x + xoff, y + yoff, 0x0000);
+        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 0x0000);
       }
 
       which >>= 1;
     }
   }
-}
-
-
-/*
-** Description
-** Save background before drawing mouse
-**
-** 1999-01-02 CG
-*/
-inline
-void
-save_mouse_background (VDI_Workstation * vwk,
-                       int               x,
-                       int               y) {
-  FBBLTPBLK * mouse_background;
-  
-  /* Setup mouse background blit */
-  mouse_background = FBgetbltpblk (vwk->fb);
-
-  mouse_background->s_xmin = x;
-  mouse_background->s_ymin = y;
-  mouse_background->b_wd = 16;
-  mouse_background->b_ht = 16;
-  mouse_background->d_form = mouse_background_buffer;
-  mouse_background->d_nxln = 16; /* FIXME for current resolution */
-
-  FBbitblt (vwk->fb, mouse_background);
-}
-
-
-/*
-** Description
-** Restore mouse background
-**
-** 1999-01-02 CG
-*/
-inline
-void
-restore_mouse_background (VDI_Workstation * vwk,
-                          int               x,
-                          int               y) {
-  FBBLTPBLK * mouse_background;
-  
-  /* Setup mouse background blit */
-  mouse_background = FBgetbltpblk (vwk->fb);
-  
-  mouse_background->d_xmin = x;
-  mouse_background->d_ymin = y;
-  mouse_background->b_wd = 16;
-  mouse_background->b_ht = 16;
-  mouse_background->s_form = mouse_background_buffer;
-  mouse_background->s_nxln = 16; /* FIXME for current resolution */
-
-  FBbitblt (vwk->fb, mouse_background);
 }
 
 
@@ -222,16 +169,18 @@ restore_mouse_background (VDI_Workstation * vwk,
 ** 1998-12-26 CG
 ** 1999-01-02 CG
 ** 1999-05-20 CG
+** 1999-08-29 CG
 */
 static
 void
 event_handler (VDI_Workstation * vwk) {
-  FBEVENT          fe;
+  Visual_Event     visual_event;
   unsigned int     buttons = 0;
   struct itimerval timer_value = {{0, 50000}, {0, 50000}};
   struct itimerval old_timer_value;
-  int enable_keyboard, key_next_index;
-  static key_index_looped = 0;
+  int              enable_keyboard;
+  int              key_next_index;
+  static int       key_index_looped = 0;
 
   /* Install a timer handler */
   signal (SIGALRM, &timer_handler);
@@ -239,7 +188,7 @@ event_handler (VDI_Workstation * vwk) {
 
   /* Save mouse background and draw mouse */
   if (mouse_visibility > 0) {
-    save_mouse_background (vwk, mouse_x, mouse_y);
+    VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
     draw_mouse_cursor (vwk, mouse_x, mouse_y);
   }
 
@@ -262,17 +211,17 @@ event_handler (VDI_Workstation * vwk) {
   key_buffer_length = KEY_BUFFER_LENGTH;
 
   while (TRUE) {
-    FBgetevent (vwk->fb, &fe);
+    VISUAL_GET_EVENT(vwk, &visual_event);
 
-    if (fe.type == FBKeyEvent && enable_keyboard) {
+    if (visual_event.type == Visual_Key_Event && enable_keyboard) {
       /* We only care if the key is pressed down, not released
        * Figure out how to make repeat if a key is held down.
        */
-      if(fe.key.keycode & 0x80) {
+      if(visual_event.key.keycode & 0x80) {
 	pthread_mutex_lock(&key_mutex);
 	
-	key_scancode_buffer[key_next_index] = fe.key.keycode;
-	key_ascii_buffer[key_next_index] = fe.key.ascii;
+	key_scancode_buffer[key_next_index] = visual_event.key.keycode;
+	key_ascii_buffer[key_next_index] = visual_event.key.ascii;
 	key_amount++;
 	if(key_first_index == -1)
 	  key_first_index = 0;
@@ -287,26 +236,26 @@ event_handler (VDI_Workstation * vwk) {
 	pthread_mutex_unlock(&key_mutex);
 	pthread_cond_broadcast(&key_cond);
       } 
-    } else if (fe.type == FBMouseEvent) {
+    } else if (visual_event.type == Visual_Mouse_Event) {
       /* Has one or more of the buttons changed? */
-      if (fe.mouse.buttons != buttons) {
+      if (visual_event.mouse.buttons != buttons) {
         if (vwk->butv != NULL) {
-          vwk->butv (map_buttons (fe.mouse.buttons));
+          vwk->butv (map_buttons (visual_event.mouse.buttons));
         }
-        buttons = fe.mouse.buttons;
+        buttons = visual_event.mouse.buttons;
       }
 
       /* Has the mouse been moved? */
-      if ((fe.mouse.x != 0) || (fe.mouse.y != 0)) {
+      if ((visual_event.mouse.x != 0) || (visual_event.mouse.y != 0)) {
         /* Make sure the visibility isn't being updated */
         pthread_mutex_lock (&mouse_mutex);
 
         if (mouse_visibility > 0) {
-          restore_mouse_background (vwk, mouse_x, mouse_y);
+          VISUAL_RESTORE_MOUSE_BG (vwk);
         }
         
-        mouse_x += fe.mouse.x;
-        mouse_y += fe.mouse.y;
+        mouse_x += visual_event.mouse.x;
+        mouse_y += visual_event.mouse.y;
         
         if (mouse_x < 0) {
           mouse_x = 0;
@@ -326,7 +275,7 @@ event_handler (VDI_Workstation * vwk) {
         }
 
         if (mouse_visibility > 0) {
-          save_mouse_background (vwk, mouse_x, mouse_y);
+          VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
           draw_mouse_cursor (vwk, mouse_x, mouse_y);
         }
 
@@ -392,13 +341,14 @@ stop_event_handler (void) {
 ** Exported
 **
 ** 1999-01-03 CG
+** 1999-08-29 CG
 */
 void
 increase_mouse_visibility (void) {
   pthread_mutex_lock (&mouse_mutex);
 
   if (mouse_visibility == 0) {
-    save_mouse_background (global_vwk, mouse_x, mouse_y);
+    VISUAL_SAVE_MOUSE_BG (global_vwk, mouse_x, mouse_y);
     draw_mouse_cursor (global_vwk, mouse_x, mouse_y);
   }
 
@@ -412,6 +362,7 @@ increase_mouse_visibility (void) {
 ** Exported
 **
 ** 1999-01-03 CG
+** 1999-08-29 CG
 */
 void
 decrease_mouse_visibility (void) {
@@ -420,7 +371,7 @@ decrease_mouse_visibility (void) {
   mouse_visibility--;
 
   if (mouse_visibility == 0) {
-    restore_mouse_background (global_vwk, mouse_x, mouse_y);
+    VISUAL_RESTORE_MOUSE_BG(global_vwk);
   }
 
   pthread_mutex_unlock (&mouse_mutex);

@@ -96,13 +96,13 @@ void vdi_v_gtext(VDI_Workstation *vwk)
   /* Draw the text, one character at a time */
   for( ; i < endchar ; i++) {
     ch = vdipb->intin[i] & 0xff;
-    FBputchar(vwk->fb, x, y, col, 0, ch);
+    VISUAL_PUT_CHAR(vwk, x, y, col, ch);
 
     if(vwk->text_a.effects & THICKENED)
-      FBputchar(vwk->fb, x+1, y, col, 0, ch);
+      VISUAL_PUT_CHAR(vwk, x+1, y, col, ch);
 
     if(vwk->text_a.effects & UNDERLINED)
-      FBhline(vwk->fb, x, x+vwk->text_a.cellwidth, ly, col);
+      VISUAL_HLINE (vwk, x, x+vwk->text_a.cellwidth, ly, col);
 
     x += vwk->text_a.cellwidth;
   }
@@ -146,7 +146,6 @@ vdi_vst_font (VDI_Workstation * vwk) {
 void vdi_vst_point(VDI_Workstation *vwk)
 {
   FontInfo *fp;
-  FBFONT fnt;
 
   ADEBUG ("ovdisis: vdi_text.c: vdi_vst_point: enter\n");
   fp = vwk->fonts;
@@ -158,12 +157,7 @@ void vdi_vst_point(VDI_Workstation *vwk)
   }
 
   /* We have found a best match in fp, now tell oFBis */
-  fnt.data = fp->data;
-  fnt.width = fp->wcell;
-  fnt.height = fp->formheight;
-  ADEBUG ("ovdisis: vdi_text.c: vdi_vst_point: call FBsetfont\n");
-  FBsetfont(vwk->fb, &fnt);
-  ADEBUG ("ovdisis: vdi_text.c: vdi_vst_point: returned from FBsetfont\n");
+  VISUAL_SET_FONT (vwk, fp->data, fp->wcell, fp->formheight);
 
   vdipb->ptsout[0] = vwk->text_a.textwidth = fp->wchar;
   vdipb->ptsout[1] = vwk->text_a.textheight = fp->top + fp->bottom;

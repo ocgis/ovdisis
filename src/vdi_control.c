@@ -2,6 +2,7 @@
  * vdi_control.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,9 +15,12 @@
 
 #undef DEBUGLEVEL
 
+#include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/shm.h>
+#include <unistd.h>
 
 #include "event.h"
 #include "inits.h"
@@ -144,10 +148,50 @@ wsdetach (VDI_Workstation * ws)
 
 /*
 ** Description
+** Find a visual to use and initialize it
+**
+** 1999-08-29 CG
+*/
+static
+VDI_Visual *
+init_visual (void)
+{
+  void *       handle;
+  char         module_name[256];
+  VDI_Visual * (*visual_init)(void);
+  char *       error;
+
+  strcpy(module_name, VISUALSDIR);
+  strcat(module_name, "/libovdisis_ofbis.so");
+  handle = dlopen(module_name, RTLD_NOW);
+
+  if(handle == NULL)
+  {
+    fprintf(stderr, "Couldn't open visual %s\n", module_name);
+    exit(1);
+  }
+
+  visual_init = dlsym(handle, "init");
+
+  error = dlerror();
+  if(error != NULL)
+  {
+    fprintf(stderr, "%s\n", error);
+    dlclose(handle);
+    exit(1);
+  }
+
+  return visual_init();
+}
+
+
+/*
+** Description
 ** Implementation of the vdi function v_opnwk
 **
 ** 1998-10-13 CG
 ** 1998-12-07 CG
+** 1999-08-29 CG
 */
 void
 vdi_v_opnwk(VDI_Workstation *vwk)
@@ -175,10 +219,13 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   
   wk[w].physical = new_ws;
 
-  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC /* | FB_NO_KBD */ )) == NULL) {
+  wk[w].physical->visual = init_visual();
+  wk[w].physical->visual->private = VISUAL_OPEN(wk[w].physical);
+  
+  if (wk[w].physical->visual->private == NULL) {
     wsfree (w);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
-    EDEBUG("v_opnwk: Error opening FrameBuffer!\n");
+    EDEBUG("v_opnwk: Error opening visual!\n");
     return;
   }
 
@@ -256,12 +303,9 @@ vdi_v_clswk (VDI_Workstation *vwk)
   /* Destroy event handler */
   stop_event_handler ();
 
-  /* cmap not used in TrueColor mode */
-  if (wk[w].physical->inq.attr.planes < 16) {
-    FBfreecmap(wk[w].physical->fb->cmap);
-    ADEBUG("v_clswk: FB cmap freed\n");
-  }
-  FBclose(wk[w].physical->fb);
+  VISUAL_FREE_CMAP(wk[w].physical);
+  VISUAL_CLOSE(wk[w].physical);
+
   ADEBUG("v_clswk: FrameBuffer closed\n");
 
   /* Free virtual workstations left open */
@@ -340,6 +384,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
    * process than the physical, we need to open the
    * frame buffer again, using the same console.
    */
+#if 0 /* FIXME */
   if(wk[v].vwk->pid != wk[v].physical->pid) {
     if ((wk[v].vwk->fb = FBopen(NULL, FB_KEEP_CURRENT_VC /* | FB_NO_KBD */)) == NULL) {
       wsdetach (w);
@@ -349,8 +394,11 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
       return;
     }
   } else { /* Otherwise we use the same framebuffer */
-    wk[v].vwk->fb = wk[v].physical->fb;
+#endif
+    wk[v].vwk->visual = wk[v].physical->visual;
+#if 0
   }
+#endif
 
   ADEBUG ("ovdisis: vdi_control.c: fb = 0x%x\n", wk[v].vwk->fb);
 
@@ -413,13 +461,9 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
    * we opened in v_opnvwk.
    */
   if(wk[v].vwk->pid != wk[v].physical->pid) {
+    VISUAL_FREE_CMAP(wk[v].vwk);
 
-    /* cmap not used in TrueColor mode */
-    if (wk[v].vwk->inq.attr.planes < 16) {
-      FBfreecmap(wk[v].vwk->fb->cmap);
-      ADEBUG("v_clswk: FB cmap freed\n");
-    }
-#if 0
+#if 0 /* FIXME */
     FBclose(wk[v].vwk->fb);
     ADEBUG("v_clswk: FrameBuffer closed\n");  
 #endif
@@ -437,26 +481,7 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
 
 void vdi_v_clrwk(VDI_Workstation *vwk)
 {
-  unsigned long fill, *mem, len, *end;
-
-  if (vwk->inq.attr.planes < 16)
-    fill = 0L;
-  else				/* TrueColor mode */
-    fill = 0xffdfffdfL;		/* TOS way, I'd rather have 0xffffffffL */
-
-  mem = (unsigned long *)vwk->fb->sbuf;
-
-  len = ((unsigned long)(vwk->dev.attr.xres + 1) *
-	 (unsigned long)(vwk->dev.attr.yres + 1) *
-	 (unsigned long)vwk->inq.attr.planes) / 8;
-
-  end = (unsigned long *)((unsigned long)vwk->fb->sbuf + len);
-
-  ADEBUG("v_clrwk: Filling screen %p to %p (%ld) with %08lx\n", mem, end, len, fill);
-
-  for (; mem < end; mem++)
-    *mem = fill;
-
+  VISUAL_CLEAR(vwk);
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
 }
@@ -502,26 +527,7 @@ void vdi_vs_clip(VDI_Workstation *vwk)
 */
 void
 vdi_vswr_mode (VDI_Workstation * vwk) {
-  switch (vdipb->intin[0]) {
-  case MD_REPLACE:
-    FBsetwritemode (vwk->fb, FB_REPLACE);
-    break;
-
-  case MD_TRANS:
-    FBsetwritemode (vwk->fb, FB_TRANS);
-    break;
-
-  case MD_XOR:
-    FBsetwritemode (vwk->fb, FB_XOR);
-    break;
-
-  case MD_ERASE:
-    FBsetwritemode (vwk->fb, FB_ERASE);
-    break;
-
-  default:
-    ;
-  }
+  VISUAL_SET_WRITE_MODE(vwk, vdipb->intin[0]);
 
   vwk->write_mode = vdipb->intin[0];
   vdipb->intout[0] = vwk->write_mode;

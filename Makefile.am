@@ -6,7 +6,7 @@ noinst_PROGRAMS = otestis
 otestis_SOURCES = otestis.c
 
 if USE_LIBTOOL
-  otestis_LDADD = src/.libs/libovdisis.a
+  otestis_LDADD = src/libovdisis.la
 else
   otestis_LDADD = src/libovdisis.a
 endif

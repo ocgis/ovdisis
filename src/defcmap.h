@@ -2,6 +2,7 @@
  * defcmap.h
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,17 @@
 
 #ifndef _DEFCMAP_H_
 #define _DEFCMAP_H_
+
+
+typedef struct vdi_cmap
+{
+  int              start;
+  int              end;
+  int              len;
+  unsigned short * red;
+  unsigned short * green;
+  unsigned short * blue;
+} VDI_CMAP;
 
 /* Default colors are in TOS order!! */
 
@@ -232,7 +244,7 @@ unsigned short default_blue_8bpl[256] =
   13107,  8716,  4390,     0
 };
 
-FBCMAP default_cmap_1bpl = 
+VDI_CMAP default_cmap_1bpl = 
 {
   0, 1, 2,
   default_red_1bpl,
@@ -240,7 +252,7 @@ FBCMAP default_cmap_1bpl =
   default_blue_1bpl
 };
 
-FBCMAP default_cmap_2bpl = 
+VDI_CMAP default_cmap_2bpl = 
 {
   0, 3, 4,
   default_red_2bpl,
@@ -248,7 +260,7 @@ FBCMAP default_cmap_2bpl =
   default_blue_2bpl
 };
 
-FBCMAP default_cmap_4bpl = 
+VDI_CMAP default_cmap_4bpl = 
 {
   0, 15, 16,
   default_red_8bpl,
@@ -256,7 +268,7 @@ FBCMAP default_cmap_4bpl =
   default_blue_8bpl
 };
 
-FBCMAP default_cmap_8bpl = 
+VDI_CMAP default_cmap_8bpl = 
 {
   0, 255, 256,
   default_red_8bpl,
@@ -265,7 +277,7 @@ FBCMAP default_cmap_8bpl =
 };
 
 /* Maybe this is done better some other way! */
-FBCMAP *default_cmap[] =
+VDI_CMAP *default_cmap[] =
 {
   NULL,
   &default_cmap_1bpl,

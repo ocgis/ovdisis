@@ -13,7 +13,7 @@
  *
  */
 
-#undef DEBUGLEVEL
+#define DEBUGLEVEL 0
 
 #include <stdio.h>
 
@@ -86,6 +86,8 @@ void vdi_call(VDIPB *vdiparblk)
         if(vdi_functions[vdipb->contrl[ROUTINE]]) {
           if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
             /* Call our function */
+            IDEBUG("vdi_call: Call to VDI nr %d, handle %d.\n",
+                   vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
             vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
             IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
                    vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);

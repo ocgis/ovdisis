@@ -207,7 +207,6 @@ int do_lineclip(RECT *cor, RECT *clip)
 
 
 /* Converts from GEM to physical (TOS) colour index. */
-/* inlines? */
 inline int gem2tos_color(int nbpl, int index)
 {
   switch(nbpl)
@@ -267,7 +266,10 @@ inline unsigned long get_color(VDI_Workstation *vwk, int index)
 	     vwk->vdi_cmap.red[index],vwk->vdi_cmap.green[index],
 	     vwk->vdi_cmap.blue[index],col);
 
+      /* FIXME
       return FBc24_to_cnative(vwk->fb, col);
+      */
+      return 0;
     }
 }
 

@@ -1,4 +1,8 @@
+SUBDIRS = visuals
+
 # Make a shared library using libtool
+
+DEFS = @DEFS@ -DVISUALSDIR=\"@VISUALSDIR@\"
 
 target_os = @target_os@
 ovdisisdir = @OSISINCLUDE@

@@ -26,35 +26,38 @@
 
 void init_workstation(VDI_Workstation *wk)
 {
-  int i;
-  int palsize = ((1 << wk->fb->vinf.red.length) *
-		 (1 << wk->fb->vinf.green.length) *
-		 (1 << wk->fb->vinf.blue.length));
+  int         i;
+  Visual_Attr visual_attr;
+
+  VISUAL_INQUIRE(wk, &visual_attr);
 
   /* Setup data for v_opnwk */
 
-  wk->dev.attr.xres = wk->fb->vinf.xres - 1;		/* Max visible width */
-  wk->dev.attr.yres = wk->fb->vinf.yres - 1;		/* Max visible height */
-  wk->dev.attr.noscale = 0;				/* Device Coord Units flag */
-  wk->dev.attr.wpixel = 372;				/* Width of pixel in microns */
-  wk->dev.attr.hpixel = 372;				/* Height of pixel in microns */
-  wk->dev.attr.cheights = 3;				/* Number of different text sizes */
-  wk->dev.attr.linetypes = 0;				/* Number of line types */
-  wk->dev.attr.linewidths = 0;				/* Number of line widths */
-  wk->dev.attr.markertypes = 6;				/* Number of marker types */
-  wk->dev.attr.markersizes = 0;				/* Number of marker sizes */
-  wk->dev.attr.faces = 1;				/* Number of fonts on device */
-  wk->dev.attr.patterns = 24;				/* Number of patterns */
-  wk->dev.attr.hatches = 12;				/* Number of hatch styles */
-  if(wk->fb->vinf.bits_per_pixel > 8)
-    wk->dev.attr.colors = 256;				/* 256 virtual pens for truecolour */
-  else
-    wk->dev.attr.colors = 1 << wk->fb->vinf.bits_per_pixel; /* Number of colours */
-  wk->dev.attr.ngdps = 10;				/* Number of GDPs */
-  for ( i = 0 ; i < 10 ; i++ ) {
-    wk->dev.attr.cangdps[i] = i+1;			/* List of GDPs supported */
+  wk->dev.attr.xres = visual_attr.x_res - 1;  /* Max visible width */
+  wk->dev.attr.yres = visual_attr.y_res - 1;  /* Max visible height */
+  wk->dev.attr.noscale = 0;                   /* Device Coord Units flag */
+  wk->dev.attr.wpixel = 372;                  /* Width of pixel in microns */
+  wk->dev.attr.hpixel = 372;                  /* Height of pixel in microns */
+  wk->dev.attr.cheights = 3;                  /* Number of different text sizes */
+  wk->dev.attr.linetypes = 0;                 /* Number of line types */
+  wk->dev.attr.linewidths = 0;                /* Number of line widths */
+  wk->dev.attr.markertypes = 6;               /* Number of marker types */
+  wk->dev.attr.markersizes = 0;               /* Number of marker sizes */
+  wk->dev.attr.faces = 1;                     /* Number of fonts on device */
+  wk->dev.attr.patterns = 24;                 /* Number of patterns */
+  wk->dev.attr.hatches = 12;                  /* Number of hatch styles */
+  if(visual_attr.number_of_colours > 256) {
+    /* 256 virtual pens for truecolour */
+    wk->dev.attr.colors = 256;
+  } else {
+    /* Number of colours is the same as number of virtual pens*/
+    wk->dev.attr.colors = visual_attr.number_of_colours;
   }
-  wk->dev.attr.gdpattr[0] = 3;				/* GDP attributes */
+  wk->dev.attr.ngdps = 10;                    /* Number of GDPs */
+  for ( i = 0 ; i < 10 ; i++ ) {
+    wk->dev.attr.cangdps[i] = i+1;            /* List of GDPs supported */
+  }
+  wk->dev.attr.gdpattr[0] = 3;                /* GDP attributes */
   wk->dev.attr.gdpattr[1] = 0;
   wk->dev.attr.gdpattr[2] = 3;
   wk->dev.attr.gdpattr[3] = 3;
@@ -64,11 +67,14 @@ void init_workstation(VDI_Workstation *wk)
   wk->dev.attr.gdpattr[7] = 0;
   wk->dev.attr.gdpattr[8] = 3;
   wk->dev.attr.gdpattr[9] = 2;
-  wk->dev.attr.cancolor = ( wk->fb->vinf.bits_per_pixel > 1 ) ? 1 : 0; /* Colour capability */
+  /* Colour capability */
+  wk->dev.attr.cancolor = (visual_attr.number_of_colours > 1 ) ? 1 : 0;
   wk->dev.attr.cantextrot = 0;				/* Text rotation */
   wk->dev.attr.canfillarea = 0;				/* Flag fill-out range */
   wk->dev.attr.cancellarray = 0;			/* Flag function cell-array */
-  wk->dev.attr.palette = (palsize>32767)? 0 : palsize;	/* Number of available colours */
+  /* Number of available colours */
+  wk->dev.attr.palette =
+    (visual_attr.palette_size > 32767) ? 0 : visual_attr.palette_size;
   wk->dev.attr.locators = 2;				/* Graphic cursor control */
   wk->dev.attr.valuators = 1;				/* Number-changeable inputs */
   wk->dev.attr.choicedevs = 1;				/* Key choice */
@@ -92,10 +98,13 @@ void init_workstation(VDI_Workstation *wk)
   /* Setup data for vq_extnd() */
 
   wk->inq.attr.screentype = 4;				/* screen type */
-  wk->inq.attr.bgcolors = (palsize>32767)? 0 : palsize;	/* number of bg colours */
+  /* number of bg colours */
+  wk->inq.attr.bgcolors =
+    (visual_attr.palette_size > 32767) ? 0 : visual_attr.palette_size;
   wk->inq.attr.textfx = -1;				/* text effects */
   wk->inq.attr.canscale = 0;				/* enlarging raster */
-  wk->inq.attr.planes = wk->fb->vinf.bits_per_pixel;	/* num of planes */
+  /* number of planes */
+  wk->inq.attr.planes = visual_attr.bits_per_pixel;
   wk->inq.attr.lut = 1;					/* look up table */
   wk->inq.attr.rops = 100;				/* 16*16 rops per second - no idea! */
   wk->inq.attr.cancontourfill = 0;			/* contour fill */
@@ -129,19 +138,7 @@ void init_cmap(VDI_Workstation *wk)
   case 2:
   case 4:
   case 8:
-    /* wk->fb->cmap is set by FBgetcmap */
-    FBgetcmap(wk->fb);
-    ADEBUG("v_opnwk: FB cmap length %d allocated: %p\n",
-	   wk->fb->cmap->len, wk->fb->cmap);
-
-    for (i = 0; i < wk->fb->cmap->len; i++) {
-      wk->fb->cmap->red[i]   =
-	default_cmap[wk->inq.attr.planes]->red[i];
-      wk->fb->cmap->green[i] =
-	default_cmap[wk->inq.attr.planes]->green[i];
-      wk->fb->cmap->blue[i]  =
-	default_cmap[wk->inq.attr.planes]->blue[i];
-
+    for (i = 0; i < (1 << wk->inq.attr.planes); i++) {
       ti = gem2tos_color(wk->inq.attr.planes, i);
 
       wk->vdi_cmap.red[i]   =
@@ -151,14 +148,8 @@ void init_cmap(VDI_Workstation *wk)
       wk->vdi_cmap.blue[i]  =
 	((int)default_cmap[wk->inq.attr.planes]->blue[ti]  * 1000) / 65535;
     }
-    /* Put the changed cmap on to the FrameBuffer */
-    wk->fb->cmap->start = 0;
-    wk->fb->cmap->len = (1 << wk->inq.attr.planes);
-    wk->fb->cmap->end = (1 << wk->inq.attr.planes) - 1;
 
-    sleep(1);			/* This is apparently needed in 8 bit mode (oFBis bug?) */
-
-    FBputcmap(wk->fb, wk->fb->cmap);
+    VISUAL_PUT_CMAP (wk);
     break;
 
   case 16:			/* TrueColor mode, use 256 virtual pens */
@@ -238,8 +229,6 @@ static void insert_font(FontInfo **fonts, FontInfo *new)
 
 void init_text(VDI_Workstation *wk)
 {
-  FBFONT fnt;
-
   wk->fonts = NULL;
 
   insert_font(&wk->fonts, &system_6x6);
@@ -260,11 +249,11 @@ void init_text(VDI_Workstation *wk)
   wk->text_a.v_alignment = 0;
   wk->text_a.rotation = 0;
 
-  /* Tell oFBis about the default font */
-  fnt.data = wk->text_a.font->data;
-  fnt.width = wk->text_a.font->wcell;
-  fnt.height = wk->text_a.font->formheight;
-  FBsetfont(wk->fb, &fnt);
+  /* Tell visual about the default font */
+  VISUAL_SET_FONT (wk,
+                   wk->text_a.font->data,
+                   wk->text_a.font->wcell,
+                   wk->text_a.font->formheight);
 }
 
 
@@ -300,6 +289,8 @@ void copy_cmap(VDI_Workstation *wk1, VDI_Workstation *wk2)
     wk2->vdi_cmap.blue[i]  = wk1->vdi_cmap.blue[i];
   }
 
+  /* FIXME: Check if we need to do this */
+#if 0
   /* If we're within the same process, no need to do more. */
   if(wk1->pid == wk2->pid)
     return;
@@ -347,6 +338,7 @@ void copy_cmap(VDI_Workstation *wk1, VDI_Workstation *wk2)
     /* Perhaps it would be better to exit here? */
     break;
   }
+#endif
 }
 
 void copy_marker(VDI_Workstation *wk1, VDI_Workstation *wk2)
@@ -382,7 +374,7 @@ void copy_text(VDI_Workstation *wk1, VDI_Workstation *wk2)
   if(wk1->pid == wk2->pid)
     return;
     
-  /* FIX ME! */
+  /* FIXME! */
   /* I'm lazy for now, and just initializing without copying! */
   init_text(wk2);  
 }

@@ -21,7 +21,7 @@
 
 
 /* Internal functions */
-static inline void set_circle_pixels(FB *,int,int,int,int,RECT *,int);
+static inline void set_circle_pixels(VDI_Workstation *,int,int,int,int,RECT *,int);
 static inline void list_circle_points(int,int,int,int *);
 
 
@@ -77,7 +77,7 @@ void vdi_v_bar(VDI_Workstation *vwk)
       break;
     case FIS_SOLID:
       for(y=cor.y1 ; y<=cor.y2 ; y++)
-        FBhline(vwk->fb, cor.x1, cor.x2, y, col);
+        VISUAL_HLINE(vwk, cor.x1, cor.x2, y, col);
       break;
     case FIS_PATTERN:
     case FIS_HATCH:
@@ -98,22 +98,22 @@ void vdi_v_bar(VDI_Workstation *vwk)
       lin.x2 = vdipb->ptsin[2];
       lin.y1 = lin.y2 = vdipb->ptsin[1];
       if(do_lineclip(&lin, &vwk->clip))
-        FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
+        VISUAL_HLINE(vwk, lin.x1, lin.x2, lin.y1, col);
       lin.x1 = vdipb->ptsin[0];
       lin.x2 = vdipb->ptsin[2];
       lin.y1 = lin.y2 = vdipb->ptsin[3];
       if(do_lineclip(&lin, &vwk->clip))
-        FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
+        VISUAL_HLINE(vwk, lin.x1, lin.x2, lin.y2, col);
       lin.x1 = lin.x2 = vdipb->ptsin[0];
       lin.y1 = vdipb->ptsin[1];
       lin.y2 = vdipb->ptsin[3];
       if(do_lineclip(&lin, &vwk->clip))
-        FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
+        VISUAL_LINE(vwk, lin.x1, lin.y1, lin.x1, lin.y2, col);
       lin.x1 = lin.x2 = vdipb->ptsin[2];
       lin.y1 = vdipb->ptsin[1];
       lin.y2 = vdipb->ptsin[3];
       if(do_lineclip(&lin, &vwk->clip))
-        FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
+        VISUAL_LINE(vwk, lin.x2, lin.y1, lin.x2, lin.y2, col);
     }
   }
 
@@ -246,7 +246,7 @@ void vdi_v_arc(VDI_Workstation *vwk)
 
     lin = linp;
     if(do_lineclip(&lin, &vwk->clip))
-      FBline(vwk->fb, lin.x1,lin.y1,lin.x2,lin.y2, col);
+      VISUAL_LINE(vwk, lin.x1,lin.y1,lin.x2,lin.y2, col);
 
     linp.x1 = linp.x2;
     linp.y1 = linp.y2;
@@ -331,16 +331,16 @@ void vdi_v_circle(VDI_Workstation *vwk)
       lin_u.y1 = lin_u.y2 =  y + y_center;
       lin_l.y1 = lin_l.y2 = -y + y_center;
       if(do_lineclip(&lin_u, &vwk->clip))
-        FBhline(vwk->fb, lin_u.x1, lin_u.x2, lin_u.y1, col);
+        VISUAL_HLINE(vwk, lin_u.x1, lin_u.x2, lin_u.y1, col);
       if(do_lineclip(&lin_l, &vwk->clip))
-        FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+        VISUAL_HLINE(vwk, lin_l.x1, lin_l.x2, lin_l.y1, col);
     }
     /* Finally the middle line which hasn't been drawn */
     lin_l.x1 = -x_values[radius] + x_center;
     lin_l.x2 =  x_values[radius] + x_center;
     lin_l.y1 = lin_l.y2 = y_center;
     if(do_lineclip(&lin_l, &vwk->clip))
-      FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+      VISUAL_HLINE(vwk, lin_l.x1, lin_l.x2, lin_l.y1, col);
     
     free(x_values);
     
@@ -364,7 +364,7 @@ void vdi_v_circle(VDI_Workstation *vwk)
     
     while(x < y)
     {
-      set_circle_pixels(vwk->fb, x, y, x_center, y_center, &vwk->clip, col);
+      set_circle_pixels(vwk, x, y, x_center, y_center, &vwk->clip, col);
       if(p < 0)
         p += 4*x + 6;
       else
@@ -375,7 +375,7 @@ void vdi_v_circle(VDI_Workstation *vwk)
       x++;
     }
     if(x == y)
-      set_circle_pixels(vwk->fb, x, y, x_center, y_center, &vwk->clip, col);
+      set_circle_pixels(vwk, x, y, x_center, y_center, &vwk->clip, col);
   }
 
   vdipb->contrl[N_PTSOUT] = 0;
@@ -410,7 +410,7 @@ void vdi_v_ellipse(VDI_Workstation *vwk)
 
     lin = linp;
     if(do_lineclip(&lin, &vwk->clip))
-      FBline(vwk->fb, lin.x1,lin.y1,lin.x2,lin.y2, col);
+      VISUAL_LINE(vwk, lin.x1,lin.y1,lin.x2,lin.y2, col);
 
     linp.x1 = linp.x2;
     linp.y1 = linp.y2;
@@ -451,7 +451,7 @@ void vdi_v_ellarc(VDI_Workstation *vwk)
 
     lin = linp;
     if(do_lineclip(&lin, &vwk->clip))
-      FBline(vwk->fb, lin.x1,lin.y1,lin.x2,lin.y2, col);
+      VISUAL_LINE(vwk, lin.x1,lin.y1,lin.x2,lin.y2, col);
 
     linp.x1 = linp.x2;
     linp.y1 = linp.y2;
@@ -499,22 +499,22 @@ void vdi_v_rbox(VDI_Workstation *vwk)
     lin.x2 = org.x2 - radius;
     lin.y1 = lin.y2 = org.y1;
     if(do_lineclip(&lin, &vwk->clip))
-      FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
+      VISUAL_HLINE(vwk, lin.x1, lin.x2, lin.y1, col);
     lin.x1 = org.x1 + radius;
     lin.x2 = org.x2 - radius;
     lin.y1 = lin.y2 = org.y2;
     if(do_lineclip(&lin, &vwk->clip))
-      FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
+      VISUAL_HLINE(vwk, lin.x1, lin.x2, lin.y2, col);
     lin.x1 = lin.x2 = org.x1;
     lin.y1 = org.y1 + radius;
     lin.y2 = org.y2 - radius;
     if(do_lineclip(&lin, &vwk->clip))
-      FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
+      VISUAL_LINE(vwk, lin.x1, lin.y1, lin.x1, lin.y2, col);
     lin.x1 = lin.x2 = org.x2;
     lin.y1 = org.y1+ radius;
     lin.y2 = org.y2 - radius;
     if(do_lineclip(&lin, &vwk->clip))
-      FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
+      VISUAL_LINE(vwk, lin.x2, lin.y1, lin.x2, lin.y2, col);
     
     
     if(radius > 0) {
@@ -535,27 +535,27 @@ void vdi_v_rbox(VDI_Workstation *vwk)
       while(x < y) {
         /* upper left corner */
         if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-          FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+          VISUAL_PUT_PIXEL(vwk, ul_xc - x, ul_yc - y, col);
         if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-          FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+          VISUAL_PUT_PIXEL(vwk, ul_xc - y, ul_yc - x, col);
         
         /* upper right corner */
         if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-          FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+          VISUAL_PUT_PIXEL(vwk, ur_xc + x, ur_yc - y, col);
         if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-          FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+          VISUAL_PUT_PIXEL(vwk, ur_xc + y, ur_yc - x, col);
         
         /* lower left corner */
         if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-          FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+          VISUAL_PUT_PIXEL(vwk, ll_xc - x, ll_yc + y, col);
         if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-	    FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+	    VISUAL_PUT_PIXEL(vwk, ll_xc - y, ll_yc + x, col);
         
         /* lower right corner */
         if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-          FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+          VISUAL_PUT_PIXEL(vwk, lr_xc + x, lr_yc + y, col);
         if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-	    FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
+	    VISUAL_PUT_PIXEL(vwk, lr_xc + y, lr_yc + x, col);
         
         if(p < 0)
           p += 4*x + 6;
@@ -568,27 +568,27 @@ void vdi_v_rbox(VDI_Workstation *vwk)
       if(x == y) {
         /* upper left corner */
         if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-          FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+          VISUAL_PUT_PIXEL(vwk, ul_xc - x, ul_yc - y, col);
         if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-          FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+          VISUAL_PUT_PIXEL(vwk, ul_xc - y, ul_yc - x, col);
         
         /* upper right corner */
         if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-          FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+          VISUAL_PUT_PIXEL(vwk, ur_xc + x, ur_yc - y, col);
         if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-          FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+          VISUAL_PUT_PIXEL(vwk, ur_xc + y, ur_yc - x, col);
         
         /* lower left corner */
         if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-          FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+          VISUAL_PUT_PIXEL(vwk, ll_xc - x, ll_yc + y, col);
         if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-          FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+          VISUAL_PUT_PIXEL(vwk, ll_xc - y, ll_yc + x, col);
         
         /* lower right corner */
         if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-          FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+          VISUAL_PUT_PIXEL(vwk, lr_xc + x, lr_yc + y, col);
         if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-          FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
+          VISUAL_PUT_PIXEL(vwk, lr_xc + y, lr_yc + x, col);
       }
     }
   }
@@ -676,9 +676,9 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
         lin_u.y1 = lin_u.y2 =  y + ul_yc;
         lin_l.y1 = lin_l.y2 = -y + ll_yc;
         if(do_lineclip(&lin_u, &vwk->clip))
-          FBhline(vwk->fb, lin_u.x1, lin_u.x2, lin_u.y1, col);
+          VISUAL_HLINE(vwk, lin_u.x1, lin_u.x2, lin_u.y1, col);
         if(do_lineclip(&lin_l, &vwk->clip))
-          FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+          VISUAL_HLINE(vwk, lin_l.x1, lin_l.x2, lin_l.y1, col);
       }
       /* Draw the middle lines */
       for(y=ul_yc ; y<=ll_yc ; y++) {
@@ -687,7 +687,7 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
         lin_l.x2 = org.x2;
         lin_l.y1 = lin_l.y2 = y;
         if(do_lineclip(&lin_l, &vwk->clip))
-          FBhline(vwk->fb, lin_l.x1, lin_l.x2, lin_l.y1, col);
+          VISUAL_HLINE(vwk, lin_l.x1, lin_l.x2, lin_l.y1, col);
       } 
       
       free(x_values);
@@ -710,22 +710,22 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
       lin.x2 = org.x2 - radius;
       lin.y1 = lin.y2 = org.y1;
       if(do_lineclip(&lin, &vwk->clip))
-        FBhline(vwk->fb, lin.x1, lin.x2, lin.y1, col);
+        VISUAL_HLINE(vwk, lin.x1, lin.x2, lin.y1, col);
       lin.x1 = org.x1 + radius;
       lin.x2 = org.x2 - radius;
       lin.y1 = lin.y2 = org.y2;
       if(do_lineclip(&lin, &vwk->clip))
-        FBhline(vwk->fb, lin.x1, lin.x2, lin.y2, col);
+        VISUAL_HLINE(vwk, lin.x1, lin.x2, lin.y2, col);
       lin.x1 = lin.x2 = org.x1;
       lin.y1 = org.y1 + radius;
       lin.y2 = org.y2 - radius;
       if(do_lineclip(&lin, &vwk->clip))
-        FBline(vwk->fb, lin.x1, lin.y1, lin.x1, lin.y2, col);
+        VISUAL_LINE(vwk, lin.x1, lin.y1, lin.x1, lin.y2, col);
       lin.x1 = lin.x2 = org.x2;
       lin.y1 = org.y1+ radius;
       lin.y2 = org.y2 - radius;
       if(do_lineclip(&lin, &vwk->clip))
-        FBline(vwk->fb, lin.x2, lin.y1, lin.x2, lin.y2, col);
+        VISUAL_LINE(vwk, lin.x2, lin.y1, lin.x2, lin.y2, col);
       
       
       if(radius > 0) {
@@ -746,27 +746,27 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
         while(x < y) {
           /* upper left corner */
           if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-            FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+            VISUAL_PUT_PIXEL(vwk, ul_xc - x, ul_yc - y, col);
           if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-            FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+            VISUAL_PUT_PIXEL(vwk, ul_xc - y, ul_yc - x, col);
           
           /* upper right corner */
           if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-            FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+            VISUAL_PUT_PIXEL(vwk, ur_xc + x, ur_yc - y, col);
           if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-            FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+            VISUAL_PUT_PIXEL(vwk, ur_xc + y, ur_yc - x, col);
           
           /* lower left corner */
           if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-            FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+            VISUAL_PUT_PIXEL(vwk, ll_xc - x, ll_yc + y, col);
           if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-            FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+            VISUAL_PUT_PIXEL(vwk, ll_xc - y, ll_yc + x, col);
           
           /* lower right corner */
           if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-            FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+            VISUAL_PUT_PIXEL(vwk, lr_xc + x, lr_yc + y, col);
           if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-            FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
+            VISUAL_PUT_PIXEL(vwk, lr_xc + y, lr_yc + x, col);
           
           if(p < 0)
             p += 4*x + 6;
@@ -779,27 +779,27 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
         if(x == y) {
           /* upper left corner */
           if(do_pointclip(ul_xc - x, ul_yc - y, &vwk->clip))
-            FBputpixel(vwk->fb, ul_xc - x, ul_yc - y, col);
+            VISUAL_PUT_PIXEL(vwk, ul_xc - x, ul_yc - y, col);
           if(do_pointclip(ul_xc - y, ul_yc - x, &vwk->clip))
-            FBputpixel(vwk->fb, ul_xc - y, ul_yc - x, col);
+            VISUAL_PUT_PIXEL(vwk, ul_xc - y, ul_yc - x, col);
           
           /* upper right corner */
           if(do_pointclip(ur_xc + x, ur_yc - y, &vwk->clip))
-            FBputpixel(vwk->fb, ur_xc + x, ur_yc - y, col);
+            VISUAL_PUT_PIXEL(vwk, ur_xc + x, ur_yc - y, col);
           if(do_pointclip(ur_xc + y, ur_yc - x, &vwk->clip))
-            FBputpixel(vwk->fb, ur_xc + y, ur_yc - x, col);
+            VISUAL_PUT_PIXEL(vwk, ur_xc + y, ur_yc - x, col);
           
           /* lower left corner */
           if(do_pointclip(ll_xc - x, ll_yc + y, &vwk->clip))
-            FBputpixel(vwk->fb, ll_xc - x, ll_yc + y, col);
+            VISUAL_PUT_PIXEL(vwk, ll_xc - x, ll_yc + y, col);
           if(do_pointclip(ll_xc - y, ll_yc + x, &vwk->clip))
-            FBputpixel(vwk->fb, ll_xc - y, ll_yc + x, col);
+            VISUAL_PUT_PIXEL(vwk, ll_xc - y, ll_yc + x, col);
           
           /* lower right corner */
           if(do_pointclip(lr_xc + x, lr_yc + y, &vwk->clip))
-            FBputpixel(vwk->fb, lr_xc + x, lr_yc + y, col);
+            VISUAL_PUT_PIXEL(vwk, lr_xc + x, lr_yc + y, col);
           if(do_pointclip(lr_xc + y, lr_yc + x, &vwk->clip))
-            FBputpixel(vwk->fb, lr_xc + y, lr_yc + x, col);
+            VISUAL_PUT_PIXEL(vwk, lr_xc + y, lr_yc + x, col);
         }
       }
     }
@@ -825,24 +825,30 @@ void vdi_v_justified(VDI_Workstation *vwk)
  ***********************/
 
 /* Used by v_circle. Puts pixels around the circle */
-static inline void set_circle_pixels(FB *fb, int x, int y, int xc, int yc, RECT *clip, int col)
+static inline void set_circle_pixels(VDI_Workstation * vwk,
+				     int               x,
+				     int               y,
+				     int               xc,
+				     int               yc,
+				     RECT *            clip,
+				     int               col)
 {
   if(do_pointclip(xc + x, yc + y, clip))
-    FBputpixel(fb, xc + x, yc + y, col);
+    VISUAL_PUT_PIXEL(vwk, xc + x, yc + y, col);
   if(do_pointclip(xc - x, yc + y, clip))
-    FBputpixel(fb, xc - x, yc + y, col);
+    VISUAL_PUT_PIXEL(vwk, xc - x, yc + y, col);
   if(do_pointclip(xc + x, yc - y, clip))
-    FBputpixel(fb, xc + x, yc - y, col);
+    VISUAL_PUT_PIXEL(vwk, xc + x, yc - y, col);
   if(do_pointclip(xc - x, yc - y, clip))
-    FBputpixel(fb, xc - x, yc - y, col);
+    VISUAL_PUT_PIXEL(vwk, xc - x, yc - y, col);
   if(do_pointclip(xc + y, yc + x, clip))
-    FBputpixel(fb, xc + y, yc + x, col);
+    VISUAL_PUT_PIXEL(vwk, xc + y, yc + x, col);
   if(do_pointclip(xc - y, yc + x, clip))
-    FBputpixel(fb, xc - y, yc + x, col);
+    VISUAL_PUT_PIXEL(vwk, xc - y, yc + x, col);
   if(do_pointclip(xc + y, yc - x, clip))
-    FBputpixel(fb, xc + y, yc - x, col);
+    VISUAL_PUT_PIXEL(vwk, xc + y, yc - x, col);
   if(do_pointclip(xc - y, yc - x, clip))
-    FBputpixel(fb, xc - y, yc - x, col);
+    VISUAL_PUT_PIXEL(vwk, xc - y, yc - x, col);
 }
 
 /* Used by v_circle. Puts calculated
