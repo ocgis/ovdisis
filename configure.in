@@ -57,7 +57,14 @@ else
   AC_CHECK_LIB(m,main)
   AC_CHECK_LIB(pthread,pthread_create)
   AC_CHECK_LIB(dl,dlopen)
-  AC_CHECK_LIB(ggi,ggiInit,AC_CHECK_HEADER(ggi/ggi.h,build_ggi_visual=true))
+  AC_CHECK_LIB(ggi,ggiInit,
+    AC_CHECK_HEADER(ggi/ggi.h,[
+      AC_DEFINE(HAVE_LIBGGI)
+      LIBS="$LIBS -lggi"
+      AC_DEFINE(HAVE_GGI_H)
+      build_ggi_visual=true
+    ])
+  )
 
   if test x$with_ofbis = xyes ; then
     AC_MSG_ERROR([
@@ -69,7 +76,7 @@ else
 
     AM_PATH_OFBIS(0.0.8,,
       AC_MSG_ERROR([
-*** oFBis 0.0.7 or better is required. The latest version of oFBis
+*** oFBis 0.0.8 or better is required. The latest version of oFBis
 *** is always available from ftp://ftp.nocrew.org.]),
       ofbis)
 
