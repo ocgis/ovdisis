@@ -20,12 +20,18 @@
 
 void *
 ofbis_visual_open (void) {
-  return (void *)FBopen(NULL, FB_OPEN_NEW_VC /* | FB_NO_KBD */ );
+  private_t *private;
+  
+  private = (private_t *) malloc(sizeof(private_t));
+  
+  private->fb = FBopen(NULL, FB_OPEN_NEW_VC /* | FB_NO_KBD */ );
+  return (void *)private;
 }
 
 void
 ofbis_visual_close (void * fb) {
   FBclose(FB_T(fb));
+  free(fb);
 }
 
 void
