@@ -27,6 +27,10 @@ extern int  fontwidth_system_8x16;
 
 extern unsigned char fontdata_system_8x16[];
 
+static char * set_chardata = NULL;
+static int    set_charwidth = 0;
+static int    set_charheight = 0;
+
 void
 ggi_visual_put_char (VWKREF vwk,
 		     int    x,
@@ -35,16 +39,15 @@ ggi_visual_put_char (VWKREF vwk,
 		     int    ch)
 {
   int ox, oy;
-  register unsigned char *chardata =
-    &fontdata_system_8x16[fontheight_system_8x16 * ch];
-  register unsigned char data;
+  register unsigned char * chardata = &set_chardata[set_charheight * ch];
+  register unsigned char   data;
 
-  for (oy = 0; oy < fontheight_system_8x16; oy++)
+  for (oy = 0; oy < set_charheight; oy++)
   {
     data = *chardata;
     chardata++;
 
-    for (ox = 0; ox < fontwidth_system_8x16; ox++)
+    for (ox = 0; ox < set_charwidth; ox++)
     {
       if (data & 0x80)
       {
@@ -61,6 +64,9 @@ void
 ggi_visual_set_font (void * vis,
 		     void * data,
 		     int    width,
-		     int    height) {
-  /* fprintf(stderr, "Implement ggi_visual_set_font\n"); */
+		     int    height)
+{
+  set_chardata = data;
+  set_charwidth = width;
+  set_charheight = height;
 }
