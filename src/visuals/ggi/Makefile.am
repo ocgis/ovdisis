@@ -6,6 +6,7 @@ GGI_VISUAL_SOURCES = \
 	ggi_visual_init.c ggi_visual_init.h \
 	ggi_visual_mouse.c ggi_visual_mouse.h \
 	ggi_visual_mutex.c ggi_visual_mutex.h \
+	ggi_visual_text.c ggi_visual_text.h \
 	ggi_visual_various.c ggi_visual_various.h
 
 INCLUDES = -I../..
