@@ -15,6 +15,7 @@
 #include <ofbis.h>
 
 #include "ofbis_visual.h"
+#include "ofbis_visual_mouse.h"
 
 static int x_last = 0;
 static int y_last = 0;

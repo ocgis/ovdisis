@@ -18,6 +18,8 @@
 #include <stdio.h>
 
 #include "ofbis_visual.h"
+#include "ofbis_visual_cmap.h"
+#include "ofbis_visual_various.h"
 #include "ovdisis.h"
 #include "various.h"
 

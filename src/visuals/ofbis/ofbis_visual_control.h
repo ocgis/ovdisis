@@ -12,6 +12,8 @@
 **
 */
 
+#include "ovdisis.h"
+
 void *
 ofbis_visual_open (void);
 

@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "ofbis_visual.h"
+#include "ofbis_visual_event.h"
 #include "ovdisis.h"
 #include "ovdisis_keyboard.h"
 

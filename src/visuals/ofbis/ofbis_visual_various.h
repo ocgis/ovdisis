@@ -12,26 +12,28 @@
 **
 */
 
+#include "ovdisis.h"
+
 int
-ofbis_visual_get_pixel (void * fb,
+ofbis_visual_get_pixel (VWKREF wk,
 			int    x,
 			int    y);
 
 void
-ofbis_visual_put_pixel (void * fb,
+ofbis_visual_put_pixel (VWKREF wk,
 			int    x,
 			int    y,
 			int    c);
 
 void
-ofbis_visual_hline (void * fb,
+ofbis_visual_hline (VWKREF wk,
 		    int    x1,
 		    int    x2,
 		    int    y,
 		    int    c);
 
 void
-ofbis_visual_line (void * fb,
+ofbis_visual_line (VWKREF wk,
 		   int    x1,
 		   int    y1,
 		   int    x2,
@@ -39,25 +41,25 @@ ofbis_visual_line (void * fb,
 		   int    c);
 
 void
-ofbis_visual_bitblt (VDI_Workstation * vwk,
-		     int               mode,
-		     RECT *            srccor,
-		     RECT *            dstcor,
-		     MFDB *            src,
-		     MFDB *            dst);
+ofbis_visual_bitblt (VWKREF vwk,
+		     int    mode,
+		     RECT * srccor,
+		     RECT * dstcor,
+		     MFDB * src,
+		     MFDB * dst);
 
 void
-ofbis_visual_bitbltt (VDI_Workstation * vwk,
-		      int               mode,
-		      int               fgcol,
-		      int               bgcol,
-		      RECT *            srccor,
-		      RECT *            dstcor,
-		      MFDB *            src,
-		      MFDB *            dst);
+ofbis_visual_bitbltt (VWKREF wk,
+		      int    mode,
+		      int    fgcol,
+		      int    bgcol,
+		      RECT * srccor,
+		      RECT * dstcor,
+		      MFDB * src,
+		      MFDB * dst);
 
 void
-ofbis_visual_put_char (void * fb,
+ofbis_visual_put_char (VWKREF wk,
                        int    x,
                        int    y,
                        int    col,

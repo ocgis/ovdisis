@@ -16,6 +16,7 @@
 #include <stdlib.h>
 
 #include "ofbis_visual.h"
+#include "ofbis_visual_control.h"
 #include "ovdisis.h"
 
 void *
