@@ -146,9 +146,9 @@ draw_mouse_cursor (VDI_Workstation * vwk,
 
     for (xoff = 0; xoff < 16; xoff++) {
       if (which & cursor[yoff]) {
-        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 0xffff);
+        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 1);
       } else if (which & mask[yoff]) {
-        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 0x0000);
+        VISUAL_PUT_PIXEL (vwk, x + xoff, y + yoff, 0);
       }
 
       which >>= 1;
