@@ -165,7 +165,7 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
   
   wk[w].physical = new_ws;
 
-  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC | FB_NO_KBD)) == NULL) {
+  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC)) == NULL) {
     wsfree (w);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: Error opening FrameBuffer!\n");

@@ -259,9 +259,9 @@ inline unsigned long get_color(VDI_Workstation *vwk, int index)
       c = (unsigned char *)(&col);
 
       c[0] = (unsigned char)((vwk->vdi_cmap.red[index]  *255)/1000);
-      c[1] = 0;
-      c[2] = (unsigned char)((vwk->vdi_cmap.green[index]*255)/1000);
-      c[3] = (unsigned char)((vwk->vdi_cmap.blue[index] *255)/1000);
+      c[1] = (unsigned char)((vwk->vdi_cmap.green[index]*255)/1000);
+      c[2] = (unsigned char)((vwk->vdi_cmap.blue[index] *255)/1000);
+      c[3] = 0;
 
       IDEBUG("get_color: Color %4u, %4u, %4u makes %08lx\n",
 	     vwk->vdi_cmap.red[index],vwk->vdi_cmap.green[index],

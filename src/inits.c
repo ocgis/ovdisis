@@ -46,7 +46,10 @@ void init_workstation(VDI_Workstation *wk)
   wk->dev.attr.faces = 1;				/* Number of fonts on device */
   wk->dev.attr.patterns = 24;				/* Number of patterns */
   wk->dev.attr.hatches = 12;				/* Number of hatch styles */
-  wk->dev.attr.colors = 1 << wk->fb->vinf.bits_per_pixel; /* Number of colours, virt pens (TC) */
+  if(wk->fb->vinf.bits_per_pixel > 8)
+    wk->dev.attr.colors = 256;				/* 256 virtual pens for truecolour */
+  else
+    wk->dev.attr.colors = 1 << wk->fb->vinf.bits_per_pixel; /* Number of colours */
   wk->dev.attr.ngdps = 10;				/* Number of GDPs */
   for ( i = 0 ; i < 10 ; i++ ) {
     wk->dev.attr.cangdps[i] = i+1;			/* List of GDPs supported */
