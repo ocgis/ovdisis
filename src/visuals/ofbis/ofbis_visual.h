@@ -12,4 +12,10 @@
 **
 */
 
-#define FB_T(private) ((FB *)private)
+typedef struct {
+  FB *fb;
+  unsigned long colours[256];
+} private_t;
+
+#define FB_T(private) (((private_t *)private)->fb)
+#define COLOURS(private) (((private_t *)private)->colours)
