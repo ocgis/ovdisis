@@ -1382,7 +1382,7 @@ vsm_string (int   handle,
   o_vdipb.contrl[N_PTSIN] = 1;
   o_vdipb.contrl[N_INTIN] = 2;
 
-  o_vdipb.intin[0] = 1 - maxlen;
+  o_vdipb.intin[0] = maxlen;
   o_vdipb.intin[1] = echo;
   
   o_vdipb.ptsin[0] = outxy[0];
@@ -1411,7 +1411,7 @@ vsm_string_raw (int   handle,
   o_vdipb.contrl[N_PTSIN] = 1;
   o_vdipb.contrl[N_INTIN] = 2;
 
-  o_vdipb.intin[0] = 1 - maxlen;
+  o_vdipb.intin[0] = -maxlen;
   o_vdipb.intin[1] = echo;
   
   o_vdipb.ptsin[0] = outxy[0];
