@@ -160,16 +160,6 @@ draw_mouse_cursor (VDI_Workstation * vwk,
 /*
 ** Description
 ** This is the event handler that handles keyboard, mouse and timer events
-**
-** 1998-10-13 CG
-** 1998-10-14 CG
-** 1998-12-06 CG
-** 1998-12-13 CG
-** 1998-12-21 CG
-** 1998-12-26 CG
-** 1999-01-02 CG
-** 1999-05-20 CG
-** 1999-08-29 CG
 */
 static
 void
@@ -251,18 +241,6 @@ event_handler (VDI_Workstation * vwk) {
         
       mouse_x = visual_event.mouse_move.x;
       mouse_y = visual_event.mouse_move.y;
-        
-      if (mouse_x < 0) {
-        mouse_x = 0;
-      } else if (mouse_x > vwk->dev.attr.xres) {
-        mouse_x = vwk->dev.attr.xres;
-      }
-      
-      if (mouse_y < 0) {
-        mouse_y = 0;
-      } else if (mouse_y > vwk->dev.attr.yres) {
-        mouse_y = vwk->dev.attr.yres;
-      }
 
       /* Has a handler been installed? */
       if (vwk->motv != NULL) {
