@@ -15,6 +15,7 @@
 #ifndef _INITS_H_
 #define _INITS_H_
 
+#include "inits.h"
 #include "ovdisis.h"
 
 void init_workstation(VDI_Workstation *);

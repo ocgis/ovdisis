@@ -19,6 +19,8 @@
 
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_text.h"
+
 
 /* Note! No clipping performed! */
 

@@ -16,6 +16,7 @@
 
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_various.h"
 
 void vdi_vs_color(VDI_Workstation *vwk)
 {

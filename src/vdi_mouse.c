@@ -16,6 +16,7 @@
 
 #include "event.h"
 #include "ovdisis.h"
+#include "vdi_mouse.h"
 
 /*
 ** Exported

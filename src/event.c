@@ -22,6 +22,7 @@
 
 #include "event.h"
 #include "ovdisis.h"
+#include "various.h"
 
 #ifndef TRUE
 #define TRUE 1
@@ -70,6 +71,7 @@ timer_handler (int signal_number) {
 ** Description
 ** Draw the mouse cursor
 */
+static
 inline
 void
 draw_mouse_cursor (VDI_Workstation * vwk,
@@ -182,15 +184,9 @@ void
 event_handler (VDI_Workstation * vwk) {
   Visual_Event     visual_event;
   unsigned int     buttons = 0;
-  struct itimerval timer_value = {{0, 50000}, {0, 50000}};
-  struct itimerval old_timer_value;
   int              enable_keyboard;
   int              key_next_index;
   static int       key_index_looped = 0;
-
-  /* Install a timer handler */
-  signal (SIGALRM, &timer_handler);
-  setitimer (ITIMER_REAL, &timer_value, &old_timer_value);
 
   /* Save mouse background and draw mouse */
   if (mouse_visibility > 0)
@@ -306,15 +302,13 @@ event_handler (VDI_Workstation * vwk) {
 }
 
 
+static struct itimerval timer_value = {{0, 50000}, {0, 50000}};
+static struct itimerval old_timer_value;
+
 /*
 ** Description
 ** Initialize the event handler and startup a thread to handle mouse,
 ** keyboard and timer events.
-**
-** 1998-10-13 CG
-** 1998-10-14 CG
-** 1998-12-07 CG
-** 1999-05-20 CG
 */
 void
 start_event_handler (VDI_Workstation * vwk)
@@ -326,20 +320,24 @@ start_event_handler (VDI_Workstation * vwk)
   if (pthread_create (&event_handler_thread,
                       NULL,
                       (void *) &event_handler,
-                      vwk) < 0) {
+                      vwk) < 0)
+  {
+    ;
   }
+
+  /* Install a timer handler */
+  signal(SIGALRM, &timer_handler);
+  setitimer(ITIMER_REAL, &timer_value, &old_timer_value);
 }
 
 
 /*
 ** Description
 ** Kill event handler loop
-**
-** 1998-10-13 CG
-** 1998-12-07 CG
 */
 void
-stop_event_handler (void) {
+stop_event_handler (void)
+{
   if(key_scancode_buffer)
     free(key_scancode_buffer);
   if(key_ascii_buffer)
@@ -347,11 +345,10 @@ stop_event_handler (void) {
   key_scancode_buffer = NULL;
   key_ascii_buffer = NULL;
 
-#if 0
-  fprintf (stderr, "ovdisis: event.c: killing handler thread\n");
-  pthread_kill (event_handler_thread, SIGKILL);
-  fprintf (stderr, "ovdisis: event.c: killed handler thread\n");
-#endif
+  signal(SIGALRM, SIG_DFL);
+  setitimer(ITIMER_REAL, &old_timer_value, &old_timer_value);
+
+  pthread_kill_other_threads_np();
 }
 
 

@@ -18,6 +18,8 @@
 
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_raster.h"
+
 
 #define USHORTS_TO_POINTER(m,l) ((void *)(((unsigned long)(m)<<16) | ((unsigned long)(l&0xffff))))
 

@@ -16,6 +16,7 @@
 
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_fill.h"
 
 void vdi_v_fillarea(VDI_Workstation *vwk)
 {

@@ -1413,26 +1413,6 @@ void v_hardcopy(int handle)
   vdi_call(&o_vdipb);
 }
 
-void vex_keyv(int  handle,
-              void (*keyv)(int state,
-                           int ascii,
-                           int scan),
-              void *(*old_keyv)(int state,
-                                int ascii,
-                                int scan)) {
-  DEFINE_VPB;
-  o_vdipb.contrl[7] = MSW(keyv);
-  o_vdipb.contrl[8] = LSW(keyv);
-
-  o_vdipb.contrl[VDI_HANDLE] = handle;
-  o_vdipb.contrl[ROUTINE] = 132;
-  o_vdipb.contrl[N_PTSIN] = 0;
-  o_vdipb.contrl[N_INTIN] = 0;
-  vdi_call(&o_vdipb);
-
-  *(long *)old_keyv = ((long)o_vdipb.contrl[9] << 16) +  o_vdipb.contrl[10];
-}
-
 int vq_gdos(void) {
   /* Return false since we haven't implemented gdos yet */
   return 0;

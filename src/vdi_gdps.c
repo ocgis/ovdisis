@@ -18,6 +18,7 @@
 
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_gdps.h"
 
 
 /* Internal functions */

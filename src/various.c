@@ -16,6 +16,7 @@
 #include <signal.h>
 
 #include "ovdisis.h"
+#include "various.h"
 
 static int gem2tos_2bpl[4]  = { 0,3,1,2 };
 static int gem2tos_4bpl[16] = { 0,15,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
@@ -34,7 +35,11 @@ inline void fix_rect(RECT *cor)
   cor->y1 = t.y1;
 }
 
-inline void fix_linex(RECT *cor)
+
+static
+inline
+void
+fix_linex(RECT *cor)
 {
   register int t;
 
@@ -49,7 +54,11 @@ inline void fix_linex(RECT *cor)
     }
 }
 
-inline void fix_liney(RECT *cor)
+
+static
+inline
+void
+fix_liney(RECT *cor)
 {
   register int t;
 

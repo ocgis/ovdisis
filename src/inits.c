@@ -15,11 +15,11 @@
 #include <stdio.h>
 #include <unistd.h>		/* for sleep() */
 
+#include "defcmap.h"
+#include "fonts.h"
+#include "inits.h"
 #include "ovdisis.h"
 #include "various.h"
-#include "defcmap.h"
-
-#include "fonts.h"
 
 
 /* Initialization functions */
@@ -257,7 +257,7 @@ void copy_workstation(VDI_Workstation *wk1, VDI_Workstation *wk2)
 
 void copy_cmap(VDI_Workstation *wk1, VDI_Workstation *wk2)
 {
-  int i, ti;
+  int i;
 
   /* Copy the cmap from the physical workstation. */
   for(i = 0; i < wk1->dev.attr.colors; i++) {

@@ -15,6 +15,7 @@
 #include <stdio.h>
 
 #include "ovdisis.h"
+#include "vdi_characters.h"
 
 static void vdi_vq_chcells(VDI_Workstation *);
 static void vdi_v_exit_cur(VDI_Workstation *);

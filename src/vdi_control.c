@@ -26,6 +26,7 @@
 #include "inits.h"
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_control.h"
 
 void vdi_v_clrwk(VDI_Workstation *);	/* Used by v_opnwk */
 
@@ -293,9 +294,6 @@ vdi_v_opnwk(VDI_Workstation *vwk)
 /*
 ** Description
 ** Implementation of v_clswk
-**
-** 1998-10-14 CG
-** 1998-12-07 CG
 */
 void
 vdi_v_clswk (VDI_Workstation *vwk)
@@ -313,7 +311,7 @@ vdi_v_clswk (VDI_Workstation *vwk)
   }
 
   /* Destroy event handler */
-  stop_event_handler ();
+  stop_event_handler();
 
   VISUAL_FREE_CMAP(wk[w].physical);
   VISUAL_CLOSE(wk[w].physical);
@@ -374,7 +372,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
     
   /* none free found */
   if (v == MAX_HANDLES) {
-    wsdetach (w);
+    wsdetach (physical);
     wsfree (v);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open virtual workstation */
     EDEBUG("v_opnvwk: We're all out of handles, I'm afraid!\n");
@@ -487,8 +485,6 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
 
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
-
-  fprintf(stderr, "v_clsvwk: Virtual workstation, handle %d freed\n", v + 1);
 }
 
 void vdi_v_clrwk(VDI_Workstation *vwk)

@@ -16,6 +16,8 @@
 
 #include "ovdisis.h"
 #include "various.h"
+#include "vdi_marker.h"
+
 
 #define LOWERODD(a) ((a)&0x1?(a):(a)-1)
 
