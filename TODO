@@ -1,6 +1,8 @@
 Most graphical functions are still to be made.
 Mouse handling.
 Cursor things and text.
+Fix initialization of virtual workstations. Check if the parent workstation
+is owned by the same process as the virtual one.
 
 The README file really needs to be rewritten.
 

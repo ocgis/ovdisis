@@ -12,6 +12,8 @@
  *
  */
 
+#define DEBUGLEVEL 0
+
 #include <stdio.h>
 #include <string.h>
 
@@ -62,8 +64,11 @@ void vdi_vst_height(VDI_Workstation *vwk)
 /* This should really only check within the same font ID. */
 void vdi_vst_point(VDI_Workstation *vwk)
 {
-  FontInfo *fp=vwk->fonts;
+  FontInfo *fp;
   FBFONT fnt;
+
+  ADEBUG ("ovdisis: vdi_text.c: vdi_vst_point: enter\n");
+  fp = vwk->fonts;
 
   /* It might be necessary later to go through the whole list
      in order to find the best match. */
@@ -75,7 +80,9 @@ void vdi_vst_point(VDI_Workstation *vwk)
   fnt.data = fp->data;
   fnt.width = fp->wcell;
   fnt.height = fp->formheight;
+  ADEBUG ("ovdisis: vdi_text.c: vdi_vst_point: call FBsetfont\n");
   FBsetfont(vwk->fb, &fnt);
+  ADEBUG ("ovdisis: vdi_text.c: vdi_vst_point: returned from FBsetfont\n");
 
   vdipb->ptsout[0] = vwk->text_a.textwidth = fp->wchar;
   vdipb->ptsout[1] = vwk->text_a.textheight = fp->top + fp->bottom;

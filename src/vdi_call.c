@@ -27,6 +27,7 @@
 #include "vdi_raster.h"
 #include "vdi_various.h"
 
+#define DEBUGLEVEL 3
 
 VdiFunction *vdi_functions[] = {
   /*   0 */ UNUSED, vdi_v_opnwk, vdi_v_clswk, vdi_v_clrwk, vdi_v_updwk,
@@ -69,8 +70,10 @@ void vdi_call(VDIPB *vdiparblk)
 
   vdipb=vdiparblk;
 
-  if(vdipb->contrl[ROUTINE]==1) { /* v_opnwk() is special */
-    vdi_functions[1]((VDI_Workstation *)NULL);
+  if ((vdipb->contrl[ROUTINE] == 1) ||
+      (vdipb->contrl[ROUTINE] == 100)) { 
+    /* v_opn{v,}wk() is special */
+    vdi_functions[vdipb->contrl[ROUTINE]]((VDI_Workstation *)NULL);
     IDEBUG("vdi_call: Call to v_opnwk finished.\n");
   } else {
     if(vdipb->contrl[ROUTINE] >= 0 && vdipb->contrl[ROUTINE] <= no_opcodes) {

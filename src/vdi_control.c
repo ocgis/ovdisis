@@ -12,6 +12,8 @@
  *
  */
 
+#define DEBUGLEVEL 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/shm.h>
@@ -172,7 +174,7 @@ vdi_v_opnwk(VDI_Workstation *vwk)
   
   wk[w].physical = new_ws;
 
-  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC)) == NULL) {
+  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC | FB_NO_KBD)) == NULL) {
     wsfree (w);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: Error opening FrameBuffer!\n");
@@ -286,6 +288,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   VDI_Workstation * physical;
   VDI_Workstation * virtual;
 
+  ADEBUG ("ovdisis: vdi_v_opnvwk: entering\n");
   w = vdipb->contrl[VDI_HANDLE] - 1;	/* Physical workstation */
 
   physical = wsattach (w);
@@ -315,9 +318,22 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   vdipb->contrl[VDI_HANDLE] = v + 1;	/* new vdi handle */
   wk_open[v] = WS_VIRTUAL;
   wk[v].physical = physical;	/* link virtual to physical, sort of */
-  wk[v].vwk->fb = wk[v].physical->fb;	/* same FB as physical workstation */
+
+  if ((wk[v].vwk->fb = FBopen(NULL, FB_KEEP_CURRENT_VC | FB_NO_KBD)) == NULL) {
+    wsfree (v);
+    vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
+    EDEBUG("v_opnvwk: Error opening FrameBuffer!\n");
+    return;
+  }
+
+  ADEBUG ("ovdisis: vdi_control.c: fb = 0x%x\n", wk[v].vwk->fb);
 
   wk[v].vwk->handle = v + 1;	/* used for debugging */
+
+  /*
+  ** FIXME add check: if in same process as physical wk then copy otherwise
+  ** initialize
+  */
 
   /* Copy some things */
   copy_workstation(wk[v].physical, wk[v].vwk);
@@ -326,6 +342,9 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   copy_line(wk[v].physical, wk[v].vwk);
   copy_fill(wk[v].physical, wk[v].vwk);
   copy_text(wk[v].physical, wk[v].vwk);
+
+  /* Initialize some things */
+  init_text (wk[v].vwk);
 
   /* make the changes the user wants */
   /* intin[0] - workstation (1-10 == screen) */
@@ -354,6 +373,8 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
 
   vdipb->contrl[N_PTSOUT] = 6;
   vdipb->contrl[N_INTOUT] = 45;
+
+  ADEBUG ("ovdisis: vdi_control.c: fb = 0x%x\n", wk[v].vwk->fb);
 }
 
 void vdi_v_clsvwk(VDI_Workstation *vwk)

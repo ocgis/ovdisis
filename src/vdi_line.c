@@ -12,6 +12,8 @@
  *
  */
 
+#define DEBUGLEVEL 0
+
 #include <stdio.h>
 
 #include "ovdisis.h"
@@ -24,6 +26,9 @@ void vdi_v_pline(VDI_Workstation *vwk)
   int n,ni;
   unsigned long col;
   RECT cor;
+
+  
+  ADEBUG ("ovdisis: vdi_line.c: vdi_v_pline: fb = 0x%x\n", vwk->fb);
 
   ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
   col = get_color(vwk, ni);

@@ -35,11 +35,10 @@ event_handler (VDI_Workstation * vwk) {
   FBEVENT fe;
   int     x = 0;
   int     y = 0;
+  int     old = 0;
 
   while (1) {
-    fprintf (stderr, "ovdisis: event.c: before FBgetevent %d\n", getpid ());
     FBgetevent (vwk->fb, &fe);
-    fprintf (stderr, "ovdisis: event.c: after FBgetevent %d\n", getpid ());
 
     if (fe.type == FBKeyEvent) {
       fprintf (stderr,
@@ -47,6 +46,9 @@ event_handler (VDI_Workstation * vwk) {
                fe.key.state,
                fe.key.ascii);
     } else if (fe.type == FBMouseEvent) {
+
+      FBputpixel (vwk->fb, x, y, old);
+
       x += fe.mouse.x;
       y += fe.mouse.y;
 
@@ -62,10 +64,15 @@ event_handler (VDI_Workstation * vwk) {
         y = 767;
       }
 
+      old = FBgetpixel (vwk->fb, x, y);
+      FBputpixel (vwk->fb, x, y, 0xffff);
+
+#if 0
       fprintf (stderr,
                "ovdisis: event.c: FBMouseEvent: x = %d y = %d\n",
                x,
                y);
+#endif
     } else {
       fprintf (stderr, "ovdisis: event.c: Unknown event\n");
     }
@@ -85,6 +92,7 @@ void
 init_event_handler (VDI_Workstation * vwk)
 {
 #if 0
+  fprintf (stderr, "ovdisis: event.c: init_event_handler: Trying to create thread\n");
   /* Create a new thread */
   if (pthread_create (&event_handler_thread,
                       NULL,
@@ -92,6 +100,7 @@ init_event_handler (VDI_Workstation * vwk)
                       (void *) vwk) < 0) {
     fprintf (stderr, "ovdisis: init_event_handler: Couldn't create event handler thread\n");
   }
+  fprintf (stderr, "ovdisis: event.c: init_event_handler: Created thread\n");
 #endif
 }
 
@@ -104,9 +113,11 @@ init_event_handler (VDI_Workstation * vwk)
 */
 void
 exit_event_handler (void) {
+#if 0
   fprintf (stderr, "ovdisis: event.c: killing handler thread\n");
   pthread_kill (event_handler_thread, SIGKILL);
   fprintf (stderr, "ovdisis: event.c: killed handler thread\n");
+#endif
 }
 
 
