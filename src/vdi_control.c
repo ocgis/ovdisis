@@ -160,9 +160,21 @@ init_visual (void)
   char         module_name[256];
   VDI_Visual * (*visual_init)(void);
   char *       error;
+  char *       visualtype;
 
   strcpy(module_name, VISUALSDIR);
-  strcat(module_name, "/libovdisis_ofbis.so");
+  strcat(module_name, "/libovdisis_");
+
+  /* Read visual type from environment variable, 
+   * if available, otherwise use oFBis.
+   */
+  visualtype = getenv("OVDISIS_VISUAL");
+  if(visualtype)
+    strcat(module_name, visualtype);
+  else
+    strcat(module_name, "ofbis");
+
+  strcat(module_name, ".so");
   handle = dlopen(module_name, RTLD_NOW);
 
   if(handle == NULL)
