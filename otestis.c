@@ -33,6 +33,8 @@
 #include "vdibind.h"
 #endif
 
+
+static
 char
 my_getchar (int vid) {
   int outxy[] = { 0, 0 };
