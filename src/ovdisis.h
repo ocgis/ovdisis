@@ -123,6 +123,12 @@ typedef struct
   int red[256],green[256],blue[256];
 } Cmap;
 
+typedef struct {
+  int x;
+  int y;
+  int color;
+} Pixel;
+
 #define VISUAL_OPEN(vwk) (vwk->visual->private = vwk->visual->open())
 #define VISUAL_CLOSE(vwk) vwk->visual->close(vwk->visual->private)
 #define VISUAL_CLEAR(vwk) vwk->visual->clear(vwk)
@@ -139,6 +145,8 @@ typedef struct
         vwk->visual->get_pixel(vwk, x, y)
 #define VISUAL_PUT_PIXEL(vwk, x, y, c) \
         vwk->visual->put_pixel(vwk, x, y, c)
+#define VISUAL_PUT_PIXELS(vwk, n, px) \
+        vwk->visual->put_pixels(vwk, n, px)
 #define VISUAL_HLINE(vwk, x1, x2, y, c) \
         vwk->visual->hline(vwk, x1, x2, y, c)
 #define VISUAL_LINE(vwk, x1, y1, x2, y2, c) \
@@ -152,8 +160,8 @@ typedef struct
 #define VISUAL_SET_FONT(vwk, data, width, height) \
         vwk->visual->set_font(vwk->visual->private, data, width, height)
 #define VISUAL_PUT_CMAP(vwk) vwk->visual->put_cmap(vwk)
-#define VISUAL_SAVE_MOUSE_BG(vwk, x, y) \
-        vwk->visual->save_mouse_bg(vwk->visual->private, x, y)
+#define VISUAL_SAVE_MOUSE_BG(vwk, x, y, w, h) \
+        vwk->visual->save_mouse_bg(vwk->visual->private, x, y, w, h)
 #define VISUAL_RESTORE_MOUSE_BG(vwk) \
         vwk->visual->restore_mouse_bg(vwk->visual->private)
 #define VISUAL_GET_EVENT(vwk, event) \
@@ -222,6 +230,7 @@ typedef struct
   void   (*put_cmap)(VWKREF vwk);         /* Put colourmap from workstation */
   int    (*get_pixel)(VWKREF, int, int);  /* Get pixel */
   void   (*put_pixel)(VWKREF, int, int, int);  /* Put pixel */
+  void   (*put_pixels)(VWKREF, int, Pixel*);  /* Put several pixels */
   void   (*hline)(VWKREF, int, int, int, int); /* Draw a horizontal line */
   void   (*line)(VWKREF, int, int, int, int, int); /* Draw a line */
   void   (*bitblt)(VWKREF vwk,
@@ -249,7 +258,9 @@ typedef struct
 		     int    height);
   void   (*save_mouse_bg)(void * private,
                           int    x,
-                          int    t);
+                          int    y,
+			  int    w,
+			  int    h);
   void   (*restore_mouse_bg)(void * private);
   void   (*get_event)(void *         private,
                       Visual_Event * event);
@@ -317,21 +328,30 @@ typedef void VdiFunction(VDI_Workstation *);
 
 #if DEBUGLEVEL>=1
 # define EDEBUG(fmt,args...) fprintf(stderr,fmt,##args)
+# define DEBUG1(fmt,args...) fprintf(stderr,fmt,##args)
 # if DEBUGLEVEL>=2
 #  define ADEBUG(fmt,args...) fprintf(stderr,fmt,##args)
+#  define DEBUG2(fmt,args...) fprintf(stderr,fmt,##args)
 #  if DEBUGLEVEL>=3
 #   define IDEBUG(fmt,args...) fprintf(stderr,fmt,##args)
+#   define DEBUG3(fmt,args...) fprintf(stderr,fmt,##args)
 #  else  /* 3 */
 #   define IDEBUG(fmt,args...) 
+#   define DEBUG3(fmt,args...) 
 #  endif /* 3 */
 # else  /* 2 */
 #  define ADEBUG(fmt,args...) 
+#  define DEBUG2(fmt,args...) 
 #  define IDEBUG(fmt,args...) 
+#  define DEBUG3(fmt,args...) 
 # endif /* 2 */
 #else  /* 1 */
 # define EDEBUG(fmt,args...) 
+# define DEBUG1(fmt,args...) 
 # define ADEBUG(fmt,args...) 
+# define DEBUG2(fmt,args...) 
 # define IDEBUG(fmt,args...) 
+# define DEBUG3(fmt,args...) 
 #endif /* 1 */
 
 #define max(a,b) ((a)>(b)?(a):(b))

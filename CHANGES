@@ -1,0 +1,24 @@
+November 2003
+- Fixed mouse drawing routine so you don't get a segmentation fault
+  anymore when moving the mouse on the edges of the display.
+- Externalized the workstation memory management stuff into
+  workstation_memory.c.
+- Added extra parameter to save_mouse_bg in the visual interface
+  so oVDIsis doesn't try to save what's outside the display area. 
+  This changes has only been implemented in the GGI visual.
+
+January 4th 2003
+- Re-organized event.c. It is now splitted in mouse.c and keyboard.c
+- Added a function put_pixels to the visual (I did it for GGI only) so that 
+  several pixels can be drawed in one call
+- Enhanced the management (redraw of the mouse)
+- Implemented vq_inquire
+- Found problem: with vex_motv: the VDI specifications says the position x and y
+  is passed in registers d0 and d1 of the 680x0, which allows user routines to
+  modify the position of the mouse. In our case, we don't run on a 680x0 so how
+  should we do ?
+  Either don't pass parameters to motv, don't support it, or pass a pointer to
+  the mouse coordinates so that a user routine can modify them... but that will
+  be via the stack and not the registers, which will break compatibility anyways.
+  I have chosen to pass pointers so that the user routine can do something.
+  At least, programs written in C may work.

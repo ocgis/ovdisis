@@ -13,7 +13,7 @@
  *
  */
 
-#define DEBUGLEVEL 0
+#define DEBUGLEVEL 2
 
 #include <netinet/in.h>
 #include <stdio.h>
@@ -31,6 +31,7 @@
 #include "vdi_mouse.h"
 #include "vdi_raster.h"
 #include "vdi_various.h"
+#include "workstation_memory.h"
 
 
 #ifdef VDI_STRACE
@@ -203,7 +204,7 @@ vdidebug[] =
   { "vqt_name" },
   { "vqt_fontinfo" }
 };
-#endif VDI_STRACE
+#endif /*VDI_STRACE */
 
 
 VdiFunction *vdi_functions[] = {
@@ -237,51 +238,45 @@ VdiFunction *vdi_functions[] = {
 };
 
 VDIPB *vdipb;
-extern VDIWK wk[MAX_HANDLES];    /* declared in vdi_control.c */
-extern int wk_open[MAX_HANDLES]; /* ----------- " ----------- */ 
 
 void (*vdi_handler)(VDIPB * vdipb) = NULL;
 
-void vdi_call(VDIPB *vdiparblk)
-{
+void vdi_call(VDIPB *vdiparblk) {
+  int routine_nb = vdiparblk->contrl[ROUTINE];
+  int handle     = vdiparblk->contrl[VDI_HANDLE];
+
   if (vdi_handler != NULL) {
     vdi_handler (vdiparblk);
   } else {
     int no_opcodes = sizeof(vdi_functions) / sizeof(VdiFunction *);
     
-    vdipb=vdiparblk;
-    
-    if ((vdipb->contrl[ROUTINE] == 1) ||
-        (vdipb->contrl[ROUTINE] == 100)) { 
-      /* v_opn{v,}wk() is special */
-      vdi_functions[vdipb->contrl[ROUTINE]]((VDI_Workstation *)NULL);
-      IDEBUG("vdi_call: Call to v_opnwk finished.\n");
+    vdipb=vdiparblk; /* This is how functions inside oVDIsis can use the passed VDIPB from the application */
+
+    if ((routine_nb == 1) || (routine_nb == 100)) { 
+      /* v_opn{v,}wk() are special */
+      vdi_functions[routine_nb]((VDI_Workstation *)NULL);
+      DEBUG3("vdi_call: Call to %s finished.\n",vdidebug[routine_nb].name);
     } else {
-      if(vdipb->contrl[ROUTINE] >= 0 && vdipb->contrl[ROUTINE] <= no_opcodes) {
-        if(vdi_functions[vdipb->contrl[ROUTINE]]) {
-          if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
+      if(routine_nb >= 0 && routine_nb <= no_opcodes) {
+        if(vdi_functions[routine_nb]) {
+          if(get_workstation_type(handle) != WS_NOTOPEN) {
             /* Call our function */
 #ifdef VDI_STRACE
-            IDEBUG("vdi_call: Call to VDI nr %d %s, handle %d.\n",
-                   vdipb->contrl[ROUTINE],
-                   vdidebug[vdipb->contrl[ROUTINE]].name,
-                   vdipb->contrl[VDI_HANDLE]);
+            DEBUG3("vdi_call: Call to VDI nr %d %s, handle %d.\n", routine_nb, vdidebug[routine_nb].name, handle);
 #else
-            IDEBUG("vdi_call: Call to VDI nr %d, handle %d.\n",
-                   vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
+            DEBUG3("vdi_call: Call to VDI nr %d, handle %d.\n", routine_nb, handle);
 #endif
-            vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
-            IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",
-                   vdipb->contrl[ROUTINE], vdipb->contrl[VDI_HANDLE]);
+            vdi_functions[routine_nb](handle_to_VDIWK(handle)->vwk);
+            DEBUG3("vdi_call: Call to VDI nr %d, handle %d finished.\n", routine_nb, handle);
             
           } else {
-            EDEBUG("vdi_call: Handle %d not open!\n",vdipb->contrl[VDI_HANDLE]);
+            DEBUG2("vdi_call: Handle %d not open!\n",handle);
           }
         } else {
-          EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
+          DEBUG2("vdi_call: Unsupported VDI call %d!\n",routine_nb);
         }
       } else {
-        EDEBUG("vdi_call: Unsupported VDI call %d!\n",vdipb->contrl[ROUTINE]);
+        DEBUG2("vdi_call: Unsupported VDI call %d!\n",routine_nb);
       }
     }
   }

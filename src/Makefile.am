@@ -15,7 +15,7 @@ DRIVER_SRC = \
 	vdi_call.c vdi_characters.c vdi_control.c vdi_various.c vdi_fill.c \
 	vdi_gdps.c vdi_line.c vdi_marker.c vdi_mouse.c \
 	vdi_raster.c vdi_text.c vdi_device.c \
-	various.c inits.c event.c \
+	various.c inits.c event.c mouse.c keyboard.c timer.c workstation_memory.c\
 	system_6x6.c system_8x8.c system_8x16.c \
 	defcmap.h event.h fonts.h inits.h ovdisis.h \
 	ovdisis_keyboard.h ovdisis_types.h various.h \

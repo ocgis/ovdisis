@@ -1,4 +1,4 @@
-SUBDIRS = src vdi_dump fntread
+SUBDIRS = src vdi_dump fntread test
 
 INCLUDES = -Isrc
 

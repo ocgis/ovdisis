@@ -26,6 +26,12 @@ ggi_visual_put_pixel (VWKREF vwk,
 		      int    c);
 
 void
+ggi_visual_put_pixels (VWKREF vwk,
+		       int n,
+		       Pixel *pixel );
+
+
+void
 ggi_visual_hline (VWKREF vwk,
 		  int    x1,
 		  int    x2,

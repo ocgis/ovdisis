@@ -2,6 +2,7 @@
 ** event.c
 **
 ** Copyright 1998 - 2000 Christer Gustavsson <cg@nocrew.org>
+** Copyright 2003        Vincent Barrilliot <vincent_barrilliot@yahoo.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -17,260 +18,46 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <sys/time.h>
 #include <stdlib.h>
+
+#define DEBUGLEVEL 3
 
 #include "event.h"
 #include "ovdisis.h"
 #include "various.h"
+#include "mouse.h"
+#include "keyboard.h"
+#include "timer.h"
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-/* Define to use signal instead of sigaction */
-#define USE_SIGNAL 1
+/* This is just to remember the physical workstation that started the
+ * event handler */
+static VDI_Workstation *global_vwk;
 
 /* This is needed for the timer handler */
-static VDI_Workstation * global_vwk;
-
-/* If this is positive the mouse cursor is visible */
-static int mouse_visibility = 0;
-
-static pthread_t event_handler_thread;
-pthread_cond_t key_cond = PTHREAD_COND_INITIALIZER;
-pthread_mutex_t key_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-
-/* This is used to generate the 20ms VDI timer tics */
-static struct itimerval timer_value = {{0, 50000}, {0, 50000}};
-static struct itimerval old_timer_value;
-
-/* Mouse cursor coordinates */
-static int mouse_x = 0;
-static int mouse_y = 0;
-
-#ifndef USE_SIGNAL
-/* Used for timer handler */
-static struct sigaction old_sa;
-#endif
-
-static
-MFORM
-mouse_cursor =
-{
-  /* mf_xhot    */
-  0,
-  /* mf_yhot    */
-  0,
-  /* mf_nplanes */
-  1,
-  /* mf_fg      */
-  1,
-  /* mf_bg      */
-  0,
-  /* mf_mask    */
-  {
-    0xc000,
-    0xe000,
-    0xf000,
-    0xf800,
-    0xfc00,
-    0xfe00,
-    0xff00,
-    0xff80,
-    0xffc0,
-    0xffe0,
-    0xfe00,
-    0xef00,
-    0xcf00,
-    0x8780,
-    0x0780,
-    0x0780
-  },
-  /* mf_data    */
-  {
-    0x0000,
-    0x4000,
-    0x6000,
-    0x7000,
-    0x7800,
-    0x7c00,
-    0x7e00,
-    0x7f00,
-    0x7f80,
-    0x7c00,
-    0x6c00,
-    0x4600,
-    0x0600,
-    0x0300,
-    0x0300,
-    0x0000
-  }
-};
-
-
-/* Character buffers from keyboard input 
- * These have to be global so that vsm_string can read them
- */
-int *key_scancode_buffer, *key_ascii_buffer;
-int key_first_index, key_amount, key_buffer_length;
-
-#define KEY_BUFFER_LENGTH 4096
-
-
-/*
-** Description
-** For each timer tick (20 ms) this routine is called and will call a
-** callback routine that the user has setup.
-*/
-static
-void
-timer_handler (int signal_number)
-{
-  if (global_vwk->timv != NULL)
-  {
-    global_vwk->timv ();
-  }
-#ifdef USE_SIGNAL
-  signal(SIGALRM, &timer_handler);
-#endif
-}
-
-
-/*
-** Description
-** Draw the mouse cursor
-*/
-static
-inline
-void
-draw_mouse_cursor(VDI_Workstation * vwk,
-                  int               x,
-                  int               y)
-{
-  int xoff;
-  int yoff;
-  int fg_col, bg_col;
-  int x2;
-
-  if( mouse_cursor.mf_nplanes > 1 ) {
-    fg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_fg);
-    bg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_bg);
-  } else {
-    fg_col = 1;
-    bg_col = 0;
-  }
-
-  x2 = x+16;
-
-  for( yoff = 0  ;  yoff < 16  ;  yoff++ ) {
-    unsigned short which = 0x8000;
-
-    for( xoff = x  ;  xoff < x2  ;  xoff++ ) {
-
-      if( which & mouse_cursor.mf_data[yoff] )
-	{
-	  VISUAL_PUT_PIXEL(vwk, xoff, y + yoff, fg_col);
-	}
-      else if( which & mouse_cursor.mf_mask[yoff] )
-	{
-	  VISUAL_PUT_PIXEL(vwk, xoff, y + yoff, bg_col);
-	}
-
-      which >>= 1;
-    }
-  }
-}
-
-
-/*
-** Description
-** Set the mouse form
-*/
-void
-set_mouse_form(MFORM * cursor)
-{
-  mouse_cursor = *cursor;
-}
+static pthread_t        event_handler_thread;
 
 
 /*
 ** Description
 ** This is the event handler that handles keyboard, mouse and timer events
 */
-static
+static 
 void
 event_handler (VDI_Workstation * vwk) {
   Visual_Event     visual_event;
-  unsigned int     buttons = 0;
-  int              enable_keyboard;
-  int              key_next_index;
 
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-
-  /* Save mouse background and draw mouse */
-  if (mouse_visibility > 0)
-  {
-    /* Lock visual before operation */
-    VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
-
-    VISUAL_SET_WRITE_MODE(vwk, MD_REPLACE);
-    VISUAL_SAVE_MOUSE_BG(vwk, mouse_x, mouse_y);
-    draw_mouse_cursor (vwk, mouse_x, mouse_y);
-
-    /* Unlock visual after operation */
-    VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
-  }
-
-  enable_keyboard = 1;
-  key_scancode_buffer = (int *)malloc(KEY_BUFFER_LENGTH);
-  if(key_scancode_buffer == NULL) {
-    fprintf(stderr, "ovdisis: event.c: Incredible, not even %d bytes to "
-	    "spare for the scancode buffer\n", KEY_BUFFER_LENGTH);
-    enable_keyboard = 0;
-  }
-  key_ascii_buffer = (int *)malloc(KEY_BUFFER_LENGTH);
-  if(key_ascii_buffer == NULL) {
-    fprintf(stderr, "ovdisis: event.c: Incredible, not even %d bytes to "
-	    "spare for the ascii buffer\n", KEY_BUFFER_LENGTH);
-    enable_keyboard = 0;
-  }
-  key_first_index = 0;
-  key_next_index = 0;
-  key_amount = 0;
-  key_buffer_length = KEY_BUFFER_LENGTH;
-
-  while (TRUE) {
+  
+  /* Endless loop that will pump events from the visual and pass them over
+   * to the right manager (mouse, keyboard) */
+  while (1) {
     VISUAL_GET_EVENT(vwk, &visual_event);
 
     switch(visual_event.type)
     {
     case Visual_Key_Press_Event  :
     case Visual_Key_Repeat_Event :
-      if(enable_keyboard)
-      {
-        /* We only care if the key is pressed down, not released */
-        pthread_mutex_lock(&key_mutex);
-        
-        key_scancode_buffer[key_next_index] = visual_event.key.keycode;
-        key_ascii_buffer[key_next_index] = visual_event.key.ascii;
-
-        /* We always write the new events (good policy?) */
-	key_next_index = (key_next_index + 1) % KEY_BUFFER_LENGTH;
-
-        key_amount++;
-
-	/* But we cannot store more than the size of the buffer, so we
-	 * discard the older event to make room for the new event to occur*/
-        if( key_amount == KEY_BUFFER_LENGTH ) {
-	  key_amount = KEY_BUFFER_LENGTH-1;
-          key_first_index = (key_first_index + 1) % KEY_BUFFER_LENGTH;
-	}
-	
-        pthread_mutex_unlock(&key_mutex);
-        pthread_cond_broadcast(&key_cond);
-      }
+      key_event( visual_event );
       break;
 
     case Visual_Key_Release_Event :
@@ -281,35 +68,12 @@ event_handler (VDI_Workstation * vwk) {
       if (vwk->butv != NULL) {
         vwk->butv (visual_event.mouse_button.buttons);
       }
-      buttons = visual_event.mouse_button.buttons;
+      set_mouse_buttons( visual_event.mouse_button.buttons );
       break;
 
     case Visual_Mouse_Move_Event :
-      /* Make sure the visibility isn't being updated */
-      VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
-      
-      if (mouse_visibility > 0)
-      {
-        VISUAL_SET_WRITE_MODE(vwk, MD_REPLACE);
-        VISUAL_RESTORE_MOUSE_BG (vwk);
-      }
-      
-      mouse_x = visual_event.mouse_move.x;
-      mouse_y = visual_event.mouse_move.y;
-      
-      /* Has a handler been installed? */
-      if (vwk->motv != NULL) {
-        vwk->motv (mouse_x, mouse_y);
-      }
-      
-      if (mouse_visibility > 0) {
-        VISUAL_SET_WRITE_MODE(vwk, MD_REPLACE);
-        VISUAL_SAVE_MOUSE_BG (vwk, mouse_x, mouse_y);
-        draw_mouse_cursor (vwk, mouse_x, mouse_y);
-      }
-        
-      /* Unlock visual after operation */
-      VISUAL_MUTEX(vwk, VISUAL_MUTEX_UNLOCK);
+      mouse_moved( visual_event.mouse_move.x,
+		   visual_event.mouse_move.y );
       break;
 
     default:
@@ -317,10 +81,6 @@ event_handler (VDI_Workstation * vwk) {
     }
   }
 }
-
-
-
-
 
 
 /*
@@ -331,35 +91,50 @@ event_handler (VDI_Workstation * vwk) {
 void
 start_event_handler (VDI_Workstation * vwk)
 {
-#ifndef USE_SIGNAL
-  struct sigaction sa;
-#endif
+  int kb_ok    = 1;
+  int mouse_ok = 1;
+  int timer_ok = 1;
 
   /* Initialize global vwk that is used by timer and mouse handlers */
   global_vwk = vwk;
+
+  if( !start_keyboard_manager( ) ) {
+    fprintf( stderr, "ovdisis:event.c: Could not start keyboard manager !\n" );
+    kb_ok = 0;
+  }
+
+  if( !start_mouse_manager( vwk )  ) {
+    fprintf( stderr, "ovdisis:event.c: Could not start mouse manager !\n" );
+    mouse_ok = 0;
+  }
+
+  if( !start_timer_manager( vwk )  ) {
+    fprintf( stderr, "ovdisis:event.c: Could not start timer manager !\n" );
+    timer_ok = 0;
+  }
+
+  if( !mouse_ok && !kb_ok && !timer_ok ) {
+    fprintf( stderr, "ovdisis:event.c: Problem while starting event handler, aborting !\n" );
+    if( kb_ok )
+      terminate_keyboard_manager( );
+
+    if( mouse_ok )
+      terminate_mouse_manager( );
+
+    if( timer_ok )
+      terminate_timer_manager( );
+
+    return; /* VB: is this the best thing to do ????? */
+  }
 
   /* Create a new thread */
   if (pthread_create (&event_handler_thread,
                       NULL,
                       (void *) &event_handler,
                       vwk) != 0)
-  {
-    ;
-  }
-
-  /* Install a timer handler */
-#ifdef USE_SIGNAL
-  signal(SIGALRM, &timer_handler);
-#else
-  sa.sa_handler = &timer_handler;
-  sigemptyset(&sa.sa_mask);
-
-  sa.sa_flags = SA_NODEFER;
-  sa.sa_flags &= ~SA_RESTART;
-  sigaction(SIGALRM, &sa, &old_sa);
-#endif
-
-  setitimer(ITIMER_REAL, &timer_value, &old_timer_value);
+    {
+      ;
+    }
 }
 
 
@@ -370,70 +145,6 @@ start_event_handler (VDI_Workstation * vwk)
 void
 stop_event_handler (void)
 {
-  /* We stop the reception of events before freeing the buffers */
-  setitimer(ITIMER_REAL, &old_timer_value, NULL);
-
-#ifdef USE_SIGNAL
-  signal(SIGALRM, SIG_DFL);
-#else
-  sigaction(SIGALRM, &old_sa, &old_sa);
-#endif
-
   pthread_cancel(event_handler_thread);
-
-  if( key_scancode_buffer )
-    free( key_scancode_buffer );
-
-  if( key_ascii_buffer )
-    free( key_ascii_buffer );
-
-  key_scancode_buffer = NULL;
-  key_ascii_buffer = NULL;
-
-
-  ADEBUG("event.c: event handler stopped\n");
-}
-
-
-/*
-** Exported
-*/
-void
-increase_mouse_visibility (void)
-{
-  /* Lock visual before operation */
-  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_LOCK);
-
-  if (mouse_visibility == 0)
-  {
-    VISUAL_SET_WRITE_MODE(global_vwk, MD_REPLACE);
-    VISUAL_SAVE_MOUSE_BG (global_vwk, mouse_x, mouse_y);
-    draw_mouse_cursor (global_vwk, mouse_x, mouse_y);
-  }
-
-  mouse_visibility++;
-
-  /* Unlock visual after operation */
-  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_UNLOCK);
-}
-
-
-/*
-** Exported
-*/
-void
-decrease_mouse_visibility (void)
-{
-  /* Lock visual before operation */
-  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_LOCK);
-
-  mouse_visibility--;
-
-  if (mouse_visibility == 0) {
-    VISUAL_SET_WRITE_MODE(global_vwk, MD_REPLACE);
-    VISUAL_RESTORE_MOUSE_BG(global_vwk);
-  }
-
-  /* Unlock visual after operation */
-  VISUAL_MUTEX(global_vwk, VISUAL_MUTEX_UNLOCK);
+  DEBUG2("event.c: event handler stopped\n");
 }

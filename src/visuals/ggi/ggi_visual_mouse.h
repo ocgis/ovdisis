@@ -19,7 +19,9 @@
 void
 ggi_visual_save_mouse_bg (void * fb,
 			  int    x,
-			  int    y);
+			  int    y,
+			  int    w,
+			  int    h);
 
 /*
 ** Description

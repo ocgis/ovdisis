@@ -2,6 +2,7 @@
 ** ggi_visual_mouse.c
 **
 ** Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+** Copyright 2003 Vincent Barrilliot  <vincent_barrilliot@yahoo.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -20,8 +21,7 @@
 
 
 static char saved[2000]; /* FIXME: Calculate size and put in private type */
-static int  saved_x = 0;
-static int  saved_y = 0;
+static int  saved_x,saved_y,saved_w,saved_h;
 
 
 /*
@@ -29,12 +29,12 @@ static int  saved_y = 0;
 ** Save background before drawing mouse
 */
 void
-ggi_visual_save_mouse_bg (void * private,
-			  int    x,
-			  int    y) {
-  ggiGetBox(VISUAL_T(private), x, y, 16, 16, saved);
+ggi_visual_save_mouse_bg (void * private, int x, int y, int w, int h) {
   saved_x = x;
-  saved_y = y;
+  saved_y=  y;
+  saved_w  = w;
+  saved_h  = h;
+  ggiGetBox(VISUAL_T(private), saved_x, saved_y, saved_w, saved_h, saved);
 }
 
 
@@ -44,5 +44,5 @@ ggi_visual_save_mouse_bg (void * private,
 */
 void
 ggi_visual_restore_mouse_bg (void * private) {
-  ggiPutBox(VISUAL_T(private), saved_x, saved_y, 16, 16, saved);
+  ggiPutBox(VISUAL_T(private), saved_x, saved_y, saved_w, saved_h, saved);
 }

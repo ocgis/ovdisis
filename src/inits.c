@@ -39,10 +39,10 @@ void init_workstation(VDI_Workstation *wk)
   wk->dev.attr.wpixel = 372;                  /* Width of pixel in microns */
   wk->dev.attr.hpixel = 372;                  /* Height of pixel in microns */
   wk->dev.attr.cheights = 3;                  /* Number of different text sizes */
-  wk->dev.attr.linetypes = 0;                 /* Number of line types */
+  wk->dev.attr.linetypes = 7;                 /* Number of line types */
   wk->dev.attr.linewidths = 0;                /* Number of line widths */
   wk->dev.attr.markertypes = 6;               /* Number of marker types */
-  wk->dev.attr.markersizes = 0;               /* Number of marker sizes */
+  wk->dev.attr.markersizes = 8;               /* Number of marker sizes */
   wk->dev.attr.faces = 1;                     /* Number of fonts on device */
   wk->dev.attr.patterns = 24;                 /* Number of patterns */
   wk->dev.attr.hatches = 12;                  /* Number of hatch styles */
@@ -69,8 +69,8 @@ void init_workstation(VDI_Workstation *wk)
   wk->dev.attr.gdpattr[9] = 2;
   /* Colour capability */
   wk->dev.attr.cancolor = (visual_attr.number_of_colours > 1 ) ? 1 : 0;
-  wk->dev.attr.cantextrot = 0;				/* Text rotation */
-  wk->dev.attr.canfillarea = 0;				/* Flag fill-out range */
+  wk->dev.attr.cantextrot = 1;				/* Text rotation */
+  wk->dev.attr.canfillarea = 1;				/* Flag fill-out range */
   wk->dev.attr.cancellarray = 0;			/* Flag function cell-array */
   /* Number of available colours */
   wk->dev.attr.palette =
@@ -89,11 +89,10 @@ void init_workstation(VDI_Workstation *wk)
   wk->dev.attr.zero5 = 0;				/* reserved */
   wk->dev.attr.maxwline = 1;				/* Maximum line width */
   wk->dev.attr.zero7 = 0;				/* reserved */
-  wk->dev.attr.minwmark = 1;				/* Minimum marker width */
-  wk->dev.attr.minhmark = 1;				/* Minimum marker height */
-  wk->dev.attr.maxwmark = -1;				/* Maximum marker width */
-  wk->dev.attr.maxhmark = -1;				/* Maximum marker height */
-
+  wk->dev.attr.minwmark = 15;				/* Minimum marker width */
+  wk->dev.attr.minhmark = 11;				/* Minimum marker height */
+  wk->dev.attr.maxwmark = 120;				/* Maximum marker width */
+  wk->dev.attr.maxhmark = 120;				/* Maximum marker height */
 
   /* Setup data for vq_extnd() */
 

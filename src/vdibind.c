@@ -1410,6 +1410,21 @@ void v_hardcopy(int handle)
   vdi_call(&o_vdipb);
 }
 
+void v_dspcur(int handle, int x, int y)
+{
+  DEFINE_VPB;
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 5;
+  o_vdipb.contrl[SUBROUTINE] = 18;
+  o_vdipb.contrl[N_PTSIN] = 1;
+  o_vdipb.contrl[N_INTIN] = 0;
+
+  o_vdipb.ptsin[0] = x;
+  o_vdipb.ptsin[1] = y;
+
+  vdi_call(&o_vdipb);
+}
+
 int vq_gdos(void) {
   /* Return false since we haven't implemented gdos yet */
   return 0;
@@ -1438,7 +1453,7 @@ vrq_string (int    handle,
   o_vdipb.intin[1] = echo;
   
   o_vdipb.ptsin[0] = outxy[0];
-  o_vdipb.ptsin[0] = outxy[1];
+  o_vdipb.ptsin[1] = outxy[1];
 
   vdi_call(&o_vdipb);
 
@@ -1465,7 +1480,7 @@ vsm_string (int   handle,
   o_vdipb.intin[1] = echo;
   
   o_vdipb.ptsin[0] = outxy[0];
-  o_vdipb.ptsin[0] = outxy[1];
+  o_vdipb.ptsin[1] = outxy[1];
 
   vdi_call(&o_vdipb);
 
@@ -1495,7 +1510,7 @@ vsm_string_raw (int   handle,
   o_vdipb.intin[1] = echo;
   
   o_vdipb.ptsin[0] = outxy[0];
-  o_vdipb.ptsin[0] = outxy[1];
+  o_vdipb.ptsin[1] = outxy[1];
 
   vdi_call(&o_vdipb);
 

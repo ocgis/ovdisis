@@ -128,4 +128,18 @@ AC_SUBST(AVAILABLE_VISUALS)
 AC_SUBST(OVDISIS_VERSION)
 AC_SUBST(LT_VERSION_INFO)
 
-AC_OUTPUT(fntread/Makefile src/Makefile src/visuals/Makefile src/visuals/ggi/Makefile src/visuals/mw/Makefile src/visuals/ofbis/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
+AC_OUTPUT(
+ test/Makefile
+ test/workstations/Makefile
+ test/mouse/Makefile
+ fntread/Makefile
+ src/Makefile
+ src/visuals/Makefile
+ src/visuals/ggi/Makefile
+ src/visuals/mw/Makefile
+ src/visuals/ofbis/Makefile
+ src/vdibind.h
+ vdi_dump/Makefile
+ Makefile
+ ovdisis.m4
+ ovdisis-config)

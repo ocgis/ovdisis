@@ -73,8 +73,8 @@ ggi_visual_clear (VWKREF vwk)
   ggiDrawBox(VISUAL_T(vwk->visual->private),
              0,
              0,
-             vwk->dev.attr.xres,
-             vwk->dev.attr.yres);
+             vwk->dev.attr.xres+1,
+             vwk->dev.attr.yres+1);
 }
 
 

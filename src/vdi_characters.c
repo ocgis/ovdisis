@@ -16,6 +16,7 @@
 
 #include "ovdisis.h"
 #include "vdi_characters.h"
+#include "mouse.h"
 
 static void vdi_vq_chcells(VDI_Workstation *);
 static void vdi_v_exit_cur(VDI_Workstation *);
@@ -33,13 +34,13 @@ static void vdi_v_rvon(VDI_Workstation *);
 static void vdi_v_rvoff(VDI_Workstation *);
 static void vdi_vq_curaddress(VDI_Workstation *);
 static void vdi_v_hardcopy(VDI_Workstation *);
-
+static void vdi_v_dspcur(VDI_Workstation *);
 
 VdiFunction *vdi_charfuncs[] = {
-  UNUSED, vdi_vq_chcells, vdi_v_exit_cur, vdi_v_enter_cur, vdi_v_curup,
-  vdi_v_curdown, vdi_v_curright, vdi_v_curleft, vdi_v_curhome, vdi_v_eeos,
-  vdi_v_eeol, vdi_v_curaddress, vdi_v_curtext, vdi_v_rvon, vdi_v_rvoff,
-  vdi_vq_curaddress, UNUSED, vdi_v_hardcopy
+  /*  0 */ UNUSED, vdi_vq_chcells, vdi_v_exit_cur, vdi_v_enter_cur, vdi_v_curup,
+  /*  5 */ vdi_v_curdown, vdi_v_curright, vdi_v_curleft, vdi_v_curhome, vdi_v_eeos,
+  /* 10 */ vdi_v_eeol, vdi_v_curaddress, vdi_v_curtext, vdi_v_rvon, vdi_v_rvoff,
+  /* 15 */ vdi_vq_curaddress, UNUSED, vdi_v_hardcopy, vdi_v_dspcur
 };
 
 
@@ -181,3 +182,13 @@ void vdi_v_hardcopy(VDI_Workstation *vwk)
 }
 
 
+/*
+** Description
+** Implementation of v_dsp_cu
+** 
+** 2003-11-22 VB
+*/
+void vdi_v_dspcur(VDI_Workstation *vwk) {
+  printf("Hello world\n");fflush(stdout);
+  just_draw_mouse_cursor(vdipb->ptsin[0],vdipb->ptsin[1]);
+}

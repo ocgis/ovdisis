@@ -101,6 +101,32 @@ ggi_visual_put_pixel (VWKREF vwk,
 }
 
 
+
+void ggi_visual_put_pixels( VWKREF vwk, int n,  /* The number of pixels to draw */
+			    Pixel *pixel ) {
+
+  int i, x, y, c;
+  for( i = 0 ; i < n ; i++ ) {
+    x = pixel[i].x;
+    y = pixel[i].y;
+    c = pixel[i].color;
+
+    if( WRITE_MODE(vwk->visual->private) == MD_REPLACE  ||  WRITE_MODE(vwk->visual->private) == MD_TRANS )
+      ggiPutPixel(VISUAL_T(vwk->visual->private), x, y, COLOR_MAPPED(vwk->visual->private)[c]);
+    else if ( WRITE_MODE(vwk->visual->private) == MD_XOR ) {
+      ggi_pixel pixel;
+      ggi_color color;
+      int i;
+      ggiGetPixel(VISUAL_T(vwk->visual->private),x,y,&pixel);
+      ggiUnmapPixel( VISUAL_T(vwk->visual->private), pixel, &color);
+      i = get_xorcolor_index(vwk,&color);
+      ggiPutPixel(VISUAL_T(vwk->visual->private),
+		  x,y,COLOR_MAPPED(vwk->visual->private)[i]);
+    }
+  }
+}
+
+
 void
 ggi_visual_hline (VWKREF vwk,
 		  int    x1,
@@ -232,4 +258,3 @@ ggi_visual_inquire (void *        vis,
   attr->number_of_colours = 1 << GT_DEPTH(graphical_mode.graphtype);
   attr->bits_per_pixel = GT_DEPTH(graphical_mode.graphtype);
 }
-

@@ -41,6 +41,7 @@ init (void)
     ggi_visual_put_cmap,
     ggi_visual_get_pixel,
     ggi_visual_put_pixel,
+    ggi_visual_put_pixels,
     ggi_visual_hline,
     ggi_visual_line,
     ggi_visual_bitblt,
