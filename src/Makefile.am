@@ -32,4 +32,4 @@ libovdisis_la_SOURCES = \
 
 endif
 
-libovdisis_la_LDFLAGS = -version-info 0:1:0
+libovdisis_la_LDFLAGS = @LT_VERSION_INFO@

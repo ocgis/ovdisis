@@ -113,7 +113,8 @@ OSIS_CHECK_TYPES
 
 OSISINCLUDE=${includedir}/osis
 
-AC_SUBST(VERSION)
+AC_SUBST(OVDISIS_VERSION)
+AC_SUBST(LT_VERSION_INFO)
 AC_SUBST(OSISINCLUDE)
 
 AC_OUTPUT(fntread/Makefile src/Makefile src/vdibind.h vdi_dump/Makefile Makefile ovdisis.m4 ovdisis-config)
