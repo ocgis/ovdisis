@@ -33,7 +33,7 @@ static void init_mfdb( VDI_Workstation *vwk, MFDB *mfdb)
 {
     mfdb->fd_w   = vwk->dev.attr.xres;
     mfdb->fd_h  = vwk->dev.attr.yres;
-    mfdb->fd_wdwidth = (vwk->dev.attr.xres + 15) % 16;
+    mfdb->fd_wdwidth = (vwk->dev.attr.xres + 15) / 16;
     mfdb->fd_stand   = 0;
     mfdb->fd_nplanes  = vwk->inq.attr.planes;
 }
@@ -151,7 +151,7 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
   int plane;
   u_int32_t pixelcol;
   u_int8_t  *line;
-  u_int8_t *dst_ptr;
+  u_int8_t *dptr;
 
   vdipb->contrl[N_PTSOUT] = 0;
   vdipb->contrl[N_INTOUT] = 0;
@@ -170,13 +170,13 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
    {
     fprintf( stderr,"vr_trnfm: Warning: Source has more bit planes than destination!\n");
    }
-
+/*
   if( dst->fd_nplanes != vwk->inq.attr.planes )
    {
     fprintf( stderr,"vr_trnfm: Warning: Destination color depth (%i) is not the actual one (%i)!\n",
         dst->fd_nplanes, vwk->inq.attr.planes);
    }
-
+*/
   /* I really can not imagine that vr_trnfm should also work with the screen directly */
   /* because it does _not_ take coordinates as parameters! */
   if( src->fd_addr == NULL || dst->fd_addr == NULL )
@@ -188,7 +188,7 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
   /* If the MFDBs are the same, we use a temporary third MFDB */
   if( src->fd_addr == dst->fd_addr )
     {
-     size_t l = ((size_t)(src->fd_w+7)) * src->fd_h * src->fd_nplanes / 8;
+     size_t l = ((size_t) src->fd_w * src->fd_nplanes + 7) / 8 * src->fd_h;
      nsrc.fd_addr=malloc( l );
      if( nsrc.fd_addr==NULL )
       {
@@ -215,14 +215,14 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
    {
     /* Convert from independent to dependent */
 
-   dst_ptr=dst->fd_addr;
+   dptr=dst->fd_addr;
    line = (u_int8_t *)nsrc.fd_addr;
-   linesize = (nsrc.fd_w+7)/8;           /* With 1 byte we can code 8 pixel */
-   whole_plane_size = (nsrc.fd_w+7)/8 * nsrc.fd_h;
+   linesize = (nsrc.fd_w + 7) / 8;          /* With 1 byte we can code 8 pixel */
+   whole_plane_size = linesize * nsrc.fd_h;
 
    for( y = 0 ;  y < h  ; y++, line += linesize )
     {
-     dst_ptr = ((u_int8_t *)dst->fd_addr) + y * ((dst->fd_w+7)/8*dst->fd_nplanes);
+     dptr = ((u_int8_t *)dst->fd_addr) + (dst->fd_w * dst->fd_nplanes + 7)/8 * y ;
      for( x = 0  ;  x < w  ;  x++ )
       {
        pixelcol = 0;
@@ -236,34 +236,37 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
         {                               /*  accesses the dest. MFDB directly, but I had no better idea - T.Huth*/
          case 1:
            if( x%8 == 0 )
-             *dst_ptr++ = *( line + x/8 );  /* Copy directly, also not so nice, but I hope it works - T.Huth */
+             *dptr++ = *( line + x/8 );  /* Copy directly, also not so nice, but I hope it works - T.Huth */
            break;
          case 2:
            fprintf( stderr,"vr_trnfm: Sorry, this color depth (2 bit) is not yet supported!\n");
+           if( src->fd_addr == dst->fd_addr ) free(nsrc.fd_addr);
            return;
            /*break;*/
          case 4:
            fprintf( stderr,"vr_trnfm: Sorry, this color depth (4 bit) is not yet supported!\n");
+           if( src->fd_addr == dst->fd_addr ) free(nsrc.fd_addr);
            return;
            /*break;*/
          case 8:
-           *dst_ptr++ = pixelcol;
+           *dptr++ = pixelcol;
            break;
          case 16:
-           *(u_int16_t *)dst_ptr = (u_int16_t)pixelcol;
-           dst_ptr+=2;
+           *(u_int16_t *)dptr = (u_int16_t)pixelcol;
+           dptr+=2;
            break;
          case 24:
-           *dst_ptr++ = (u_int8_t)pixelcol;
-           *dst_ptr++ = (u_int8_t)(pixelcol>>8);
-           *dst_ptr++ = (u_int8_t)(pixelcol>>16);
+           *dptr++ = (u_int8_t)pixelcol;
+           *dptr++ = (u_int8_t)(pixelcol>>8);
+           *dptr++ = (u_int8_t)(pixelcol>>16);
            break;
          case 32:
-           *(u_int32_t *)dst_ptr = pixelcol;
-           dst_ptr+=4;
+           *(u_int32_t *)dptr = pixelcol;
+           dptr+=4;
            break;
          default:
            fprintf( stderr,"vr_trnfm: Unsupported color depth!\n");
+           if( src->fd_addr == dst->fd_addr ) free(nsrc.fd_addr);
            return;
         }
       }
@@ -272,8 +275,70 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
   }
  else
   {
-    /* Convert from independent to dependent */
-   fprintf( stderr,"vr_trnfm: Conversion to standard format not yet supported!\n");
+    /* Convert from dependent to independent */
+   dptr=nsrc.fd_addr;
+   line = (u_int8_t *)dst->fd_addr;
+   linesize = (dst->fd_w + 7) / 8 ;
+   whole_plane_size = linesize * dst->fd_h;
+
+   for( y = 0 ;  y < h  ; y++, line += linesize )
+    {
+     dptr = ((u_int8_t *)nsrc.fd_addr) + (nsrc.fd_w * nsrc.fd_nplanes + 7)/8 * y;
+     for( x = 0  ;  x < w  ;  x++ )
+      {
+       pixelcol = 0;
+       
+       switch(nsrc.fd_nplanes)          /* Set the destination pixel - not very clean, since it */
+        {                               /*  accesses the dest. MFDB directly, but I had no better idea */
+         case 1:
+           if( *dptr & (128>>(x%8)) )
+             pixelcol = 1;
+           if( x%8 == 7 )
+             dptr++;
+           break;
+         case 2:
+           fprintf( stderr,"vr_trnfm: Sorry, this color depth (2 bit) is not yet supported!\n");
+           if( src->fd_addr == dst->fd_addr ) free(nsrc.fd_addr);
+           return;
+           /*break;*/
+         case 4:
+           fprintf( stderr,"vr_trnfm: Sorry, this color depth (4 bit) is not yet supported!\n");
+           if( src->fd_addr == dst->fd_addr ) free(nsrc.fd_addr);
+           return;
+           /*break;*/
+         case 8:
+           pixelcol = *dptr++;
+           break;
+         case 16:
+           pixelcol = *(u_int16_t *)dptr;
+           dptr+=2;
+           break;
+         case 24:
+           pixelcol = *dptr++ ;
+           pixelcol |= (*dptr++) << 8;
+           pixelcol |= (*dptr++) << 16;
+           break;
+         case 32:
+           pixelcol = *(u_int32_t *)dptr;
+           dptr+=4;
+           break;
+         default:
+           fprintf( stderr,"vr_trnfm: Unsupported color depth!\n");
+           if( src->fd_addr == dst->fd_addr ) free(nsrc.fd_addr);
+           return;
+        }
+
+       for( plane = 0 ; plane < dst->fd_nplanes ; plane++ )       /* Set the color value of the source pixel */
+        {
+         if( pixelcol & (1<<plane) )
+            *( line+( plane * whole_plane_size)+x/8 ) |= (128>>(x%8));
+           else
+            *( line+( plane * whole_plane_size)+x/8 ) &= ~(128>>(x%8));
+        }
+
+      }
+    }
+
   }
 
  if( src->fd_addr == dst->fd_addr )
