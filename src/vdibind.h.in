@@ -22,12 +22,18 @@
 #define UWORD @U_INT16_T@
 #endif /* WORD */
 
+#define NR_CONTRL 15
+#define NR_INTIN 132
+#define NR_PTSIN 145
+#define NR_INTOUT 140
+#define NR_PTSOUT 145
+
 typedef struct {
-  WORD contrl[15];
-  WORD intin[132];
-  WORD ptsin[145];
-  WORD intout[140];
-  WORD ptsout[145];
+  WORD contrl[NR_CONTRL];
+  WORD intin[NR_INTIN];
+  WORD ptsin[NR_PTSIN];
+  WORD intout[NR_INTOUT];
+  WORD ptsout[NR_PTSOUT];
 } VDIPARBLK;
 
 typedef struct {
@@ -155,6 +161,7 @@ typedef struct {
   WORD fd_nplanes;
   WORD fd_r1;
   WORD fd_r2;
+
   WORD fd_r3;
 } __attribute__ ((packed)) MFDB;
 
@@ -298,6 +305,11 @@ extern void vrq_string (int    handle,
 			int    echo,
 			int *  outxy,
 			char * str);
+extern int vsm_string (int    handle,
+		       int    maxlen,
+		       int    echo,
+		       int *  outxy,
+		       char * str);
 extern int vsm_string_raw (int   handle,
 			   int   maxlen,
 			   int   echo,
