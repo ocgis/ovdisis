@@ -75,13 +75,13 @@ VERSION = @VERSION@
 ofbis_cflags = @ofbis_cflags@
 ofbis_libs = @ofbis_libs@
 
-CFLAGS = -I../vdibind/
+INCLUDES = -I../vdibind/
 
 noinst_PROGRAMS = vdi_dump
 
 vdi_dump_SOURCES = vdi_dump.c
 
-vdi_dump_LDADD = ../vdibind/libvdibind.a ../src/.libs/libovdisis.a
+vdi_dump_LDADD = ../src/.libs/libovdisis.a
 
 EXTRA_DIST = 16_dump 256_dump outputs tc_dump
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -95,9 +95,9 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 vdi_dump_OBJECTS =  vdi_dump.o
-vdi_dump_DEPENDENCIES =  ../vdibind/libvdibind.a \
-../src/.libs/libovdisis.a
+vdi_dump_DEPENDENCIES =  ../src/.libs/libovdisis.a
 vdi_dump_LDFLAGS = 
+CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@

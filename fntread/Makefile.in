@@ -79,7 +79,7 @@ noinst_PROGRAMS = fntread
 
 fntread_SOURCES = fntread.c
 
-CFLAGS = -I../src
+INCLUDES = -I../src
 
 EXTRA_DIST = System0.fnt System1.fnt System2.fnt
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -96,6 +96,7 @@ fntread_OBJECTS =  fntread.o
 fntread_LDADD = $(LDADD)
 fntread_DEPENDENCIES = 
 fntread_LDFLAGS = 
+CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@
