@@ -12,6 +12,7 @@
 **
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 
 #include "ovdisis.h"
@@ -26,32 +27,34 @@ ggi_visual_get_pixel (void * fb,
 
 
 void
-ggi_visual_put_pixel (void * fb,
+ggi_visual_put_pixel (void * vis,
 		      int    x,
 		      int    y,
 		      int    c) {
-  fprintf(stderr, "Implement ggi_visual_put_pixel\n");
+  ggiPutPixel((ggi_visual_t)vis, x, y, c);
 }
 
 
 void
-ggi_visual_hline (void * fb,
+ggi_visual_hline (void * vis,
 		  int    x1,
 		  int    x2,
 		  int    y,
 		  int    c) {
-  fprintf(stderr, "Implement ggi_visual_hline\n");
+  ggiSetGCForeground((ggi_visual_t)vis, c);
+  ggiDrawHLine((ggi_visual_t)vis, x1, y, x2 - x1 + 1);
 }
 
 
 void
-ggi_visual_line (void * fb,
+ggi_visual_line (void * vis,
 		 int    x1,
 		 int    y1,
 		 int    x2,
 		 int    y2,
 		 int    c) {
-  fprintf(stderr, "Implement ggi_visual_line\n");
+  ggiSetGCForeground((ggi_visual_t)vis, c);
+  ggiDrawLine((ggi_visual_t)vis, x1, y1, x2, y2);
 }
 
 
@@ -80,12 +83,13 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 
 
 void
-ggi_visual_put_char (void * fb,
+ggi_visual_put_char (void * vis,
 		     int    x,
 		     int    y,
 		     int    col,
 		     int    ch) {
-  fprintf(stderr, "Implement ggi_visual_put_char\n");
+  ggiSetGCForeground((ggi_visual_t)vis, col);
+  ggiPutc((ggi_visual_t)vis, x, y, ch);
 }
 
 

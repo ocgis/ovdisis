@@ -57,6 +57,7 @@ else
   AC_CHECK_LIB(m,main)
   AC_CHECK_LIB(pthread,pthread_create)
   AC_CHECK_LIB(dl,dlopen)
+  AC_CHECK_LIB(ggi,ggiInit)
 
   if test x$with_ofbis = xyes ; then
     AC_MSG_ERROR([

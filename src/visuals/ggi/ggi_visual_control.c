@@ -12,19 +12,40 @@
 **
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 
 #include "ovdisis.h"
 
 void *
 ggi_visual_open (void) {
-  fprintf(stderr, "Implement ggi_visual_open\n");
-  return NULL;
+  ggi_visual_t vis;
+  int          err;
+  ggi_mode     suggested_mode;
+
+  ggiInit();
+
+  vis = ggiOpen(NULL);
+  
+  err = ggiSetGraphMode(vis,GGI_AUTO,GGI_AUTO,GGI_AUTO,GGI_AUTO,GT_AUTO);
+
+  if(err == 0)
+  {
+    return (void *)vis;
+  }
+  else
+  {
+    ggiClose(vis);
+    ggiExit();
+
+    return NULL;
+  }
 }
 
 void
-ggi_visual_close (void * fb) {
-  fprintf(stderr, "Implement ggi_visual_close\n");
+ggi_visual_close (void * vis) {
+  ggiClose((ggi_visual_t)vis);
+  ggiExit;
 }
 
 void
