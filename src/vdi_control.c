@@ -29,7 +29,7 @@ int first=1; /* Used to clear the above array first time */
 /* vwk not used by this function */
 void vdi_v_opnwk(VDI_Workstation *vwk)
 {
-  int i, w;
+  int w;
 
   if(first) {
     for(w=0 ; w<MAX_HANDLES ; w++)
@@ -52,7 +52,7 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
     EDEBUG("v_opnwk: Not enough memory for physical workstation!\n");
     return;
   }
-  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC | FB_LINEA)) == NULL) {
+  if ((wk[w].physical->fb = FBopen(NULL, FB_OPEN_NEW_VC)) == NULL) {
     free(wk[w].physical);
     vdipb->contrl[VDI_HANDLE] = 0;	/* Could not open workstation */
     EDEBUG("v_opnwk: Error opening FrameBuffer!\n");
@@ -69,19 +69,9 @@ void vdi_v_opnwk(VDI_Workstation *vwk)
   ADEBUG("v_opnwk: FrameBuffer opened: %p\n", wk[w].physical->fb);
 
   /* Setting default values */
-  /* Values are read from oFBis line-a variables */
 
-  /* v_opnvwk */
-  for (i = 0; i < 45; i++)
-    vdipb->intout[i] = wk[w].physical->dev.tab[i] = wk[w].physical->fb->linea->dev_tab[i];
-  for (i = 0; i < 12; i++)
-    vdipb->ptsout[i] = wk[w].physical->dev.tab[i + 45] = wk[w].physical->fb->linea->siz_tab[i];
-
-  /* vq_extnd */
-  for (i = 0; i < 45; i++)
-    wk[w].physical->inq.tab[i] = wk[w].physical->fb->linea->inq_tab[i];
-  for (i = 0; i < 12; i++)
-    wk[w].physical->inq.tab[i + 45] = 0;
+  /* v_opnvwk and vq_extnd values */
+  init_workstation(wk[w].physical);
 
   wk[w].physical->write_mode = MD_REPLACE;
   wk[w].physical->clip.x1 = 0;
@@ -194,6 +184,7 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   wk[v].vwk->handle = v + 1;	/* used for debugging */
 
   /* Copy some things */
+  copy_workstation(wk[v].physical, wk[v].vwk);
   copy_cmap(wk[v].physical, wk[v].vwk);
   copy_marker(wk[v].physical, wk[v].vwk);
   copy_line(wk[v].physical, wk[v].vwk);
@@ -213,25 +204,17 @@ void vdi_v_opnvwk(VDI_Workstation *vwk)
   wk[v].vwk->fill_a.color = (int)vdipb->intin[9];
   /* intin[10] - Coordinate system.  Only used in GDOS */
 
-  /* setup virtual workstation as the physical */
-
-  /* v_opnvwk */
-  for (i = 0; i < 45; i++)
-    vdipb->intout[i] = wk[v].vwk->dev.tab[i] = wk[v].physical->dev.tab[i];
-  for (i = 0; i < 12; i++)
-    vdipb->ptsout[i] = wk[v].vwk->dev.tab[i + 45] = wk[v].physical->dev.tab[i + 45];
-
-  /* vq_extnd */
-  for (i = 0; i < 45; i++)
-    wk[v].vwk->inq.tab[i] = wk[v].physical->inq.tab[i];
-  for (i = 0; i < 12; i++)	/* all zero now, but let's do it this way anyhow */
-    wk[v].vwk->inq.tab[i + 45] = wk[v].physical->inq.tab[i + 45];
-
   wk[v].vwk->write_mode = wk[v].physical->write_mode;
   wk[v].vwk->clip.x1 = wk[v].physical->clip.x1;
   wk[v].vwk->clip.y1 = wk[v].physical->clip.y1;
   wk[v].vwk->clip.x2 = wk[v].physical->clip.x2;
   wk[v].vwk->clip.y2 = wk[v].physical->clip.y2;
+
+  /* v_opnvwk values to return */
+  for (i = 0; i < 45; i++)
+    vdipb->intout[i] = wk[v].vwk->dev.tab[i] = wk[v].physical->dev.tab[i];
+  for (i = 0; i < 12; i++)
+    vdipb->ptsout[i] = wk[v].vwk->dev.tab[i + 45] = wk[v].physical->dev.tab[i + 45];
 
   vdipb->contrl[N_PTSOUT] = 6;
   vdipb->contrl[N_INTOUT] = 45;
