@@ -3,6 +3,7 @@
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
  * Copyright 2000 Thomas Huth <thothy@gmx.net>
+ * Copyright 2001 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +60,8 @@ void vdi_vro_cpyfm(VDI_Workstation *vwk)
   dstcor.y2 = vdipb->ptsin[7];
 
   /* Get pointers of the MFDBs */
-  src = (MFDB *)USHORTS_TO_POINTER(vdipb->contrl[7],vdipb->contrl[8]);
-  dst = (MFDB *)USHORTS_TO_POINTER(vdipb->contrl[9],vdipb->contrl[10]);
+  src = *(MFDB **)&vdipb->contrl[7];
+  dst = *(MFDB **)&vdipb->contrl[9];
 
 #if 0  /* Vincents stuff - does not work yet: */
   /* Some inits and checks */
@@ -117,8 +118,8 @@ void vdi_vrt_cpyfm(VDI_Workstation *vwk)
   fix_rect(&srccor);
   fix_rect(&dstcor);
 
-  src = (MFDB *)USHORTS_TO_POINTER(vdipb->contrl[7],vdipb->contrl[8]);
-  dst = (MFDB *)USHORTS_TO_POINTER(vdipb->contrl[9],vdipb->contrl[10]);
+  src = *(MFDB **)&vdipb->contrl[7];
+  dst = *(MFDB **)&vdipb->contrl[9];
 
   VISUAL_BITBLTT(vwk,
                  vdipb->intin[0],
@@ -157,9 +158,8 @@ void vdi_vr_trnfm(VDI_Workstation *vwk)
   vdipb->contrl[N_INTOUT] = 0;
 
   /* Get the pointers to the MFDBs */
-  src = (MFDB *)USHORTS_TO_POINTER(vdipb->contrl[7],vdipb->contrl[8]);
-  dst = (MFDB *)USHORTS_TO_POINTER(vdipb->contrl[9],vdipb->contrl[10]);
-
+  src = *(MFDB **)&vdipb->contrl[7];
+  dst = *(MFDB **)&vdipb->contrl[9];
   if( src->fd_stand == dst->fd_stand )
    {
     fprintf( stderr,"vr_trnfm: Want to convert to same mode !\n" );

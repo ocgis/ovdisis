@@ -2,7 +2,7 @@
  * vdibind.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
- * Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
+ * Copyright 1999 - 2001 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -817,10 +817,8 @@ void vro_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest)
 
   o_vdipb.intin[0] = mode;
 
-  o_vdipb.contrl[7] = MSW(src);
-  o_vdipb.contrl[8] = LSW(src);
-  o_vdipb.contrl[9] = MSW(dest);
-  o_vdipb.contrl[10] = LSW(dest);
+  *(MFDB **)&o_vdipb.contrl[7] = src;
+  *(MFDB **)&o_vdipb.contrl[9] = dest;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 109;
@@ -841,10 +839,8 @@ void vrt_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest, int i
   o_vdipb.intin[1] = index[0];
   o_vdipb.intin[2] = index[1];
 
-  o_vdipb.contrl[7] = MSW(src);
-  o_vdipb.contrl[8] = LSW(src);
-  o_vdipb.contrl[9] = MSW(dest);
-  o_vdipb.contrl[10] = LSW(dest);
+  *(MFDB **)&o_vdipb.contrl[7] = src;
+  *(MFDB **)&o_vdipb.contrl[9] = dest;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 121;
@@ -856,10 +852,9 @@ void vrt_cpyfm(int handle, int mode, int coords[8], MFDB *src, MFDB *dest, int i
 void vr_trnfm(int handle, MFDB *src, MFDB *dest)
 {
   DEFINE_VPB;
-  o_vdipb.contrl[7] = MSW(src);
-  o_vdipb.contrl[8] = LSW(src);
-  o_vdipb.contrl[9] = MSW(dest);
-  o_vdipb.contrl[10] = LSW(dest);
+
+  *(MFDB **)&o_vdipb.contrl[7] = src;
+  *(MFDB **)&o_vdipb.contrl[9] = dest;
 
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 110;

@@ -2,7 +2,7 @@
  * vdi_call.c
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
- * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+ * Copyright 1999 - 2001 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +113,23 @@ void vdi_call(VDIPB *vdiparblk)
     dst[i] = fun(src[i]); \
   }
 
+static
+void
+convert_mfdb (MFDB * dst,
+              MFDB * src)
+{
+  dst->fd_addr = (void *)ntohl((long)src->fd_addr);
+  dst->fd_w = ntohs (src->fd_w);
+  dst->fd_h = ntohs (src->fd_h);
+  dst->fd_wdwidth = ntohs (src->fd_wdwidth);
+  dst->fd_stand = ntohs (src->fd_stand);
+  dst->fd_nplanes = ntohs (src->fd_nplanes);
+  dst->fd_r1 = ntohs (src->fd_r1);
+  dst->fd_r2 = ntohs (src->fd_r2);
+  dst->fd_r3 = ntohs (src->fd_r3);
+}
+
+
 void
 vdi_call_be32(VDIPB * vdiparblk)
 {
@@ -127,6 +144,8 @@ vdi_call_be32(VDIPB * vdiparblk)
     e_vdiparblk.intout,
     e_vdiparblk.ptsout
   };
+  MFDB             src_mfdb;
+  MFDB             dst_mfdb;
 
   tmp_short = (short *)ntohl((long)vdiparblk->contrl);
   FIX(e_vdiparblk.contrl, tmp_short, NR_CONTRL, ntohs);
@@ -137,6 +156,17 @@ vdi_call_be32(VDIPB * vdiparblk)
   tmp_short = (short *)ntohl((long)vdiparblk->ptsin);
   FIX(e_vdiparblk.ptsin, tmp_short, e_vdiparblk.contrl[N_PTSIN] * 2, ntohs);
 
+  if((e_vdiparblk.contrl[0] == 109) ||
+     (e_vdiparblk.contrl[0] == 110) ||
+     (e_vdiparblk.contrl[0] == 121))
+  {
+    tmp_short = (short *)ntohl((long)vdiparblk->contrl);
+    convert_mfdb(&src_mfdb, (MFDB *)ntohl(*(long *)&tmp_short[7]));
+    convert_mfdb(&dst_mfdb, (MFDB *)ntohl(*(long *)&tmp_short[9]));
+    *(MFDB **)&e_vdiparblk.contrl[7] = &src_mfdb;
+    *(MFDB **)&e_vdiparblk.contrl[9] = &dst_mfdb;
+  }
+     
   vdi_call(&o_vdipb);
 
   tmp_short = (short *)ntohl((long)vdiparblk->contrl);
