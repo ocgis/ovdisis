@@ -889,7 +889,7 @@ void vsc_form(int handle, MFORM * data)
   DEFINE_VPB;
   int i;
 
-  for(i = 0 ; sizeof(MFORM) / sizeof(WORD); i++)
+  for(i = 0 ; i < sizeof(MFORM) / sizeof(WORD); i++)
   {
     o_vdipb.intin[i] = ((WORD *)data)[i];
   }
