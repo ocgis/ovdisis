@@ -26,7 +26,7 @@
 #include "vdi_gdps.h"
 #include "vdi_characters.h"
 #include "vdi_control.h"
-#include "vdi_keyboard.h"
+#include "vdi_device.h"
 #include "vdi_mouse.h"
 #include "vdi_raster.h"
 #include "vdi_various.h"
@@ -38,7 +38,7 @@ VdiFunction *vdi_functions[] = {
   /*  15 */ vdi_vsl_type, vdi_vsl_width, vdi_vsl_color, vdi_vsm_type, vdi_vsm_height,
   /*  20 */ vdi_vsm_color, vdi_vst_font, vdi_vst_color, vdi_vsf_interior, vdi_vsf_style,
   /*  25 */ vdi_vsf_color, vdi_vq_color, UNUSED, UNUSED, UNUSED,
-  /*  30 */ UNUSED, UNUSED, vdi_vswr_mode, UNUSED, UNUSED,
+  /*  30 */ UNUSED, vdi_vsm_string, vdi_vswr_mode, vdi_vsin_mode, UNUSED,
   /*  35 */ vdi_vql_attributes, vdi_vqm_attributes, vdi_vqf_attributes, vdi_vqt_attributes, vdi_vst_alignment,
   /*  40 */ UNUSED, UNUSED, UNUSED, UNUSED, UNUSED,
   /*  45 */ UNUSED, UNUSED, UNUSED, UNUSED, UNUSED,
@@ -58,7 +58,7 @@ VdiFunction *vdi_functions[] = {
   /* 115 */ vdi_vqin_mode, vdi_vqt_extent, vdi_vqt_width, vdi_vex_timv, UNUSED,
   /* 120 */ UNUSED, vdi_vrt_cpyfm, vdi_v_show_c, vdi_v_hide_c, vdi_vq_mouse,
   /* 125 */ vdi_vex_butv, vdi_vex_motv, vdi_vex_curv, vdi_vq_key_s, vdi_vs_clip,
-  /* 130 */ vdi_vqt_name, vdi_vqt_fontinfo, vdi_vex_keyv
+  /* 130 */ vdi_vqt_name, vdi_vqt_fontinfo
 };
 
 VDIPB *vdipb;
