@@ -77,6 +77,9 @@ VERSION = @VERSION@
 ofbis_cflags = @ofbis_cflags@
 ofbis_libs = @ofbis_libs@
 
+ovdisisdir = @includedir@
+ovdisis_HEADERS = vdibind.h
+
 lib_LTLIBRARIES = libovdisis.la
 
 libovdisis_la_SOURCES = \
@@ -84,6 +87,7 @@ libovdisis_la_SOURCES = \
 	vdi_gdps.c vdi_line.c vdi_marker.c vdi_mouse.c vdi_raster.c \
 	vdi_text.c various.c ovdi_more.c inits.c \
 	system_6x6.c system_8x8.c system_8x16.c \
+	vdibind.c \
 	defcmap.h fonts.h inits.h ovdi_more.h ovdisis.h various.h \
 	vdi_characters.h vdi_control.h vdi_fill.h vdi_gdps.h vdi_line.h \
 	vdi_marker.h vdi_mouse.h vdi_raster.h vdi_text.h vdi_various.h
@@ -102,11 +106,13 @@ libovdisis_la_LIBADD =
 libovdisis_la_OBJECTS =  vdi_call.lo vdi_characters.lo vdi_control.lo \
 vdi_various.lo vdi_fill.lo vdi_gdps.lo vdi_line.lo vdi_marker.lo \
 vdi_mouse.lo vdi_raster.lo vdi_text.lo various.lo ovdi_more.lo inits.lo \
-system_6x6.lo system_8x8.lo system_8x16.lo
+system_6x6.lo system_8x8.lo system_8x16.lo vdibind.lo
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+HEADERS =  $(ovdisis_HEADERS)
+
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -118,11 +124,11 @@ DEP_FILES =  .deps/inits.P .deps/ovdi_more.P .deps/system_6x6.P \
 .deps/system_8x16.P .deps/system_8x8.P .deps/various.P .deps/vdi_call.P \
 .deps/vdi_characters.P .deps/vdi_control.P .deps/vdi_fill.P \
 .deps/vdi_gdps.P .deps/vdi_line.P .deps/vdi_marker.P .deps/vdi_mouse.P \
-.deps/vdi_raster.P .deps/vdi_text.P .deps/vdi_various.P
+.deps/vdi_raster.P .deps/vdi_text.P .deps/vdi_various.P .deps/vdibind.P
 SOURCES = $(libovdisis_la_SOURCES)
 OBJECTS = $(libovdisis_la_OBJECTS)
 
-all: Makefile $(LTLIBRARIES)
+all: Makefile $(LTLIBRARIES) $(HEADERS)
 
 .SUFFIXES:
 .SUFFIXES: .S .c .lo .o .s
@@ -193,6 +199,21 @@ maintainer-clean-libtool:
 
 libovdisis.la: $(libovdisis_la_OBJECTS) $(libovdisis_la_DEPENDENCIES)
 	$(LINK) -rpath $(libdir) $(libovdisis_la_LDFLAGS) $(libovdisis_la_OBJECTS) $(libovdisis_la_LIBADD) $(LIBS)
+
+install-ovdisisHEADERS: $(ovdisis_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(ovdisisdir)
+	@list='$(ovdisis_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(ovdisisdir)/$$p"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(ovdisisdir)/$$p; \
+	done
+
+uninstall-ovdisisHEADERS:
+	@$(NORMAL_UNINSTALL)
+	list='$(ovdisis_HEADERS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(ovdisisdir)/$$p; \
+	done
 
 tags: TAGS
 
@@ -267,18 +288,18 @@ installcheck:
 install-exec: install-libLTLIBRARIES
 	@$(NORMAL_INSTALL)
 
-install-data: 
+install-data: install-ovdisisHEADERS
 	@$(NORMAL_INSTALL)
 
 install: install-exec install-data all
 	@:
 
-uninstall: uninstall-libLTLIBRARIES
+uninstall: uninstall-libLTLIBRARIES uninstall-ovdisisHEADERS
 
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
 installdirs:
-	$(mkinstalldirs)  $(DATADIR)$(libdir)
+	$(mkinstalldirs)  $(DATADIR)$(libdir) $(DATADIR)$(ovdisisdir)
 
 
 mostlyclean-generic:
@@ -319,12 +340,13 @@ clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
 uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
 distclean-compile clean-compile maintainer-clean-compile \
 mostlyclean-libtool distclean-libtool clean-libtool \
-maintainer-clean-libtool tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info dvi \
-installcheck install-exec install-data install uninstall all \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-libtool uninstall-ovdisisHEADERS \
+install-ovdisisHEADERS tags mostlyclean-tags distclean-tags clean-tags \
+maintainer-clean-tags distdir mostlyclean-depend distclean-depend \
+clean-depend maintainer-clean-depend info dvi installcheck install-exec \
+install-data install uninstall all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

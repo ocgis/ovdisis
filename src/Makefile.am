@@ -1,5 +1,8 @@
 # Make a shared library using libtool
 
+ovdisisdir = @includedir@
+ovdisis_HEADERS = vdibind.h
+
 lib_LTLIBRARIES = libovdisis.la
 
 libovdisis_la_SOURCES = \
@@ -7,6 +10,8 @@ libovdisis_la_SOURCES = \
 	vdi_gdps.c vdi_line.c vdi_marker.c vdi_mouse.c vdi_raster.c \
 	vdi_text.c various.c ovdi_more.c inits.c \
 	system_6x6.c system_8x8.c system_8x16.c \
+	vdibind.c \
 	defcmap.h fonts.h inits.h ovdi_more.h ovdisis.h various.h \
 	vdi_characters.h vdi_control.h vdi_fill.h vdi_gdps.h vdi_line.h \
 	vdi_marker.h vdi_mouse.h vdi_raster.h vdi_text.h vdi_various.h
+

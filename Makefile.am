@@ -1,11 +1,10 @@
-SUBDIRS = src vdibind vdi_dump fntread
+SUBDIRS = src vdi_dump fntread
 
-CFLAGS = -Ivdibind -Isrc
+INCLUDES = -Isrc
 
-noinst_HEADERS = extern_ovdisis.h vdidefs.h
 noinst_PROGRAMS = otestis
 otestis_SOURCES = otestis.c
-otestis_LDADD = vdibind/libvdibind.a src/.libs/libovdisis.a
+otestis_LDADD = src/.libs/libovdisis.a
 
 bin_SCRIPTS = ovdisis-config
 

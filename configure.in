@@ -86,4 +86,4 @@ AC_SUBST(ofbis_libs)
 
 AC_SUBST(VERSION)
 
-AC_OUTPUT(fntread/Makefile src/Makefile vdibind/Makefile vdi_dump/Makefile Makefile ovdisis-config)
+AC_OUTPUT(fntread/Makefile src/Makefile vdi_dump/Makefile Makefile ovdisis-config)
