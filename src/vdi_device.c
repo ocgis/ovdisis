@@ -27,8 +27,7 @@ extern int key_first_index, key_amount, key_buffer_length;
 
 void vdi_vsm_string(VDI_Workstation *vwk)
 {
-  int maxlen, amount, i;
-  int *buf;
+  int maxlen, amount, i, getboth;
 
   /* There is echo info in there too, but we don't support that yet, 
    * if ever. 
@@ -42,15 +41,21 @@ void vdi_vsm_string(VDI_Workstation *vwk)
 
     maxlen = (int)vdipb->intin[0];
     if(maxlen < 0) {
-      buf = key_scancode_buffer;
       maxlen = -maxlen;
+      getboth = 1;
     } else {
-      buf = key_ascii_buffer;
+      getboth = 0;
     }
     
     amount = min(NR_INTOUT, min(maxlen, key_amount));
     for(i = 0 ; i < amount ; i++) {
-      vdipb->intout[i] = (WORD)buf[key_first_index];
+      WORD value;
+
+      value = (WORD)key_ascii_buffer[key_first_index] & 0xff;
+      if(getboth)
+	value |= (WORD)(key_ascii_buffer[key_first_index] << 8);
+      
+      vdipb->intout[i] = value;
       key_first_index = (key_first_index+1) % key_buffer_length;
     }
     key_amount -= amount;
