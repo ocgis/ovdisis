@@ -4,10 +4,10 @@
 #
 # Generated automatically by ltconfig - GNU libtool 1.0h
 # This program was configured as follows,
-# on host lasagna:
+# on host gnocchi:
 #
-# CC="gcc" CFLAGS=" -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce" CPPFLAGS="" \
-# LD="/usr/bin/ld" NM="/usr/bin/nm -B" RANLIB="ranlib" LN_S="ln -s" \
+# CC="m68k-linux-gcc" CFLAGS=" -Wall -O2 -pipe -fomit-frame-pointer -fno-strength-reduce" CPPFLAGS="" \
+# LD="/usr/local/m68k-cross/usr//m68k-linux/bin/ld" NM="/usr/bin/nm -B" RANLIB="m68k-linux-ranlib" LN_S="ln -s" \
 #   ./ltconfig --with-gcc --with-gnu-ld --no-verify ./ltmain.sh m68k-unknown-linux-gnu
 #
 # Compiler and other test output produced by ltconfig, useful for
@@ -36,10 +36,10 @@ host="m68k-unknown-linux-gnu"
 AR="ar"
 
 # The default C compiler.
-CC="gcc"
+CC="m68k-linux-gcc"
 
 # The linker used to build libraries.
-LD="/usr/bin/ld"
+LD="/usr/local/m68k-cross/usr//m68k-linux/bin/ld"
 
 # Whether we need hard or soft links.
 LN_S="ln -s"
@@ -86,7 +86,7 @@ library_names_spec="\$libname.so.\$versuffix \$libname.so.\$major \$libname.so"
 soname_spec="\$libname.so.\$major"
 
 # Commands used to build and install an old-style archive.
-RANLIB="ranlib"
+RANLIB="m68k-linux-ranlib"
 old_archive_cmds="\$AR cru \$oldlib\$oldobjs;\$RANLIB \$oldlib"
 old_postinstall_cmds="chmod 644 \$oldlib;\$RANLIB \$oldlib"
 old_postuninstall_cmds=""
@@ -109,7 +109,7 @@ finish_cmds="PATH=\\\"\\\\\$PATH:/sbin\\\" ldconfig -n \$libdir"
 finish_eval=""
 
 # Take the output of nm and produce a listing of raw symbols and C names.
-global_symbol_pipe="sed -n -e 's/^.* [ABCDGISTUW] \\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\1/p'"
+global_symbol_pipe=""
 
 # How to strip a library file.
 striplib=""
