@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>              
 
-#include "../ovdisis.h"
+#include "ovdisis.h"
 
 #define BIN8(c) ((c)>>7)&1,((c)>>6)&1,((c)>>5)&1,((c)>>4)&1, \
 		((c)>>3)&1,((c)>>2)&1,((c)>>1)&1,((c)>>0)&1

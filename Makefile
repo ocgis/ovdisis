@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -O2 -Wall -pipe
+COPTIONS = -O2 -Wall -pipe
 LDLIBS = -lfb
 AR = ar
-DO_MAKE = $(MAKE) 'CC=$(CC)' 'CFLAGS=$(CFLAGS) -DDEBUGLEVEL=2' 'AR=$(AR)'
+DO_MAKE = $(MAKE) 'CC=$(CC)' 'COPTIONS=$(COPTIONS) -DDEBUGLEVEL=2' 'AR=$(AR)'
 EXEC = otestis
 
 SUBDIRS = src vdibind vdi_dump
@@ -20,7 +20,9 @@ endif
 # vs_color. It seems to work with linux 2.0.25, but not
 # with 2.0.21. If you have 2.0.21, uncomment the next
 # line, or the program might hang.
-#CFLAGS += -DNOKEYCHECK
+#COPTIONS += -DNOKEYCHECK
+
+CFLAGS = $(COPTIONS) -I. -Isrc -Ivdibind
 
 
 all: $(PREREQ) $(EXEC)

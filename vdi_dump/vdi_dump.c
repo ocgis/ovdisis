@@ -19,10 +19,7 @@
 #include <aes.h>
 #include <vdi.h>
 #else
-#include "../vdibind/vdibind.h"
-
-VDIPARBLK e_vdiparblk;
-VDIPB o_vdipb;          /* Must have this name when using vdibind!!! */
+#include "vdibind.h"
 #endif /* __TOS__ */
 
 char *dev_int[] = {
@@ -76,16 +73,6 @@ int do_stuff(FILE *fp)
   int work_in[11] = { 1,1,1,1,1,1,1,1,1,1,2 };
   int work_out[57];
 
-#ifndef __TOS__
-  /* initialize o_vdipb */
-  o_vdipb.contrl=e_vdiparblk.contrl;
-  o_vdipb.intin=e_vdiparblk.intin;
-  o_vdipb.ptsin=e_vdiparblk.ptsin; 
-  o_vdipb.intout=e_vdiparblk.intout; 
-  o_vdipb.ptsout=e_vdiparblk.ptsout;
-#endif /* __TOS__ */
-
-
 #ifdef __TOS__
   vp1 = graf_handle(&i,&i,&i,&i);
 #else
@@ -94,7 +81,6 @@ int do_stuff(FILE *fp)
   if(!vp1)
     return 0;
 #endif /* __TOS__ */
-
 
   vh1 = vp1;
   v_opnvwk(work_in, &vh1, work_out);
@@ -119,7 +105,6 @@ int do_stuff(FILE *fp)
 #ifndef __TOS__
   v_clswk(vp1);
 #endif /* __TOS__ */
-
 
   return 1;
 }

@@ -1,6 +1,8 @@
 SRCS = vdibind.c
 OBJS = vdibind.o
 
+CFLAGS = $(COPTIONS) -I.. -I../src
+
 all: $(OBJS)
 
 dep depend .depend: 

@@ -6,19 +6,21 @@ ifneq (.depend,$(wildcard .depend))
 PREREQ += dep
 endif
 
+CFLAGS = $(COPTIONS) -I.. -I../..
+
 all:	$(PREREQ) fonts.o
 
 fonts.o: $(OBJS)
 	$(CC) -nostdlib -Wl,-r -o $@ $^
 
-fntread: fntread.c
-	$(CC) -pipe -Wall -o $@ $^
+fntread: fntread.o
+	$(CC) -o $@ $^
 
 dep depend .depend: 
 	$(CC) $(CFLAGS) -MM $(SRCS) > .depend
 
 clean:
-	rm -f core *~ $(OBJS) .depend
+	rm -f core *~ $(OBJS) fntread.o .depend
 
 realclean: clean
 	rm -f fonts.o fntread

@@ -16,7 +16,7 @@
 #define _OVDISIS_H_
 
 #include <fb/libfb.h>
-#include "../vdidefs.h"
+#include "vdidefs.h"
 
 /* Defines for vdipb->contrl[] */
 #define ROUTINE 0

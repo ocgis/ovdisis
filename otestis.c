@@ -28,8 +28,8 @@
 #define CLIP_OFF 0
 #define CLIP_ON 1
 #else
-#include "src/ovdi_more.h" /* for ovdi_getchar() */
-#include "vdibind/vdibind.h"
+#include "ovdi_more.h" /* for ovdi_getchar() */
+#include "vdibind.h"
 #endif /* __TOS__ */
 
 int do_stuff(void);

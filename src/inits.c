@@ -18,7 +18,8 @@
 #include "ovdisis.h"
 #include "various.h"
 #include "defcmap.h"
-#include "fonts/fonts.h"
+
+#include "fonts.h"
 
 
 /* Initialization functions */

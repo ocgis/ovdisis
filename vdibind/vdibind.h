@@ -15,7 +15,7 @@
 #ifndef _VDIBIND_H_
 #define _VDIBIND_H_
 
-#include "../vdidefs.h"
+#include "vdidefs.h"
 
 extern void v_opnwk(int *, int *, int *);
 extern void v_clswk(int);

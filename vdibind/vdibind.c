@@ -12,7 +12,7 @@
  *
  */
 
-#include "../src/ovdisis.h"
+#include "ovdisis.h"
 
 /* set contrl[N_INTIN] & contrl[N_PTSIN] too ?? */
 

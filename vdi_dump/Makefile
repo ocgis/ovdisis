@@ -9,6 +9,8 @@ ifneq (.depend,$(wildcard .depend))
 PREREQ += dep
 endif
 
+CFLAGS = $(COPTIONS) -I../vdibind -I..
+
 all:	$(PREREQ) $(EXEC)
 
 $(EXEC): force $(OBJS)
