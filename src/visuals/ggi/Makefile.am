@@ -3,7 +3,7 @@ GGI_VISUAL_SOURCES = \
 	ggi_visual_cmap.c ggi_visual_cmap.h \
 	ggi_visual_control.c ggi_visual_control.h \
 	ggi_visual_event.c ggi_visual_event.h \
-	ggi_visual_init.c \
+	ggi_visual_init.c ggi_visual_init.h \
 	ggi_visual_mouse.c ggi_visual_mouse.h \
 	ggi_visual_mutex.c ggi_visual_mutex.h \
 	ggi_visual_various.c ggi_visual_various.h

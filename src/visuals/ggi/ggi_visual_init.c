@@ -18,6 +18,7 @@
 #include "ggi_visual_cmap.h"
 #include "ggi_visual_control.h"
 #include "ggi_visual_event.h"
+#include "ggi_visual_init.h"
 #include "ggi_visual_mouse.h"
 #include "ggi_visual_mutex.h"
 #include "ggi_visual_various.h"
