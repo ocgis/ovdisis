@@ -5,6 +5,7 @@ OFBIS_VISUAL_SOURCES = \
 	ofbis_visual_event.c ofbis_visual_event.h \
 	ofbis_visual_init.c \
 	ofbis_visual_mouse.c ofbis_visual_mouse.h \
+	ofbis_visual_mutex.c ofbis_visual_mutex.h \
 	ofbis_visual_various.c ofbis_visual_various.h
 
 EXTRA_DIST = $(OFBIS_VISUAL_SOURCES)

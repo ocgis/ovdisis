@@ -19,12 +19,14 @@
 #include "ofbis_visual_control.h"
 #include "ofbis_visual_event.h"
 #include "ofbis_visual_mouse.h"
+#include "ofbis_visual_mutex.h"
 #include "ofbis_visual_various.h"
 
 VDI_Visual *
 init (void)
 {
-  static VDI_Visual visual = {
+  static VDI_Visual visual =
+  {
     ofbis_visual_open,
     ofbis_visual_close,
     ofbis_visual_clear,
@@ -44,7 +46,8 @@ init (void)
     ofbis_visual_set_font,
     ofbis_visual_save_mouse_bg,
     ofbis_visual_restore_mouse_bg,
-    ofbis_visual_get_event
+    ofbis_visual_get_event,
+    ofbis_visual_mutex
   };
 
   return &visual;
