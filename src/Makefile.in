@@ -71,13 +71,14 @@ NM = @NM@
 OFBIS_CFLAGS = @OFBIS_CFLAGS@
 OFBIS_CONFIG = @OFBIS_CONFIG@
 OFBIS_LIBS = @OFBIS_LIBS@
+OSISINCLUDE = @OSISINCLUDE@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
 ofbis_cflags = @ofbis_cflags@
 ofbis_libs = @ofbis_libs@
 
-ovdisisdir = @includedir@
+ovdisisdir = @OSISINCLUDE@
 ovdisis_HEADERS = vdibind.h
 
 lib_LTLIBRARIES = libovdisis.la
@@ -91,6 +92,8 @@ libovdisis_la_SOURCES = \
 	defcmap.h fonts.h inits.h ovdi_more.h ovdisis.h various.h \
 	vdi_characters.h vdi_control.h vdi_fill.h vdi_gdps.h vdi_line.h \
 	vdi_marker.h vdi_mouse.h vdi_raster.h vdi_text.h vdi_various.h
+
+libovdisis_la_LDFLAGS = -version-info 0:1:0
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -101,7 +104,6 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-libovdisis_la_LDFLAGS = 
 libovdisis_la_LIBADD = 
 libovdisis_la_OBJECTS =  vdi_call.lo vdi_characters.lo vdi_control.lo \
 vdi_various.lo vdi_fill.lo vdi_gdps.lo vdi_line.lo vdi_marker.lo \

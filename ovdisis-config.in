@@ -42,7 +42,7 @@ while test $# -gt 0; do
       echo @VERSION@
       ;;
     --cflags)
-      echo $ofbis_cflags
+      echo $ofbis_cflags -I@OSISINCLUDE@
       ;;
     --libs)
       my_ofbis_libs=

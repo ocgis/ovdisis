@@ -538,7 +538,7 @@ fi
 
 
 PACKAGE=ovdisis
-VERSION=0.0.0
+VERSION=0.0.1
 
 ac_aux_dir=
 for ac_dir in $srcdir $srcdir/.. $srcdir/../..; do
@@ -1898,6 +1898,9 @@ else
   
 fi
 
+OSISINCLUDE=${includedir}/osis
+
+
 
 
 
@@ -2063,6 +2066,7 @@ s%@OFBIS_CFLAGS@%$OFBIS_CFLAGS%g
 s%@OFBIS_LIBS@%$OFBIS_LIBS%g
 s%@ofbis_cflags@%$ofbis_cflags%g
 s%@ofbis_libs@%$ofbis_libs%g
+s%@OSISINCLUDE@%$OSISINCLUDE%g
 
 CEOF
 EOF
