@@ -17,6 +17,7 @@
 
 #include "ggi_visual.h"
 #include "ggi_visual_blit.h"
+#include "ggi_visual_various.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -43,7 +44,8 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
   }
   else
   {
-    fprintf(stderr, "Implement ggi_visual_bitblt\n");
+    fprintf(stderr,
+            "Implement ggi_visual_bitblt (memory to display or vice versa\n");
   }
 }
 
@@ -58,5 +60,49 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 		    MFDB *            src,
 		    MFDB *            dst)
 {
-  fprintf(stderr, "Implement ggi_visual_bitbltt\n");
+  if((src->fd_addr == NULL) && (dst->fd_addr == NULL))
+  {
+    fprintf(stderr,
+            "Implement ggi_visual_bitbltt (display to display)\n");
+  }
+  else if(dst->fd_addr == NULL)
+  {
+    char * data;
+    int    x;
+    int    y;
+
+    /* Order coordinates in a good way */
+    fix_rect(srccor);
+    fix_rect(dstcor);
+
+    data = src->fd_addr;
+
+    for(y = 0; y <= (srccor->y2 - srccor->y1); y++)
+    {
+      for(x = 0; x <= (srccor->x2 - srccor->x1); x++)
+      {
+        char byte = 0;
+
+        if((x % 256) == 0)
+        {
+          byte = *data++;
+        }
+
+        if(byte & 0x80)
+        {
+          ggi_visual_put_pixel(vwk,
+                               x + dstcor->x1,
+                               y + dstcor->y1,
+                               fgcol);
+        }
+
+        byte <<= 1;
+      }
+    }
+  }
+  else
+  {
+    fprintf(stderr,
+            "Implement ggi_visual_bitbltt (display to memory)\n");
+  }
 }
