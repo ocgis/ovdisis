@@ -1,7 +1,7 @@
 /*
 ** ggi_visual_various.h
 **
-** Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+** Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -43,33 +43,20 @@ ggi_visual_line (VWKREF vwk,
 void
 ggi_visual_bitblt (VWKREF vwk,
 		   int    mode,
-		   RECT *            srccor,
-		   RECT *            dstcor,
-		   MFDB *            src,
-		   MFDB *            dst);
+		   RECT * srccor,
+		   RECT * dstcor,
+		   MFDB * src,
+		   MFDB * dst);
 
 void
 ggi_visual_bitbltt (VWKREF vwk,
-		    int               mode,
-		    int               fgcol,
-		    int               bgcol,
-		    RECT *            srccor,
-		    RECT *            dstcor,
-		    MFDB *            src,
-		    MFDB *            dst);
-
-void
-ggi_visual_put_char (VWKREF vwk,
-		     int    x,
-		     int    y,
-		     int    col,
-		     int    ch);
-
-void
-ggi_visual_set_font (void * fb,
-		     void * data,
-		     int    width,
-		     int    height);
+		    int    mode,
+		    int    fgcol,
+		    int    bgcol,
+		    RECT * srccor,
+		    RECT * dstcor,
+		    MFDB * src,
+		    MFDB * dst);
 
 void
 ggi_visual_inquire (void *        fb,

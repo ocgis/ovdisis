@@ -1,7 +1,7 @@
 /*
 ** ggi_visual_various.c
 **
-** Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+** Copyright 1999 - 2000 Christer Gustavsson <cg@nocrew.org>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -105,27 +105,6 @@ ggi_visual_bitbltt (VDI_Workstation * vwk,
 		    MFDB *            dst)
 {
   fprintf(stderr, "Implement ggi_visual_bitbltt\n");
-}
-
-
-void
-ggi_visual_put_char (VWKREF vwk,
-		     int    x,
-		     int    y,
-		     int    col,
-		     int    ch) {
-  ggiSetGCForeground(VISUAL_T(vwk->visual->private), 
-		     COLOURS(vwk->visual->private)[col]);
-  ggiPutc(VISUAL_T(vwk->visual->private), x, y, ch);
-}
-
-
-void
-ggi_visual_set_font (void * vis,
-		     void * data,
-		     int    width,
-		     int    height) {
-  fprintf(stderr, "Implement ggi_visual_set_font\n");
 }
 
 
