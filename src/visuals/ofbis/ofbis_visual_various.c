@@ -261,12 +261,18 @@ ofbis_visual_bitbltt (VDI_Workstation * vwk,
   if(src->fd_addr) {
     fbb->s_form = src->fd_addr;
 
-    if(src->fd_stand) {
+    if(src->fd_stand)
+    {
       /* block is in VDI format */
 
       fbb->s_nxwd = 2;
       fbb->s_nxln = src->fd_wdwidth * 2;
     } /* else block is in machine dependent format */
+    else
+    {
+      fbb->s_nxwd = 2;
+      fbb->s_nxln = src->fd_wdwidth * 2;
+    }
 
     /* See discussion about machine dependent in vro_cpyfm above */
 
@@ -288,6 +294,18 @@ ofbis_visual_bitbltt (VDI_Workstation * vwk,
       fbb->d_nxln = dst->fd_wdwidth * 2;
       fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
     } /* else destination should be in machine dependent format */
+    else
+    {
+      /* destination should be in machine dependent format */
+
+      fbb->d_nxwd = 2;
+      if(FB_T(vwk->visual->private)->finf.type == FB_TYPE_PACKED_PIXELS) {
+	fbb->d_nxln = (fbb->b_wd * fbb->plane_ct) / 8;
+      } else { /* assume planes of some kind */
+	fbb->d_nxln = dst->fd_wdwidth * 2;
+	fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
+      }
+    }
 
     /* See discussion about machine dependent in vro_cpyfm above */
 
