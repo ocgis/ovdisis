@@ -42,6 +42,9 @@ dnl AC_TYPE_OFF_T
 dnl AC_HEADER_TIME
 
 
+dnl Check for standard types
+OSIS_CHECK_TYPES
+
 if test x$target_os = xmint; then
   build_bindings_only=true
   use_libtool=false
@@ -126,9 +129,6 @@ AM_CONDITIONAL(USE_LIBTOOL, test x$use_libtool = xtrue)
 dnl Decide which visuals to build
 AM_CONDITIONAL(BUILD_GGI_VISUAL, test x$build_ggi_visual = xtrue)
 AM_CONDITIONAL(BUILD_OFBIS_VISUAL, test x$build_ofbis_visual = xtrue)
-
-dnl Check for standard types
-OSIS_CHECK_TYPES
 
 OSISINCLUDE=${includedir}/osis
 AC_SUBST(OSISINCLUDE)
