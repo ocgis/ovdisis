@@ -95,7 +95,9 @@ ggi_visual_put_char (void * vis,
 		     int    y,
 		     int    col,
 		     int    ch) {
-  ggiSetGCForeground(VISUAL_T(vis), col);
+  ggi_color col1 = { 0xffff, 0xffff, 0xffff, 0xffff };
+
+  ggiSetGCForeground(VISUAL_T(vis), ggiMapColor(VISUAL_T(vis), &col1));
   ggiPutc(VISUAL_T(vis), x, y, ch);
 }
 
