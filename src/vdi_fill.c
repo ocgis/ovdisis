@@ -61,9 +61,9 @@ void vdi_vr_recfl(VDI_Workstation *vwk)
     }
 }
 
-void vdi_v_contour(VDI_Workstation *vwk)
+void vdi_v_contourfill(VDI_Workstation *vwk)
 {
-  EDEBUG("v_contour: Call not implemented!\n");
+  EDEBUG("v_contourfill: Call not implemented!\n");
 }
 
 void vdi_vsf_color(VDI_Workstation *vwk)

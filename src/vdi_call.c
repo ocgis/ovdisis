@@ -49,7 +49,7 @@ VdiFunction *vdi_functions[] = {
   /*  85 */ UNUSED, UNUSED, UNUSED, UNUSED, UNUSED,
   /*  90 */ UNUSED, UNUSED, UNUSED, UNUSED, UNUSED,
   /*  95 */ UNUSED, UNUSED, UNUSED, UNUSED, UNUSED,
-  /* 100 */ vdi_v_opnvwk, vdi_v_clsvwk, vdi_vq_extnd, vdi_v_contour, vdi_vsf_perimeter,
+  /* 100 */ vdi_v_opnvwk, vdi_v_clsvwk, vdi_vq_extnd, vdi_v_contourfill, vdi_vsf_perimeter,
   /* 105 */ vdi_v_get_pixel, vdi_vst_effects, vdi_vst_point, vdi_vsl_ends, vdi_vro_cpyfm,
   /* 110 */ vdi_vr_trnfm, vdi_vsc_form, vdi_vsf_udpat, vdi_vsl_udsty, vdi_vr_recfl,
   /* 115 */ vdi_vqin_mode, vdi_vqt_extent, vdi_vqt_width, vdi_vex_timv, UNUSED,

@@ -45,7 +45,7 @@ None of the functions are complete though.
   vdi_fill.c:
     vdi_v_fillarea
     vdi_vr_recfl	!
-    vdi_v_contour
+    vdi_v_contourfill
     vdi_vsf_color	!
     vdi_vsf_interior	!
     vdi_vsf_style	!
