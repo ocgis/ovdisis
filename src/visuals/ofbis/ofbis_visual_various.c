@@ -327,7 +327,7 @@ ofbis_visual_put_char (VWKREF vwk,
                        int    col,
                        int    ch) {
   FBputchar(FB_T(vwk->visual->private), x, y, ofbis_native_colour(vwk,col),
-	    (vwk->write_mode == MD_REPLACE)?0:0x80000000, ch);
+	    (vwk->write_mode == MD_REPLACE)?ofbis_native_colour(vwk,0):0x80000000, ch);
 }
 
 
