@@ -123,6 +123,11 @@ typedef struct
 #define COLOR_REQUESTED 0
 #define COLOR_ACTUAL    1
 
+/* return values for vq_vgdos() inquiry */
+#define GDOS_NONE (-2L)        /* no GDOS installed */
+#define GDOS_FSM  0x5F46534DL /* '_FSM' */
+#define GDOS_FNT  0x5F464E54L /* '_FNT' */
+
 /****** Raster definitions *********************************************/
 
 typedef struct
@@ -187,11 +192,20 @@ extern void vst_height(int, int, int *, int *, int *, int *);
 extern int vst_point(int, int, int *, int *, int *, int *);
 extern int vst_effects(int, int);
 extern void vst_alignment(int, int, int, int *, int *);
-extern int vst_rotation(int, int);
+extern int  vst_rotation(int, int);
+extern int  vst_font(int handle, int index);
+extern int vst_load_fonts(int handle, int rsrvd);
+extern void vst_unload_fonts(int handle, int rselect);
+extern int vst_arbpt (int   handle,
+                      int   point,
+                      int * wchar,
+                      int * hchar,
+                      int * wcell,
+                      int * hcell);
 extern void v_pline(int, int, int *);
-extern int vsl_color(int, int);
-extern int vsl_width(int, int);
-extern int vsl_type(int, int);
+extern int  vsl_color(int, int);
+extern int  vsl_width(int, int);
+extern int  vsl_type(int, int);
 extern void vsl_udsty(int, int);
 extern void vsl_ends(int, int, int);
 extern void v_pmarker(int, int, int *);
@@ -245,8 +259,8 @@ extern void vqm_attributes(int, int *);
 extern void vqf_attributes(int, int *);
 extern void vqt_attributes(int, int *);
 extern void vqt_extent(int, char *, int *);
-extern void vqt_width(int, char, int *, int *, int *);
-extern int vqt_name(int, int, char *);
+extern int  vqt_width(int, char, int *, int *, int *);
+extern int  vqt_name(int, int, char *);
 extern void vqt_fontinfo(int, int *, int *, int *, int *, int *);
 extern void vqin_mode(int, int, int *);
 extern void vq_chcells(int, int *, int *);
@@ -265,5 +279,7 @@ extern void v_rvon(int);
 extern void v_rvoff(int);
 extern void vq_curaddress(int, int *, int *);
 extern void v_hardcopy(int);
+extern int  vq_gdos(void);
+extern int  vq_vgdos(void);
 
 #endif /* _VDIBIND_H_ */

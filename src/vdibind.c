@@ -211,7 +211,7 @@ void vst_alignment(int handle, int h_in, int v_in, int *h_out, int *v_out)
   vdi_call(&o_vdipb);
 
   *h_out = o_vdipb.intout[0];
-  *v_out = o_vdipb.intout[0];
+  *v_out = o_vdipb.intout[1];
 }
 
 int vst_rotation(int handle, int rot)
@@ -221,6 +221,57 @@ int vst_rotation(int handle, int rot)
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 13;
   vdi_call(&o_vdipb);
+
+  return o_vdipb.intout[0];
+}
+
+int vst_font(int handle, int index)
+{
+  o_vdipb.intin[0] = index;
+
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 21;
+  vdi_call(&o_vdipb);
+
+  return o_vdipb.intout[0];
+}
+
+int vst_load_fonts(int handle, int rsrvd)
+{
+  o_vdipb.intin[0] = rsrvd;
+
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 119;
+  vdi_call(&o_vdipb);
+
+  return o_vdipb.intout[0];
+}
+
+void vst_unload_fonts(int handle, int select)
+{
+  o_vdipb.intin[0] = select;
+
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 120;
+  vdi_call(&o_vdipb);
+}
+
+int vst_arbpt (int   handle,
+               int   point,
+               int * wchar,
+               int * hchar,
+               int * wcell,
+               int * hcell) {
+  o_vdipb.intin[0] = point;
+
+  o_vdipb.contrl[VDI_HANDLE] = handle;
+  o_vdipb.contrl[ROUTINE] = 246;
+  vdi_call(&o_vdipb);
+
+  *wchar = o_vdipb.ptsout[0];
+  *hchar = o_vdipb.ptsout[1];
+  *wcell = o_vdipb.ptsout[2];
+  *hcell = o_vdipb.ptsout[3];
 
   return o_vdipb.intout[0];
 }
@@ -883,7 +934,7 @@ void vqt_extent(int handle, char *string, int coords[8])
     coords[i] = o_vdipb.ptsout[i];
 }
 
-void vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
+int vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
 {
   o_vdipb.intin[0] = (short)ch;
 
@@ -894,6 +945,8 @@ void vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
   *cwidth = o_vdipb.ptsout[0];
   *v_offset = o_vdipb.ptsout[2];
   *h_offset = o_vdipb.ptsout[4];
+
+  return o_vdipb.intout[0];
 }
 
 int vqt_name(int handle, int index, char *fontname)
@@ -1104,4 +1157,13 @@ void vex_keyv(int  handle,
   o_vdipb.contrl[VDI_HANDLE] = handle;
   o_vdipb.contrl[ROUTINE] = 132;
   vdi_call(&o_vdipb);
+}
+
+int vq_gdos(void) {
+  /* Return false since we haven't implemented gdos yet */
+  return 0;
+}
+
+int vq_vgdos(void) {
+  return GDOS_NONE;
 }
