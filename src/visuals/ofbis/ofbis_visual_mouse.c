@@ -41,7 +41,7 @@ ofbis_visual_save_mouse_bg (void * fb,
   mouse_background->b_wd = 16;
   mouse_background->b_ht = 16;
   mouse_background->d_form = mouse_background_buffer;
-  mouse_background->d_nxln = 16; /* FIXME for current resolution */
+  mouse_background->d_nxln = 16 * mouse_background->plane_ct / 8;
 
   FBbitblt (FB_T(fb), mouse_background);
 
@@ -66,7 +66,7 @@ ofbis_visual_restore_mouse_bg (void * fb) {
   mouse_background->b_wd = 16;
   mouse_background->b_ht = 16;
   mouse_background->s_form = mouse_background_buffer;
-  mouse_background->s_nxln = 16; /* FIXME for current resolution */
+  mouse_background->s_nxln = 16 * mouse_background->plane_ct / 8;
 
   FBbitblt (FB_T(fb), mouse_background);
 }
