@@ -67,7 +67,7 @@ c-file they are in.
 They're not complete yet, any of them. v_pline only does 1 pixel wide, no
 patterned lines. vr_recfl, v_bar and v_circle only works with solid or hollow.
 
-This snapshot needs oFBis v0.0.4 to work.
+This snapshot needs oFBis v0.0.5 to work.
 
 
 That's all, hack loose.

@@ -1,3 +1,17 @@
+/*
+ * ovdisis.h
+ *
+ * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *  
+ * Read the file COPYING for more information.
+ *
+ */
+
 #ifndef _OVDISIS_H_
 #define _OVDISIS_H_
 
@@ -196,4 +210,4 @@ typedef void VdiFunction(VDI_Workstation *);
 #define min(a,b) ((a)<(b)?(a):(b))
 
 
-#endif
+#endif /* _OVDISIS_H_ */
