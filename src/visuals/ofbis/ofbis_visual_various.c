@@ -272,10 +272,10 @@ ofbis_visual_bitbltt (VDI_Workstation * vwk,
     } /* else block is in machine dependent format */
     else
     {
-      /*
+      /* init machine dependent? what? how? where? explain! */
+      
       fbb->s_nxwd = 2;
       fbb->s_nxln = src->fd_wdwidth * 2;
-      */
     }
 
     /* See discussion about machine dependent in vro_cpyfm above */
