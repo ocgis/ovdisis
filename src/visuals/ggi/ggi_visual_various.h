@@ -41,23 +41,5 @@ ggi_visual_line (VWKREF vwk,
 		 int    c);
 
 void
-ggi_visual_bitblt (VWKREF vwk,
-		   int    mode,
-		   RECT * srccor,
-		   RECT * dstcor,
-		   MFDB * src,
-		   MFDB * dst);
-
-void
-ggi_visual_bitbltt (VWKREF vwk,
-		    int    mode,
-		    int    fgcol,
-		    int    bgcol,
-		    RECT * srccor,
-		    RECT * dstcor,
-		    MFDB * src,
-		    MFDB * dst);
-
-void
 ggi_visual_inquire (void *        fb,
 		    Visual_Attr * attr);

@@ -1,5 +1,6 @@
 GGI_VISUAL_SOURCES = \
 	ggi_visual.h \
+	ggi_visual_blit.c ggi_visual_blit.h \
 	ggi_visual_cmap.c ggi_visual_cmap.h \
 	ggi_visual_control.c ggi_visual_control.h \
 	ggi_visual_event.c ggi_visual_event.h \

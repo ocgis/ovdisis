@@ -15,6 +15,7 @@
 #include <stdio.h>
 
 #include "ovdisis.h"
+#include "ggi_visual_blit.h"
 #include "ggi_visual_cmap.h"
 #include "ggi_visual_control.h"
 #include "ggi_visual_event.h"
@@ -27,7 +28,8 @@
 VDI_Visual *
 init (void)
 {
-  static VDI_Visual visual = {
+  static VDI_Visual visual =
+  {
     ggi_visual_open,
     ggi_visual_close,
     ggi_visual_clear,
