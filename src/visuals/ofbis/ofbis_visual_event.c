@@ -13,10 +13,12 @@
 */
 
 #include <ofbis.h>
+#include <ofbis_keyboard.h>
+#include <stdio.h>
 
 #include "ofbis_visual.h"
 #include "ovdisis.h"
-
+#include "ovdisis_keyboard.h"
 
 /*
 ** Description
@@ -35,6 +37,9 @@ map_buttons (unsigned int ofbis_buttons) {
 }
 
 
+/*
+** Map pressed key from oFBis to VDI representation
+*/
 static
 inline
 void
@@ -42,8 +47,23 @@ map_key (FBKEYEVENT *            fe,
          Visual_Key_Event_Type * ve)
 {
   ve->state = fe->state;
-  ve->keycode = fe->keycode & 0x7f;
-  ve->ascii = fe->ascii;
+
+  switch(fe->ascii)
+  {
+  case FB_UC_Linefeed:
+    ve->keycode = fe->keycode & 0x7f;
+    ve->ascii   = VDI_KVAL(VDI_K_Return);
+    break;
+
+  case FB_UC_Delete:
+    ve->keycode = fe->keycode & 0x7f;
+    ve->ascii   = VDI_KVAL(VDI_K_BackSpace);
+    break;
+
+  default:
+    ve->keycode = fe->keycode & 0x7f;
+    ve->ascii = fe->ascii;
+  }
 }
 
 
