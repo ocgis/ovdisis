@@ -140,6 +140,14 @@ typedef struct
 
 /***********************************************************/
 
+typedef struct vdi_rectangle
+{
+  int v_x1;
+  int v_y1;
+  int v_x2;
+  int v_y2;
+} VRECT;
+
 
 /* oVDIsis call function */
 

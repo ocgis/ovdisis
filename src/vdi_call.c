@@ -76,7 +76,6 @@ void vdi_call(VDIPB *vdiparblk)
     if(vdipb->contrl[ROUTINE] >= 0 && vdipb->contrl[ROUTINE] <= no_opcodes) {
       if(vdi_functions[vdipb->contrl[ROUTINE]]) {
 	if(wk_open[vdipb->contrl[VDI_HANDLE]-1]) {
-
 	  /* Call our function */
 	  vdi_functions[vdipb->contrl[ROUTINE]](wk[vdipb->contrl[VDI_HANDLE]-1].vwk);
 	  IDEBUG("vdi_call: Call to VDI nr %d, handle %d finished.\n",

@@ -185,7 +185,6 @@ typedef struct
 typedef void VdiFunction(VDI_Workstation *);
 #define UNUSED (VdiFunction *)NULL
 
-
 /* debug info defines */
 #if DEBUGLEVEL>=1
 # define EDEBUG(fmt,args...) fprintf(stderr,fmt,##args)

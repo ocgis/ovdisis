@@ -1741,6 +1741,50 @@ fi
 
 
 
+echo $ac_n "checking for main in -lm""... $ac_c" 1>&6
+echo "configure:1746: checking for main in -lm" >&5
+ac_lib_var=`echo m'_'main | sed 'y%./+-%__p_%'`
+if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lm  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 1754 "configure"
+#include "confdefs.h"
+
+int main() {
+main()
+; return 0; }
+EOF
+if { (eval echo configure:1761: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest; then
+  rm -rf conftest*
+  eval "ac_cv_lib_$ac_lib_var=yes"
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  eval "ac_cv_lib_$ac_lib_var=no"
+fi
+rm -f conftest*
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+    ac_tr_lib=HAVE_LIB`echo m | sed -e 's/[^a-zA-Z0-9_]/_/g' \
+    -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'`
+  cat >> confdefs.h <<EOF
+#define $ac_tr_lib 1
+EOF
+
+  LIBS="-lm $LIBS"
+
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+
 if test x$with_ofbis = xyes ; then
   { echo "configure: error: 
 *** Directory must be specified for --with-ofbis" 1>&2; exit 1; }
@@ -1790,7 +1834,7 @@ fi
   # Extract the first word of "ofbis-config", so it can be a program name with args.
 set dummy ofbis-config; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1794: checking for $ac_word" >&5
+echo "configure:1838: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_path_OFBIS_CONFIG'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1821,7 +1865,7 @@ fi
 
   min_ofbis_version=0.0.6
   echo $ac_n "checking for oFBis - version >= $min_ofbis_version""... $ac_c" 1>&6
-echo "configure:1825: checking for oFBis - version >= $min_ofbis_version" >&5
+echo "configure:1869: checking for oFBis - version >= $min_ofbis_version" >&5
   no_ofbis=""
   if test "$OFBIS_CONFIG" = "no" ; then
     no_ofbis=yes
@@ -1899,9 +1943,6 @@ else
 fi
 
 OSISINCLUDE=${includedir}/osis
-
-
-
 
 
 
@@ -2064,8 +2105,6 @@ s%@CPP@%$CPP%g
 s%@OFBIS_CONFIG@%$OFBIS_CONFIG%g
 s%@OFBIS_CFLAGS@%$OFBIS_CFLAGS%g
 s%@OFBIS_LIBS@%$OFBIS_LIBS%g
-s%@ofbis_cflags@%$ofbis_cflags%g
-s%@ofbis_libs@%$ofbis_libs%g
 s%@OSISINCLUDE@%$OSISINCLUDE%g
 
 CEOF

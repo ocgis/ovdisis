@@ -1,7 +1,7 @@
 #!/bin/sh
 
-ofbis_libs="@ofbis_libs@"
-ofbis_cflags="@ofbis_cflags@"
+ofbis_libs="@OFBIS_LIBS@"
+ofbis_cflags="@OFBIS_LIBS@"
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@

@@ -75,8 +75,6 @@ OSISINCLUDE = @OSISINCLUDE@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
 VERSION = @VERSION@
-ofbis_cflags = @ofbis_cflags@
-ofbis_libs = @ofbis_libs@
 
 ovdisisdir = @OSISINCLUDE@
 ovdisis_HEADERS = vdibind.h

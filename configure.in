@@ -33,6 +33,8 @@ dnl AC_C_INLINE
 dnl AC_TYPE_OFF_T
 dnl AC_HEADER_TIME
 
+AC_CHECK_LIB(m,main)
+
 if test x$with_ofbis = xyes ; then
   AC_MSG_ERROR([
 *** Directory must be specified for --with-ofbis])
@@ -82,9 +84,6 @@ else
 fi
 
 OSISINCLUDE=${includedir}/osis
-
-AC_SUBST(ofbis_cflags)
-AC_SUBST(ofbis_libs)
 
 AC_SUBST(VERSION)
 AC_SUBST(OSISINCLUDE)
