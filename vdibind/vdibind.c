@@ -874,7 +874,7 @@ void vqt_extent(int handle, char *string, int coords[8])
   vdi_call(&o_vdipb);
 
   for(i=0 ; i<8 ; i++)
-    coords[i] = o_vdipb.ptsin[i];
+    coords[i] = o_vdipb.ptsout[i];
 }
 
 void vqt_width(int handle, char ch, int *cwidth, int *v_offset, int *h_offset)
