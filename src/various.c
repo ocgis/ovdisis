@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <fb/libfb.h>
 
 #include "ovdisis.h"
 
@@ -258,16 +259,16 @@ inline unsigned long get_color(VDI_Workstation *vwk, int index)
     {
       c = (unsigned char *)(&col);
 
-      c[0] = (unsigned char)((vwk->vdi_cmap.red[index]  *255)/1000);
-      c[1] = (unsigned char)((vwk->vdi_cmap.green[index]*255)/1000);
-      c[2] = (unsigned char)((vwk->vdi_cmap.blue[index] *255)/1000);
-      c[3] = 0;
+      c[0] = 0;
+      c[1] = (unsigned char)((vwk->vdi_cmap.red[index]  *255)/1000);
+      c[2] = (unsigned char)((vwk->vdi_cmap.green[index]*255)/1000);
+      c[3] = (unsigned char)((vwk->vdi_cmap.blue[index] *255)/1000);
 
       IDEBUG("get_color: Color %4u, %4u, %4u makes %08lx\n",
 	     vwk->vdi_cmap.red[index],vwk->vdi_cmap.green[index],
 	     vwk->vdi_cmap.blue[index],col);
 
-      return col;
+      return FBc24_to_cnative(vwk->fb, col);
     }
 }
 
