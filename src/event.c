@@ -120,8 +120,6 @@ timer_handler (int signal_number)
   {
     global_vwk->timv ();
   }
-
-  signal(SIGALRM, &timer_handler);
 }
 
 
@@ -305,6 +303,8 @@ event_handler (VDI_Workstation * vwk) {
 static struct itimerval timer_value = {{0, 50000}, {0, 50000}};
 static struct itimerval old_timer_value;
 
+static struct sigaction old_sa;
+
 /*
 ** Description
 ** Initialize the event handler and startup a thread to handle mouse,
@@ -313,6 +313,8 @@ static struct itimerval old_timer_value;
 void
 start_event_handler (VDI_Workstation * vwk)
 {
+  struct sigaction sa;
+
   /* Initialize global vwk that is used by timer and mouse handlers */
   global_vwk = vwk;
 
@@ -326,7 +328,11 @@ start_event_handler (VDI_Workstation * vwk)
   }
 
   /* Install a timer handler */
-  signal(SIGALRM, &timer_handler);
+  sa.sa_handler = &timer_handler;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = 0;
+  sigaction(SIGALRM, &sa, &old_sa);
+
   setitimer(ITIMER_REAL, &timer_value, &old_timer_value);
 }
 
@@ -345,7 +351,7 @@ stop_event_handler (void)
   key_scancode_buffer = NULL;
   key_ascii_buffer = NULL;
 
-  signal(SIGALRM, SIG_DFL);
+  sigaction(SIGALRM, &old_sa, &old_sa);
   setitimer(ITIMER_REAL, &old_timer_value, &old_timer_value);
 
   pthread_cancel(event_handler_thread);
