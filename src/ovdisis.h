@@ -158,6 +158,10 @@ typedef struct
         vwk->visual->restore_mouse_bg(vwk->visual->private)
 #define VISUAL_GET_EVENT(vwk, event) \
         vwk->visual->get_event(vwk->visual->private, event)
+#define VISUAL_MUTEX(vwk, mode) \
+        vwk->visual->mutex(mode)
+#define VISUAL_MUTEX_LOCK   0
+#define VISUAL_MUTEX_UNLOCK 1
 
 typedef struct {
   int x_res;
@@ -249,6 +253,7 @@ typedef struct
   void   (*restore_mouse_bg)(void * private);
   void   (*get_event)(void *         private,
                       Visual_Event * event);
+  void   (*mutex)(int mode);
 
   /* Visual specific data is stored here */
   void * private;
