@@ -1,7 +1,7 @@
 /*
 ** ggi_visual_text.c
 **
-** Copyright 2000 Christer Gustavsson <cg@nocrew.org>
+** Copyright 2000 - 2001 Christer Gustavsson <cg@nocrew.org>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -41,10 +41,26 @@ ggi_visual_put_char (VWKREF vwk,
   int ox, oy;
   register unsigned char * chardata = &set_chardata[set_charheight * ch];
   register unsigned char   data;
+  register char            light = vwk->text_a.effects & LIGHT;
 
   for (oy = 0; oy < set_charheight; oy++)
   {
-    data = *chardata;
+    if(light)
+    {
+      if(oy & 1)
+      {
+        data = *chardata & 0x55;
+      }
+      else
+      {
+        data = *chardata & 0xaa;
+      }
+    }
+    else
+    {
+      data = *chardata;
+    }
+
     chardata++;
 
     for (ox = 0; ox < set_charwidth; ox++)
