@@ -15,23 +15,27 @@
 #ifndef _VDIBIND_H_
 #define _VDIBIND_H_
 
+#include <sys/types.h>
 
-typedef struct
-{
-    short contrl[15];
-    short intin[132];
-    short ptsin[145];
-    short intout[140];
-    short ptsout[145];
+#ifndef WORD
+#define WORD int16_t
+#define UWORD u_int16_t
+#endif /* WORD */
+
+typedef struct {
+  WORD contrl[15];
+  WORD intin[132];
+  WORD ptsin[145];
+  WORD intout[140];
+  WORD ptsout[145];
 } VDIPARBLK;
 
-typedef struct
-{
-    short *contrl;
-    short *intin;
-    short *ptsin;
-    short *intout;
-    short *ptsout;
+typedef struct {
+  WORD *contrl;
+  WORD *intin;
+  WORD *ptsin;
+  WORD *intout;
+  WORD *ptsout;
 } VDIPB;
 
 
@@ -130,41 +134,38 @@ typedef struct
 
 /****** Raster definitions *********************************************/
 
-typedef struct
-{
-        void            *fd_addr;
-        int             fd_w;
-        int             fd_h;
-        int             fd_wdwidth;
-        int             fd_stand;
-        int             fd_nplanes;
-        int             fd_r1;
-        int             fd_r2;
-        int             fd_r3;
-} MFDB;
+typedef struct {
+  void *fd_addr;
+  WORD fd_w;
+  WORD fd_h;
+  WORD fd_wdwidth;
+  WORD fd_stand;
+  WORD fd_nplanes;
+  WORD fd_r1;
+  WORD fd_r2;
+  WORD fd_r3;
+} __attribute__ ((packed)) MFDB;
 
 /***********************************************************/
 
-typedef struct vdi_rectangle
-{
+typedef struct vdi_rectangle {
   int v_x1;
   int v_y1;
   int v_x2;
   int v_y2;
-} VRECT;
+} __attribute__ ((packed)) VRECT;
 
 /***********************************************************/
 
-typedef struct
-{
-  short mf_xhot;
-  short mf_yhot;
-  short mf_nplanes;
-  short mf_fg;
-  short mf_bg;
-  short mf_mask[16];
-  short mf_data[16];
-} MFORM;
+typedef struct {
+  WORD mf_xhot;
+  WORD mf_yhot;
+  WORD mf_nplanes;
+  WORD mf_fg;
+  WORD mf_bg;
+  WORD mf_mask[16];
+  WORD mf_data[16];
+} __attribute__ ((packed)) MFORM;
 
 /***********************************************************/
 
@@ -175,7 +176,6 @@ extern void vdi_call(VDIPB *);
 
 
 /* VDI function bindings */
-
 
 extern void v_opnwk(int *, int *, int *);
 extern void v_clswk(int);
