@@ -29,23 +29,26 @@ ggi_visual_bitblt (VDI_Workstation * vwk,
 		   MFDB *            src,
 		   MFDB *            dst)
 {
-  if((src->fd_addr == NULL) && (dst->fd_addr == NULL))
+  if((srccor->x1 != srccor->x2) && (srccor->y1 != srccor->y2))
   {
-    fix_rect(srccor);
-    fix_rect(dstcor);
-
-    ggiCopyBox(VISUAL_T(vwk->visual->private),
-               srccor->x1,
-               srccor->y1,
-               srccor->x2 - srccor->x1 + 1,
-               srccor->y2 - srccor->y1 + 1,
-               dstcor->x1,
-               dstcor->y1);
-  }
-  else
-  {
-    fprintf(stderr,
-            "Implement ggi_visual_bitblt (memory to display or vice versa\n");
+    if((src->fd_addr == NULL) && (dst->fd_addr == NULL))
+    {      
+      fix_rect(srccor);
+      fix_rect(dstcor);
+      
+      ggiCopyBox(VISUAL_T(vwk->visual->private),
+                 srccor->x1,
+                 srccor->y1,
+                 srccor->x2 - srccor->x1 + 1,
+                 srccor->y2 - srccor->y1 + 1,
+                 dstcor->x1,
+                 dstcor->y1);
+    }
+    else
+    {
+      fprintf(stderr,
+              "Implement ggi_visual_bitblt (memory to display or vice versa\n");
+    }
   }
 }
 
