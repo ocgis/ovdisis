@@ -324,6 +324,7 @@ void copy_cmap(VDI_Workstation *wk1, VDI_Workstation *wk2)
     /* Actually, we don't need to set the palette since we're
      * using the same Virtual Console for the framebuffer
      */
+    /* Or maybe we do after all.. urgh.. */
 #if 0
     sleep(1);			/* This is apparently needed in 8 bit mode (oFBis bug?) */
 

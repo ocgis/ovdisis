@@ -30,7 +30,7 @@ int wk_open[MAX_HANDLES];
 int first=1; /* Used to clear the above array first time */
 
 
-#define WSID(id) (0x424344 | id)
+#define WSID(id) (0x42434400 | id)
 
 /*
 ** Description
@@ -401,6 +401,24 @@ void vdi_v_clsvwk(VDI_Workstation *vwk)
       EDEBUG("v_clsvwk: Handle %d is not open\n", v + 1);
     return;
   }
+
+  /* If we're not in the same process as where the physical
+   * workstation was opened, we need to close the framebuffer
+   * we opened in v_opnvwk.
+   */
+  if(wk[v].vwk->pid != wk[v].physical->pid) {
+
+    /* cmap not used in TrueColor mode */
+    if (wk[v].vwk->inq.attr.planes < 16) {
+      FBfreecmap(wk[v].vwk->fb->cmap);
+      ADEBUG("v_clswk: FB cmap freed\n");
+    }
+#if 0
+    FBclose(wk[v].vwk->fb);
+    ADEBUG("v_clswk: FrameBuffer closed\n");  
+#endif
+  }
+
   wsfree (v);
   wk_open[v] = WS_NOTOPEN;
 

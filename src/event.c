@@ -105,15 +105,15 @@ event_handler (VDI_Workstation * vwk) {
 void
 start_event_handler (VDI_Workstation * vwk)
 {
-  fprintf (stderr, "ovdisis: event.c: init_event_handler: Trying to create thread\n");
+  fprintf (stderr, "ovdisis: event.c: start_event_handler: Trying to create thread\n");
   /* Create a new thread */
   if (pthread_create (&event_handler_thread,
                       NULL,
                       (void *) &event_handler,
                       (void *) vwk) < 0) {
-    fprintf (stderr, "ovdisis: init_event_handler: Couldn't create event handler thread\n");
+    fprintf (stderr, "ovdisis: event.c: start_event_handler: Couldn't create event handler thread\n");
   }
-  fprintf (stderr, "ovdisis: event.c: init_event_handler: Created thread\n");
+  fprintf (stderr, "ovdisis: event.c: start_event_handler: Created thread\n");
 }
 
 
