@@ -57,13 +57,17 @@ dnl Decide which visuals to build
   old_LIBS=${LIBS}
   old_CFLAGS=${CFLAGS}
 
-  AC_CHECK_LIB(ggi,ggiInit,
-    AC_CHECK_HEADER(ggi/ggi.h,[
-      AC_DEFINE(HAVE_LIBGGI)
-      AC_DEFINE(HAVE_GGI_H)
-      build_ggi_visual=true
-    ])
-  )
+
+  AC_ARG_ENABLE(ggi, [  --disable-ggi       Do not check for GGI],
+                    ,
+  [AC_CHECK_LIB(ggi,ggiInit,
+     AC_CHECK_HEADER(ggi/ggi.h,[
+       AC_DEFINE(HAVE_LIBGGI)
+       AC_DEFINE(HAVE_GGI_H)
+       build_ggi_visual=true
+     ])
+   )
+  ])
 
   ifdef([AM_CHECK_LIBOFBIS], 
       [AM_CHECK_LIBOFBIS(0.1.0, , 
