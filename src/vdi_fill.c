@@ -13,7 +13,6 @@
  */
 
 #include <stdio.h>
-#include <fb/libfb.h>
 
 #include "ovdisis.h"
 #include "various.h"

@@ -15,7 +15,7 @@
 #ifndef _OVDISIS_H_
 #define _OVDISIS_H_
 
-#include <fb/libfb.h>
+#include <ofbis.h>
 #include "vdibind.h" /* for VDI definitions */
 
 /* Defines for vdipb->contrl[] */

@@ -14,7 +14,6 @@
 
 #include <stdio.h>
 #include <signal.h>
-#include <fb/libfb.h>
 
 #include "ovdisis.h"
 

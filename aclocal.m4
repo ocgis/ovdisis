@@ -403,7 +403,7 @@ AC_ARG_ENABLE(ofbistest, [  --disable-ofbistest       Do not try to compile and 
   fi
 
   AC_PATH_PROG(OFBIS_CONFIG, ofbis-config, no)
-  min_ofbis_version=ifelse([$1], ,0.0.6,$1)
+  min_ofbis_version=ifelse([$1], ,0.0.7,$1)
   AC_MSG_CHECKING(for oFBis - version >= $min_ofbis_version)
   no_ofbis=""
   if test "$OFBIS_CONFIG" = "no" ; then

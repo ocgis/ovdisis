@@ -1936,7 +1936,7 @@ else
   esac
 
   OFBIS_CFLAGS="-I$ofbis_dir"
-  OFBIS_LIBS=$ofbis_dir/libfb.la
+  OFBIS_LIBS=$ofbis_dir/libofbis.la
 
   
   

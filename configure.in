@@ -47,7 +47,7 @@ if test x$with_ofbis = x ; then
     AC_MSG_ERROR([
 *** oFBis 0.0.6 or better is required. The latest version of oFBis
 *** is always available from ftp://ftp.nocrew.org.]),
-    libfb)
+    ofbis)
 
   ofbis_cflags=$OFBIS_CFLAGS
   ofbis_libs=$OFBIS_LIBS
@@ -77,7 +77,7 @@ else
   esac
 
   OFBIS_CFLAGS="-I$ofbis_dir"
-  OFBIS_LIBS=$ofbis_dir/libfb.la
+  OFBIS_LIBS=$ofbis_dir/libofbis.la
 
   AC_SUBST(OFBIS_CFLAGS)
   AC_SUBST(OFBIS_LIBS)
