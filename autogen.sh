@@ -10,6 +10,14 @@ cd $srcdir
 PROJECT=ovdisis
 FILE=src/ovdisis.h
 
+(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+	echo
+	echo "You must have libtool installed to compile $PROJECT."
+	echo "Download the appropriate package for your distribution,"
+	echo "or get the source tarball at ftp://ftp.gnu.org/pub/gnu/"
+	DIE=1
+}
+
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoconf installed to compile $PROJECT."
@@ -32,6 +40,7 @@ test $TEST_TYPE $FILE || {
 }
 
 aclocal $ACLOCAL_FLAGS
+libtoolize --force
 
 # optionally feature autoheader
 (autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader
