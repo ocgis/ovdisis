@@ -12,7 +12,7 @@
  *
  */
 
-#define DEBUGLEVEL 0
+#undef DEBUGLEVEL
 
 #include <stdio.h>
 #include <stdlib.h>

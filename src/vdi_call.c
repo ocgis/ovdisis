@@ -27,7 +27,7 @@
 #include "vdi_raster.h"
 #include "vdi_various.h"
 
-#define DEBUGLEVEL 3
+#undef DEBUGLEVEL
 
 VdiFunction *vdi_functions[] = {
   /*   0 */ UNUSED, vdi_v_opnwk, vdi_v_clswk, vdi_v_clrwk, vdi_v_updwk,
