@@ -57,7 +57,7 @@ else
   AC_CHECK_LIB(m,main)
   AC_CHECK_LIB(pthread,pthread_create)
   AC_CHECK_LIB(dl,dlopen)
-  AC_CHECK_LIB(ggi,ggiInit)
+  AC_CHECK_LIB(ggi,ggiInit,AC_CHECK_HEADER(ggi/ggi.h,build_ggi_visual=true))
 
   if test x$with_ofbis = xyes ; then
     AC_MSG_ERROR([
@@ -75,6 +75,8 @@ else
 
     ofbis_cflags=$OFBIS_CFLAGS
     ofbis_libs=$OFBIS_LIBS
+
+    build_ofbis_visual=true
   else
     # Use uninstalled ofbis (assume they got the version right)
 
@@ -105,11 +107,18 @@ else
 
     AC_SUBST(OFBIS_CFLAGS)
     AC_SUBST(OFBIS_LIBS)
+
+    build_ofbis_visual=true
   fi
 fi
 
+dnl Decide how to build the sources
 AM_CONDITIONAL(BUILD_BINDINGS_ONLY, test x$build_bindings_only = xtrue)
 AM_CONDITIONAL(USE_LIBTOOL, test x$use_libtool = xtrue)
+
+dnl Decide which visuals to build
+AM_CONDITIONAL(BUILD_GGI_VISUAL, test x$build_ggi_visual = xtrue)
+AM_CONDITIONAL(BUILD_OFBIS_VISUAL, test x$build_ofbis_visual = xtrue)
 
 dnl Check for standard types
 OSIS_CHECK_TYPES

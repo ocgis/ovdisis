@@ -22,6 +22,7 @@ DRIVER_SRC = \
 	vdi_line.h vdi_marker.h vdi_mouse.h vdi_raster.h vdi_text.h \
 	vdi_device.h vdi_various.h
 
+EXTRA_DIST = $(BINDINGS_SRC) $(TRAP_SRC) $(DRIVER_SRC)
 
 if BUILD_BINDINGS_ONLY
 lib_LIBRARIES = libovdisis.a
