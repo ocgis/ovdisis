@@ -33,11 +33,14 @@ lib_LIBRARIES = libovdisis.a
 
 libovdisis_a_SOURCES = \
 	$(BINDINGS_SRC) $(TRAP_SRC)
+libovdisis_a_CFLAGS = $(AM_CFLAGS)
+
 else
 lib_LTLIBRARIES = libovdisis.la
 
 libovdisis_la_SOURCES = \
 	$(BINDINGS_SRC) $(DRIVER_SRC)
+libovdisis_la_CFLAGS = $(AM_CFLAGS)
 
 endif
 
