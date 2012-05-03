@@ -13,6 +13,7 @@ endif
 
 bin_SCRIPTS = ovdisis-config
 
+ACLOCAL_AMFLAGS = -I m4
 m4datadir = $(datadir)/aclocal
 m4data_DATA = ovdisis.m4
 
