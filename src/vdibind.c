@@ -177,7 +177,10 @@ void v_gtext(int handle, int x, int y, char *string)
   o_vdipb.ptsin[0] = x;
   o_vdipb.ptsin[1] = y;
   
-  while((o_vdipb.intin[i++] = (int)*((unsigned char *)string)++) != 0);
+  while((o_vdipb.intin[i++] = (int)*((unsigned char *)string)) != 0)
+  {
+    string++;
+  }
 
   o_vdipb.contrl[N_PTSIN] = 1;
   o_vdipb.contrl[N_INTIN] = --i;

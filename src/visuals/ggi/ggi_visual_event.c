@@ -64,6 +64,7 @@ map_key(gii_key_event *         ge,
       break;
 
     default :
+      ;
       /* FIXME */
     }
 
