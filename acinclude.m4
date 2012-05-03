@@ -1,6 +1,6 @@
 dnl Check for standard types
 
-AC_DEFUN(OSIS_CHECK_TYPES,
+AC_DEFUN([OSIS_CHECK_TYPES],
 [ AC_CHECK_SIZEOF(short, 2)
   if test x$ac_cv_sizeof_short = x2; then
     S_INT16_T="signed short"
