@@ -4,7 +4,7 @@
 dnl AM_PATH_OVDISIS([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
 dnl Test for oVDIsis, and define OVDISIS_CFLAGS and OVDISIS_LIBS
 
-AC_DEFUN(AM_PATH_OVDISIS,
+AC_DEFUN([AM_PATH_OVDISIS],
 [dnl 
 dnl Get the cflags and libraries from the ovdisis-config script
 dnl
