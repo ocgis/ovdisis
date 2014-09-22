@@ -68,13 +68,15 @@ void vdi_v_bar(VDI_Workstation *vwk)
 
   if(do_rectclip(&cor, &vwk->clip))
   {
+    int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
+
     /* Lock visual before operation */
     VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
 
     /* Setup write mode */
     VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
-    ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
+    ni = gem2tos_color(planes, vwk->fill_a.color);
     col = get_color(vwk, ni);
     
     switch(vwk->fill_a.interior)
@@ -139,6 +141,7 @@ void vdi_v_arc(VDI_Workstation *vwk)
   int radius,x_center,y_center, angle_start,angle_end;
   int p,x,y,ni, start_x,end_x;
   unsigned long col;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   x_center = vdipb->ptsin[0];
   y_center = vdipb->ptsin[1];
@@ -146,7 +149,7 @@ void vdi_v_arc(VDI_Workstation *vwk)
   angle_start = vdipb->intin[0] % 3600;
   angle_end = vdipb->intin[1] % 3600;
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
+  ni = gem2tos_color(planes, vwk->fill_a.color);
   col = get_color(vwk, ni);
 
 
@@ -233,6 +236,7 @@ void vdi_v_arc(VDI_Workstation *vwk)
   unsigned long col;
   double angle, abeg, aend, astep;
   RECT lin,linp;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   /* Lock visual before operation */
   VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
@@ -250,7 +254,7 @@ void vdi_v_arc(VDI_Workstation *vwk)
   if(abeg > aend)
     aend += 2*M_PI;
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
+  ni = gem2tos_color(planes, vwk->line_a.color);
   col = get_color(vwk, ni);
 
   linp.x1 = x_center + radius*cos(abeg);
@@ -295,6 +299,7 @@ void vdi_v_circle(VDI_Workstation *vwk)
   int *x_values;
   unsigned long col;
   RECT lin_u, lin_l;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   /* Lock visual before operation */
   VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
@@ -308,7 +313,7 @@ void vdi_v_circle(VDI_Workstation *vwk)
 
   IDEBUG("v_circle: x_center: %d, y_center: %d, radius: %d\n",x_center,y_center,radius);
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
+  ni = gem2tos_color(planes, vwk->fill_a.color);
   col = get_color(vwk, ni);
 
   switch(vwk->fill_a.interior)
@@ -418,6 +423,7 @@ void vdi_v_ellipse(VDI_Workstation *vwk)
   unsigned long col;
   double angle, abeg, aend, astep;
   RECT lin,linp;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   /* Lock visual before operation */
   VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
@@ -432,7 +438,7 @@ void vdi_v_ellipse(VDI_Workstation *vwk)
   abeg = (0) * 2*M_PI/3600.0;
   aend = (3600) * 2*M_PI/3600.0;
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
+  ni = gem2tos_color(planes, vwk->line_a.color);
   col = get_color(vwk, ni);
 
   linp.x1 = x_center + x_radius*cos(abeg);
@@ -464,6 +470,7 @@ void vdi_v_ellarc(VDI_Workstation *vwk)
   unsigned long col;
   double angle, abeg, aend, astep;
   RECT lin,linp;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   /* Lock visual before operation */
   VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
@@ -482,7 +489,7 @@ void vdi_v_ellarc(VDI_Workstation *vwk)
   if(abeg > aend)
     aend += 2*M_PI;
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
+  ni = gem2tos_color(planes, vwk->line_a.color);
   col = get_color(vwk, ni);
 
   linp.x1 = x_center + x_radius*cos(abeg);
@@ -542,7 +549,8 @@ void vdi_v_rbox(VDI_Workstation *vwk)
   /* check if draw at all */
   if(do_rectclip(&cor, &vwk->clip))
   {
-    ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
+    int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
+    ni = gem2tos_color(planes, vwk->line_a.color);
     col = get_color(vwk, ni);
     
     radius = RBOX_RADIUS(org);
@@ -676,10 +684,11 @@ void vdi_v_rfbox(VDI_Workstation *vwk)
 
   /* check if draw at all */
   if(do_rectclip(&cor, &vwk->clip)) {
+    int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
   
     radius = RBOX_RADIUS(org);
 
-    ni = gem2tos_color(vwk->inq.attr.planes, vwk->fill_a.color);
+    ni = gem2tos_color(planes, vwk->fill_a.color);
     col = get_color(vwk, ni);
 
     switch(vwk->fill_a.interior)

@@ -28,6 +28,7 @@ void vdi_v_gtext(VDI_Workstation *vwk)
 {
   int ch, i,endchar, ni, x,y,ly, w;
   unsigned long col;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   /* Lock visual before operation */
   VISUAL_MUTEX(vwk, VISUAL_MUTEX_LOCK);
@@ -35,7 +36,7 @@ void vdi_v_gtext(VDI_Workstation *vwk)
   /* Setup write mode */
   VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->text_a.color);
+  ni = gem2tos_color(planes, vwk->text_a.color);
   col = get_color(vwk, ni);
  
   x = vdipb->ptsin[0];

@@ -185,8 +185,9 @@ void make_pixel_list_from_mform( VDI_Workstation *vwk, MFORM *cursor ) {
   int i;
 
   if( mouse_cursor.mf_nplanes > 1 ) {
-    fg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_fg);
-    bg_col = gem2tos_color(vwk->inq.attr.planes, mouse_cursor.mf_bg);
+    int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
+    fg_col = gem2tos_color(planes, mouse_cursor.mf_fg);
+    bg_col = gem2tos_color(planes, mouse_cursor.mf_bg);
   } else {
     fg_col = 1;
     bg_col = 0;

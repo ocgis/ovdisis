@@ -21,10 +21,11 @@
 void vdi_vs_color(VDI_Workstation *vwk)
 {
   int i,ni;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
 
   i = min(vdipb->intin[0], 255);
 
-  ni = gem2tos_color(vwk->inq.attr.planes, i);
+  ni = gem2tos_color(planes, i);
   
   vwk->vdi_cmap.red[i]   = vdipb->intin[1];
   vwk->vdi_cmap.green[i] = vdipb->intin[2];
@@ -63,7 +64,8 @@ void vdi_vq_color(VDI_Workstation *vwk)
     vdipb->intout[0] = -1;    /* Color out of range */
   else
   {
-    ni = gem2tos_color(vwk->inq.attr.planes, i);
+    int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
+    ni = gem2tos_color(planes, i);
     vdipb->intout[0] = i;
     
     /* Return the actual colour */

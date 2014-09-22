@@ -28,6 +28,7 @@ void vdi_v_pline(VDI_Workstation *vwk)
   int n,ni;
   unsigned long col;
   RECT cor;
+  int planes = (vwk->inq.attr.planes < 8) ? vwk->inq.attr.planes : 8;
   
   
   ADEBUG ("ovdisis: vdi_line.c: vdi_v_pline: fb = 0x%x\n", vwk->fb);
@@ -38,7 +39,7 @@ void vdi_v_pline(VDI_Workstation *vwk)
   /* Setup write mode */
   VISUAL_SET_WRITE_MODE(vwk, vwk->write_mode);
 
-  ni = gem2tos_color(vwk->inq.attr.planes, vwk->line_a.color);
+  ni = gem2tos_color(planes, vwk->line_a.color);
   col = get_color(vwk, ni);
   
   for(n=0 ; n < (int)vdipb->contrl[N_PTSIN]-1 ; n++)
