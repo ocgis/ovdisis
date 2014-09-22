@@ -1,0 +1,12 @@
+*.o
+*.lo
+*.la
+Makefile
+.deps
+.libs
+Makefile.in
+vdibind.h
+*.lib
+Linker.Out
+*.P
+test_workstations

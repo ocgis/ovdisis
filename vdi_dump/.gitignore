@@ -1,0 +1,6 @@
+*.o
+Makefile
+vdi_dump
+.deps
+.libs
+Makefile.in

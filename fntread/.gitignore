@@ -1,0 +1,6 @@
+*.o
+Makefile
+fntread
+.deps
+.libs
+Makefile.in
