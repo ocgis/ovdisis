@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "ofbis_visual.h"
+#include "ofbis_visual_cmap.h"
 #include "ovdisis.h"
 #include "various.h"
 
@@ -137,6 +138,7 @@ ofbis_native_colour(VWKREF wk, int c) {
   case 16:
   case 24:
   case 32:
+  default:
     if(c>255) {
       fprintf(stderr, "Illegal colour value %d\n", c);
       return FBc24_to_cnative(FB_T(wk->visual->private), 

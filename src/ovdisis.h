@@ -2,7 +2,7 @@
  * ovdisis.h
  *
  * Copyright 1998 Tomas Berndtsson <tomas@nocrew.org>
- * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
+ * Copyright 1999 - 2001 Christer Gustavsson <cg@nocrew.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
 
 #ifndef _OVDISIS_H_
 #define _OVDISIS_H_
+
+#include <stdio.h>
 
 #include "ovdisis_types.h"
 #include "vdibind.h" /* for VDI definitions */
@@ -353,6 +355,11 @@ typedef void VdiFunction(VDI_Workstation *);
 # define IDEBUG(fmt,args...) 
 # define DEBUG3(fmt,args...) 
 #endif /* 1 */
+
+#define DEBUG0(fmt,args...) fprintf(stderr,fmt,##args)
+#define DEBUG1 EDEBUG 
+#define DEBUG2 ADEBUG 
+#define DEBUG3 IDEBUG 
 
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))

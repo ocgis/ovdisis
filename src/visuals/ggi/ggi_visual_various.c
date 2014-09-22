@@ -20,6 +20,8 @@
 #include "ovdisis.h"
 #include "various.h"
 
+
+static
 int
 get_color_index(VWKREF vwk,
 		const ggi_color * color) {
@@ -39,6 +41,7 @@ get_color_index(VWKREF vwk,
 }
 
 
+static
 int
 get_xorcolor_index(VWKREF vwk,
 		   const ggi_color * color) {
@@ -172,6 +175,7 @@ ggi_visual_hline (VWKREF vwk,
 }
 
 
+static
 void
 ggi_visual_vline (VWKREF vwk,
 		  int    x,
