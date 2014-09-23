@@ -42,6 +42,7 @@ init(void)
     sdl_visual_put_cmap,
     sdl_visual_get_pixel,
     sdl_visual_put_pixel,
+    sdl_visual_put_pixels,
     sdl_visual_hline,
     sdl_visual_line,
     sdl_visual_bitblt,

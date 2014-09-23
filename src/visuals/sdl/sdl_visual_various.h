@@ -24,6 +24,11 @@ sdl_visual_put_pixel(VWKREF vwk,
                      int    y,
                      int    c);
 
+void
+sdl_visual_put_pixels (VWKREF vwk,
+		       int n,
+		       Pixel *pixel );
+
 int
 sdl_visual_get_pixel (VWKREF vwk,
 		      int    x,
