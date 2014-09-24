@@ -127,17 +127,16 @@ sdl_visual_put_pixel(VWKREF vwk,
 }
 
 
-/* FIXME: optimize */
+/* FIXME: Optimize */
 void sdl_visual_put_pixels( VWKREF vwk, int n,  /* The number of pixels to draw */
 			    Pixel *pixel ) {
 
-  int i, x, y, c;
+  int i;
   for( i = 0 ; i < n ; i++ ) {
-    x = pixel[i].x;
-    y = pixel[i].y;
-    c = pixel[i].color;
-
-    sdl_visual_put_pixel(vwk, x, y, c);
+    sdl_visual_put_pixel(vwk,
+			 pixel[i].x,
+			 pixel[i].y,
+			 pixel[i].color);
   }
 }
 
