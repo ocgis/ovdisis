@@ -93,7 +93,7 @@ sdl_visual_get_event (void *         vis,
     break;
 
     case SDL_MOUSEMOTION:
-      DEBUG3("motion event\n");
+      DEBUG3("motion event %d x %d\n", event.motion.x, event.motion.y);
       visual_event->type = Visual_Mouse_Move_Event;
       visual_event->mouse_move.x = event.motion.x;
       visual_event->mouse_move.y = event.motion.y;
