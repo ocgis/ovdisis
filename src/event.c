@@ -77,7 +77,7 @@ event_handler (VDI_Workstation * vwk) {
       break;
 
     default:
-      fprintf (stderr, "ovdisis: event.c: Unknown event\n");
+      fprintf (stderr, "ovdisis: event.c: Unknown event 0x%x\n", visual_event.type);
     }
   }
 }
