@@ -113,13 +113,20 @@ sdl_visual_get_event (void *         vis,
               &visual_event->key);
       break;
 
+    case SDL_ACTIVEEVENT:
+      DEBUG3("active event\n");
+      visual_event->type = Visual_No_Event;
+      break;
+
     default:
       DEBUG3("SDL_WaitEvent returned %d\n", event.type);
+      visual_event->type = Visual_No_Event;
     }
   }
   else
   {
     DEBUG1("SDL_WaitEvent failed!\n");
+    visual_event->type = Visual_No_Event;
   }
 
   DEBUG3("sdl_visual_get_event exited\n");
