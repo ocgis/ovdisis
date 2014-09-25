@@ -285,8 +285,8 @@ void mouse_moved( unsigned int x, unsigned int y ) {
     WORD mx, my;
     mx = (short)mouse_x;
     my = (short)mouse_y;
-    DEBUG3("mouse_moved: Calling mouse move handler...");
-    global_vwk->motv (&mx, &my);
+    DEBUG3("mouse_moved: Calling mouse move handler: mx = %d my = %d...", mx, my);
+    global_vwk->motv (mx, my);
     DEBUG3("done.\n");
     mouse_x = mx;
     mouse_y = my;
