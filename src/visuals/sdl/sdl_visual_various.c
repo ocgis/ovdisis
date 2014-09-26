@@ -67,6 +67,10 @@ sdl_visual_put_pixel(VWKREF vwk,
     }
   }
 
+  if( WRITE_MODE(vwk->visual->private) == MD_XOR ) {
+    printf("bpp = %d\n", screen->format->BytesPerPixel);
+  }
+
   switch(screen->format->BytesPerPixel)
   {
   case 1: /* Assuming 8-bpp */

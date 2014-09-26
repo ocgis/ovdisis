@@ -122,5 +122,6 @@ sdl_visual_set_write_mode(void * vis,
                           int    write_mode)
 {
   DEBUG3("sdl_visual_set_write_mode entered\n");
+  WRITE_MODE(vis) = write_mode;
   DEBUG3("sdl_visual_set_write_mode exited\n");
 }

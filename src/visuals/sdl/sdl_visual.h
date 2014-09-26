@@ -22,9 +22,11 @@ typedef struct
 {
   SDL_Surface * visual;        /* This is the SDL handle */
   Uint32        pens[256];
+  int           write_mode;   /* Takes values defined by the VDI */
 } sdl_visual_private_t;
 
 #define VISUAL_T(private)       (((sdl_visual_private_t *)private)->visual)
 #define PENS(private)           (((sdl_visual_private_t *)private)->pens)
+#define WRITE_MODE(private)     (((sdl_visual_private_t *)private)->write_mode)
 
 #endif
